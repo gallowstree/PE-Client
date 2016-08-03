@@ -7,6 +7,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 
 set(SOURCE_FILES main.cpp serialization.h)
 add_executable(test_client ${SOURCE_FILES} main.cpp)
+TARGET_LINK_LIBRARIES(test_client pthread)
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake_modules")
 find_package(SFML REQUIRED system window graphics audio)

@@ -59,7 +59,7 @@ void processEvents()
 void sendCommands()
 {
 
-    short client = 1;
+    short client = 0;
 
     intToChars(client,buff,0);
     intToChars(msgnm,buff,4);
@@ -77,7 +77,7 @@ void initSocket()
     /*Configure settings in address struct*/
     serverAddr.sin_family = AF_INET;
     serverAddr.sin_port = htons(7891);
-    serverAddr.sin_addr.s_addr = inet_addr("192.168.1.78");
+    serverAddr.sin_addr.s_addr = inet_addr("192.168.2.1");
     memset(serverAddr.sin_zero, '\0', sizeof serverAddr.sin_zero);
 
     /*Initialize size variable to be used later on*/
@@ -86,20 +86,29 @@ void initSocket()
 
 void *listenToServer(void * args)
 {
-    int udpSocket, nBytes;
-    char buffer[COMMAND_BUFFER_SIZE];
-    struct sockaddr_in serverAddr, clientAddr;
+    /*Create UDP socket*/
+    int udpSocket;
+    struct sockaddr_in serverAddr2;
     struct sockaddr_storage serverStorage;
-    socklen_t addr_size, client_addr_size;
-    int i;
+    udpSocket = socket(PF_INET, SOCK_DGRAM, 0);
+    char buffer[1024];
+    /*Configure settings in address struct*/
+    serverAddr2.sin_family = AF_INET;
+    serverAddr2.sin_port = htons(7892);
+    serverAddr2.sin_addr.s_addr = inet_addr("192.168.2.2");
+    memset(serverAddr.sin_zero, '\0', sizeof serverAddr.sin_zero);
 
+    /*Bind socket with address struct*/
+    bind(udpSocket, (struct sockaddr *) &serverAddr2, sizeof(serverAddr2));
 
+    /*Initialize size variable to be used later on*/
+    addr_size = sizeof serverStorage;
 
     while(1)
     {
         /* Try to receive any incoming UDP datagram. Address and port of
           requesting client will be stored on serverStorage variable */
-        nBytes = recvfrom(clientSocket, buffer, COMMAND_BUFFER_SIZE, 0, (struct sockaddr *)&serverStorage, &addr_size);
+        nBytes = recvfrom(udpSocket, buffer, COMMAND_BUFFER_SIZE, 0, (struct sockaddr *)&serverStorage, &addr_size);
 
         charsToInt(buffer,msgid,0);
         charsToInt(buffer,playerID,4);
