@@ -47,13 +47,13 @@ void processEvents()
 
     moves = 0x0000;
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-        moves |= 0x0001;
+        moves |= 0x1;
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-        moves |= 0x0010;
+        moves |= 0x2;
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-        moves |= 0x0100;
+        moves |= 0x4;
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-        moves |= 0x1000;
+        moves |= 0x8;
 }
 
 void sendCommands()
