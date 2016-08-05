@@ -47,19 +47,19 @@ void processEvents()
 
     moves = 0x0000;
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-        moves |= 0x0001;
+        moves |= 0x1;
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-        moves |= 0x0010;
+        moves |= 0x2;
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-        moves |= 0x0100;
+        moves |= 0x4;
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-        moves |= 0x1000;
+        moves |= 0x8;
 }
 
 void sendCommands()
 {
 
-    short client = 0;
+    short client = 1;
 
     intToChars(client,buff,0);
     intToChars(msgnm,buff,4);
@@ -76,8 +76,8 @@ void initSocket()
 
     /*Configure settings in address struct*/
     serverAddr.sin_family = AF_INET;
-    serverAddr.sin_port = htons(7891);
-    serverAddr.sin_addr.s_addr = inet_addr("192.168.2.1");
+    serverAddr.sin_port = htons(50420);
+    serverAddr.sin_addr.s_addr = inet_addr("192.168.2.6");
     memset(serverAddr.sin_zero, '\0', sizeof serverAddr.sin_zero);
 
     /*Initialize size variable to be used later on*/
@@ -94,8 +94,8 @@ void *listenToServer(void * args)
     char buffer[1024];
     /*Configure settings in address struct*/
     serverAddr2.sin_family = AF_INET;
-    serverAddr2.sin_port = htons(7892);
-    serverAddr2.sin_addr.s_addr = inet_addr("192.168.2.2");
+    serverAddr2.sin_port = htons(50421);
+    serverAddr2.sin_addr.s_addr = inet_addr("192.168.2.6");
     memset(serverAddr.sin_zero, '\0', sizeof serverAddr.sin_zero);
 
     /*Bind socket with address struct*/
