@@ -15,9 +15,14 @@ int msgnm = 0;
 
 /***SOCKET**/
 int clientSocket, portNum, nBytes;
-short playerID = 0;
-int const COMMAND_BUFFER_SIZE = 1024;
+int16_t playerID = 0;
 int16_t const c_input_command = 0;
+const char * c_ip = "192.168.1.12";
+const char * s_ip = "192.168.1.90";
+const int s_port = 50420;
+const int c_port = 50421;
+
+int const COMMAND_BUFFER_SIZE = 1024;
 char buff[1024];
 struct sockaddr_in serverAddr;
 socklen_t addr_size;
@@ -81,8 +86,8 @@ void initSocket()
 
     /*Configure settings in address struct*/
     serverAddr.sin_family = AF_INET;
-    serverAddr.sin_port = htons(50420);
-    serverAddr.sin_addr.s_addr = inet_addr("192.168.1.90");
+    serverAddr.sin_port = htons(s_port);
+    serverAddr.sin_addr.s_addr = inet_addr(s_ip);
     memset(serverAddr.sin_zero, '\0', sizeof serverAddr.sin_zero);
 
     /*Initialize size variable to be used later on*/
@@ -99,8 +104,8 @@ void *listenToServer(void * args)
     char buffer[1024];
     /*Configure settings in address struct*/
     serverAddr2.sin_family = AF_INET;
-    serverAddr2.sin_port = htons(50421);
-    serverAddr2.sin_addr.s_addr = inet_addr("192.168.1.12");
+    serverAddr2.sin_port = htons(c_port);
+    serverAddr2.sin_addr.s_addr = inet_addr(c_ip);
     memset(serverAddr.sin_zero, '\0', sizeof serverAddr.sin_zero);
 
     /*Bind socket with address struct*/

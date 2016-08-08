@@ -51,14 +51,14 @@ void charsToInt(const char c[], int& i, int position)
     i = converter.i;
 }
 
-void shortToChars(const short& s, char c[], int position)
+void shortToChars(const int16_t& s, char c[], int position)
 {
     short2Chars converter;
     converter.s = s;
     memcpy(c + position, converter.c, sizeof(s) );
 }
 
-void charsToShort(const char c[], short& s, int position)
+void charsToShort(const char c[], int16_t& s, int position)
 {
     short2Chars converter;
     memcpy(converter.c, c + position, sizeof(int16_t));
