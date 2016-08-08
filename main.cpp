@@ -20,7 +20,7 @@ socklen_t addr_size;
 int msgid,playerID;
 float x1,y_1,x2,y2;
 
-sf::RenderWindow mWindow(sf::VideoMode(800, 700), "SFML Application", sf::Style::Close);
+sf::RenderWindow mWindow(sf::VideoMode(1024, 768), "SFML Application", sf::Style::Close);
 const sf::Time TimePerFrame = sf::seconds(1.f/60.f);
 sf::CircleShape circle(10);
 sf::CircleShape circle2(10);
@@ -54,6 +54,8 @@ void processEvents()
         moves |= 0x4;
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
         moves |= 0x8;
+    if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
+        moves |= 0x10;
 }
 
 void sendCommands()
@@ -77,7 +79,7 @@ void initSocket()
     /*Configure settings in address struct*/
     serverAddr.sin_family = AF_INET;
     serverAddr.sin_port = htons(50420);
-    serverAddr.sin_addr.s_addr = inet_addr("192.168.2.6");
+    serverAddr.sin_addr.s_addr = inet_addr("10.1.11.57");
     memset(serverAddr.sin_zero, '\0', sizeof serverAddr.sin_zero);
 
     /*Initialize size variable to be used later on*/
@@ -95,7 +97,7 @@ void *listenToServer(void * args)
     /*Configure settings in address struct*/
     serverAddr2.sin_family = AF_INET;
     serverAddr2.sin_port = htons(50421);
-    serverAddr2.sin_addr.s_addr = inet_addr("192.168.2.6");
+    serverAddr2.sin_addr.s_addr = inet_addr("10.1.11.57");
     memset(serverAddr.sin_zero, '\0', sizeof serverAddr.sin_zero);
 
     /*Bind socket with address struct*/
