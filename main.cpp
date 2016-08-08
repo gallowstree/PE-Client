@@ -9,22 +9,27 @@
 #include "serialization.h"
 #include "command.h"
 #include "Player.h"
+#include "Projectile.h"
 
 int moves;
 int msgnm = 0, lastServerMsgid = -1;
 
+sf::RectangleShape projectile(sf::Vector2f(6,6));
+
 
 /***SOCKET**/
 int clientSocket, nBytes;
-int16_t playerID = 1;
+int16_t playerID = 0;
 int16_t const c_input_command = 0;
-const char * c_ip = "192.168.1.90";
+int16_t const s_projectile_command = 1;
+const char * c_ip = "192.168.1.12";
 const char * s_ip = "192.168.1.90";
 const int s_port = 50420;
 const int c_port = 50421;
 
-int const COMMAND_BUFFER_SIZE = 1024;
-char buff[1024];
+const int COMMAND_DATA_SIZE= 1400;
+char outputBuff[COMMAND_DATA_SIZE];
+char inputBuff[COMMAND_DATA_SIZE];
 struct sockaddr_in serverAddr;
 socklen_t addr_size;
 int msgid;
@@ -32,6 +37,7 @@ int msgid;
 sf::RenderWindow mWindow(sf::VideoMode(800, 600), "President Evil", sf::Style::Close);
 const sf::Time TimePerFrame = sf::seconds(1.f/60.f);
 std::queue<command_t> commandQueue;
+std::queue<Projectile> projectileQueue;
 std::vector<Player> players;
 pthread_mutex_t commandQueueMutex;
 pthread_t listeningThread;
@@ -59,6 +65,15 @@ void render()
     for (auto &player : players)
     {
         mWindow.draw(player.circle);
+    }
+
+    while(!projectileQueue.empty())
+    {
+        Projectile p = projectileQueue.front();
+        projectileQueue.pop();
+        projectile.setPosition(p.posx,p.posy);
+        projectile.setRotation(p.angle);
+        mWindow.draw(projectile);
     }
     mWindow.display();
 }
@@ -93,18 +108,21 @@ void processServerEvents()
     {
         command_t command = commandQueue.front();
         commandQueue.pop();
-        players[command.playerId].circle.setPosition(command.posx,command.posy);
+        if(command.type == c_input_command)
+            players[command.oid].circle.setPosition(command.posx,command.posy);
+        else if (command.type == s_projectile_command)
+            projectileQueue.push(Projectile(command.posx,command.posy,command.angle));
     }
     pthread_mutex_unlock(&commandQueueMutex);
 }
 
 void sendCommands()
 {
-    shortToChars(c_input_command,buff,0);
-    shortToChars(playerID,buff,2);
-    intToChars(msgnm,buff,4);
-    intToChars(moves,buff,8);
-    sendto(clientSocket,buff,1024,0,(struct sockaddr *)&serverAddr,addr_size);
+    shortToChars(c_input_command,outputBuff,0);
+    shortToChars(playerID,outputBuff,2);
+    intToChars(msgnm,outputBuff,4);
+    intToChars(moves,outputBuff,8);
+    sendto(clientSocket,outputBuff,1024,0,(struct sockaddr *)&serverAddr,addr_size);
     msgnm++;
 }
 
@@ -115,7 +133,6 @@ void *listenToServer(void * args)
     struct sockaddr_in serverAddr2;
     struct sockaddr_storage serverStorage;
     udpSocket = socket(PF_INET, SOCK_DGRAM, 0);
-    char buffer[1024];
     /*Configure settings in address struct*/
     serverAddr2.sin_family = AF_INET;
     serverAddr2.sin_port = htons(c_port);
@@ -132,29 +149,33 @@ void *listenToServer(void * args)
     {
         /* Try to receive any incoming UDP datagram. Address and port of
           requesting client will be stored on serverStorage variable */
-        nBytes = recvfrom(udpSocket, buffer, COMMAND_BUFFER_SIZE, 0, (struct sockaddr *)&serverStorage, &addr_size);
+        nBytes = recvfrom(udpSocket, inputBuff, COMMAND_DATA_SIZE, 0, (struct sockaddr *)&serverStorage, &addr_size);
 
         int32_t  msgNum;
         short offset = 0;
-        charsToInt(buffer,msgNum,offset);
+        charsToInt(inputBuff,msgNum,offset);
         if(msgNum > lastServerMsgid)
         {
             lastServerMsgid = msgid;
             int16_t command_type;
             offset += 4;
-            charsToShort(buffer, command_type, offset);
-            if(command_type == c_input_command)
-            {
-                offset += 2;
-                bool eom = false;
-                do {
+            charsToShort(inputBuff, command_type, offset);
+            offset += 2;
+            bool eom = false;
+
+            if(command_type == c_input_command || command_type == s_projectile_command) {
+                do
+                {
                     command srvCmd;
-                    charsToShort(buffer, srvCmd.playerId, offset);
-                    if (srvCmd.playerId != -1) {
+                    srvCmd.type = command_type;
+                    charsToShort(inputBuff, srvCmd.oid, offset);
+                    if (srvCmd.oid != -1) {
                         offset += 2;
-                        charsToFloat(buffer, srvCmd.posx, offset);
+                        charsToFloat(inputBuff, srvCmd.posx, offset);
                         offset += 4;
-                        charsToFloat(buffer, srvCmd.posy, offset);
+                        charsToFloat(inputBuff, srvCmd.posy, offset);
+                        offset += 4;
+                        charsToFloat(inputBuff, srvCmd.angle, offset);
                         offset += 4;
                         pthread_mutex_lock(&commandQueueMutex);
                         commandQueue.push(srvCmd);
@@ -177,6 +198,7 @@ void init()
     pthread_mutex_init(&commandQueueMutex, NULL);
     players.push_back(Player(0,0,0,sf::Color::Blue));
     players.push_back(Player(1,0,0,sf::Color::Red));
+    projectile.setFillColor(sf::Color::Cyan);
 }
 
 int main()

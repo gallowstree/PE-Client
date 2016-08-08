@@ -9,9 +9,11 @@
 #include <cstdint>
 
 typedef struct command {
-    int16_t playerId;
+    int16_t oid;
+    int16_t type;
     float posx;
     float posy;
+    float angle;
 } command_t;
 
 
