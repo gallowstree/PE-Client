@@ -11,20 +11,21 @@
 
 class Projectile {
     public:
+        int16_t bulletID;
         int16_t type;
         sf::Vector2f position;
         sf::Vector2f origin;
         bool  valid;
         sf::RectangleShape projectile;
 
-        Projectile(int16_t type,  sf::Vector2f position,sf::Vector2f origin);
+        Projectile(int16_t bulletID,int16_t type,  sf::Vector2f position,sf::Vector2f origin);
         void update(sf::Time elapsedTime);
 
     private:
         sf::Vector2f velocity;
         float range = 200;
         float speed = 500;
-        float angle = 0;
+        float angle = 45;
 };
 
 

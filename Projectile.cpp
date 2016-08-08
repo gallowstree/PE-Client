@@ -5,7 +5,8 @@
 #include <zconf.h>
 #include "Projectile.h"
 
-Projectile::Projectile(int16_t type,  sf::Vector2f position,sf::Vector2f origin):
+Projectile::Projectile(int16_t bulletID, int16_t type,  sf::Vector2f position,sf::Vector2f origin):
+bulletID(bulletID),
 type(type),
 position(position),
 origin(origin),
@@ -18,7 +19,7 @@ projectile(sf::Vector2f(6,6))
     projectile.setPosition(position);
 }
 
-void Projectile::update (sf::Time elapsedTime)
+void  Projectile::update  (sf::Time elapsedTime)
 {
     position += velocity * elapsedTime.asSeconds();
     projectile.setPosition(position);

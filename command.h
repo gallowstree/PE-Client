@@ -10,7 +10,9 @@
 
 typedef struct command {
     int32_t msgNum;
-    int16_t oid;
+    int16_t playerID;
+    int16_t bulletID;
+    int16_t bulletType;
     int16_t type;
     float posx;
     float posy;
