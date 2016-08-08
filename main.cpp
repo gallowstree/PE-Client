@@ -1,10 +1,12 @@
 #include <stdio.h>
+#include <queue>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <string.h>
 #include <arpa/inet.h>
 #include <SFML/Graphics.hpp>
 #include "serialization.h"
+#include "command.h"
 #include <pthread.h>
 
 int moves;
@@ -13,18 +15,21 @@ int msgnm = 0;
 
 /***SOCKET**/
 int clientSocket, portNum, nBytes;
-int client = 0;
+short playerID = 0;
 int const COMMAND_BUFFER_SIZE = 1024;
+int16_t const c_input_command = 0;
 char buff[1024];
 struct sockaddr_in serverAddr;
 socklen_t addr_size;
-int msgid,playerID;
+int msgid;
 float x1,y_1,x2,y2;
 
 sf::RenderWindow mWindow(sf::VideoMode(1024, 768), "SFML Application", sf::Style::Close);
 const sf::Time TimePerFrame = sf::seconds(1.f/60.f);
 sf::CircleShape circle(10);
 sf::CircleShape circle2(10);
+std::queue<command_t> commandQueue;
+pthread_mutex_t commandQueueMutex;
 pthread_t listeningThread;
 
 
@@ -61,12 +66,12 @@ void processEvents()
 
 void sendCommands()
 {
-    intToChars(client,buff,0);
+    shortToChars(c_input_command,buff,0);
+    shortToChars(playerID,buff,2);
     intToChars(msgnm,buff,4);
     intToChars(moves,buff,8);
-    int result = sendto(clientSocket,buff,1024,0,(struct sockaddr *)&serverAddr,addr_size);
+    sendto(clientSocket,buff,1024,0,(struct sockaddr *)&serverAddr,addr_size);
     msgnm++;
-    //printf("mandando %04x, %d, %d\n",moves,msgnm,client);
 }
 
 void initSocket()
@@ -111,7 +116,8 @@ void *listenToServer(void * args)
         nBytes = recvfrom(udpSocket, buffer, COMMAND_BUFFER_SIZE, 0, (struct sockaddr *)&serverStorage, &addr_size);
 
         charsToInt(buffer,msgid,0);
-        charsToInt(buffer,playerID,4);
+        charsToShort(buffer,playerID,4);
+        charsToShort(buffer,playerID,6);
         charsToFloat(buffer,x1,8);
         charsToFloat(buffer,y_1,12);
         circle.setPosition(x1,y_1);
