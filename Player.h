@@ -6,9 +6,17 @@
 #define TEST_CLIENT_PLAYER_H
 
 
-class Player {
-    int client = 0;
-};
+#include <cstdint>
+#include <SFML/Graphics.hpp>
 
+class Player {
+    public:
+        int16_t playerID;
+        sf::CircleShape circle;
+
+
+
+        Player(int16_t playerID,float posx,float posy,sf::Color);
+};
 
 #endif //TEST_CLIENT_PLAYER_H

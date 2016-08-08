@@ -10,10 +10,8 @@
 
 typedef struct command {
     int16_t playerId;
-    int16_t command_type;
-    int32_t msgNum;
-    int32_t posx;
-    int32_t posy;
+    float posx;
+    float posy;
 } command_t;
 
 
