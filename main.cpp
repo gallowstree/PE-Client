@@ -16,9 +16,9 @@ int msgnm = 0, lastServerMsgid = -1;
 
 /***SOCKET**/
 int clientSocket, nBytes;
-int16_t playerID = 0;
+int16_t playerID = 1;
 int16_t const c_input_command = 0;
-const char * c_ip = "192.168.1.12";
+const char * c_ip = "192.168.1.90";
 const char * s_ip = "192.168.1.90";
 const int s_port = 50420;
 const int c_port = 50421;
@@ -29,7 +29,7 @@ struct sockaddr_in serverAddr;
 socklen_t addr_size;
 int msgid;
 
-sf::RenderWindow mWindow(sf::VideoMode(1024, 768), "President Evil", sf::Style::Close);
+sf::RenderWindow mWindow(sf::VideoMode(800, 600), "President Evil", sf::Style::Close);
 const sf::Time TimePerFrame = sf::seconds(1.f/60.f);
 std::queue<command_t> commandQueue;
 std::vector<Player> players;
@@ -187,6 +187,10 @@ int main()
     sf::Time timeSinceLastUpdate = sf::Time::Zero;
     pthread_create(&listeningThread, NULL, listenToServer, NULL);
     initSocket();
+
+    mWindow.setVerticalSyncEnabled(true);
+    bool should_render = true;
+
     while (mWindow.isOpen())
     {
         sf::Time elapsedTime = clock.restart();
@@ -197,12 +201,17 @@ int main()
             processServerEvents();
             processEvents();
             sendCommands();
+            should_render = true;
             //update(TimePerFrame);
 
         }
         //updateStatistics(elapsedTime);
+        if (should_render)
+        {
+            render();
+            should_render = false;
+        }
 
-        render();
     }
 
     return 0;
