@@ -13,6 +13,7 @@ int msgnm = 0;
 
 /***SOCKET**/
 int clientSocket, portNum, nBytes;
+int client = 0;
 int const COMMAND_BUFFER_SIZE = 1024;
 char buff[1024];
 struct sockaddr_in serverAddr;
@@ -60,9 +61,6 @@ void processEvents()
 
 void sendCommands()
 {
-
-    short client = 1;
-
     intToChars(client,buff,0);
     intToChars(msgnm,buff,4);
     intToChars(moves,buff,8);
@@ -79,7 +77,7 @@ void initSocket()
     /*Configure settings in address struct*/
     serverAddr.sin_family = AF_INET;
     serverAddr.sin_port = htons(50420);
-    serverAddr.sin_addr.s_addr = inet_addr("10.1.11.57");
+    serverAddr.sin_addr.s_addr = inet_addr("192.168.1.90");
     memset(serverAddr.sin_zero, '\0', sizeof serverAddr.sin_zero);
 
     /*Initialize size variable to be used later on*/
@@ -97,7 +95,7 @@ void *listenToServer(void * args)
     /*Configure settings in address struct*/
     serverAddr2.sin_family = AF_INET;
     serverAddr2.sin_port = htons(50421);
-    serverAddr2.sin_addr.s_addr = inet_addr("10.1.11.57");
+    serverAddr2.sin_addr.s_addr = inet_addr("192.168.1.12");
     memset(serverAddr.sin_zero, '\0', sizeof serverAddr.sin_zero);
 
     /*Bind socket with address struct*/
