@@ -15,7 +15,7 @@ int msgnm = 0;
 
 /***SOCKET**/
 int clientSocket, portNum, nBytes;
-int16_t playerID = 0;
+int16_t playerID = 0, plid;
 int16_t const c_input_command = 0;
 const char * c_ip = "192.168.1.12";
 const char * s_ip = "192.168.1.90";
@@ -121,8 +121,8 @@ void *listenToServer(void * args)
         nBytes = recvfrom(udpSocket, buffer, COMMAND_BUFFER_SIZE, 0, (struct sockaddr *)&serverStorage, &addr_size);
 
         charsToInt(buffer,msgid,0);
-        charsToShort(buffer,playerID,4);
-        charsToShort(buffer,playerID,6);
+        charsToShort(buffer,plid,4);
+        charsToShort(buffer,plid,6);
         charsToFloat(buffer,x1,8);
         charsToFloat(buffer,y_1,12);
         circle.setPosition(x1,y_1);
