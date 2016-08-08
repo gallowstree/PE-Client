@@ -9,11 +9,14 @@
 #include <cstdint>
 
 typedef struct command {
+    int32_t msgNum;
     int16_t oid;
     int16_t type;
     float posx;
     float posy;
     float angle;
+    float originx;
+    float originy;
 } command_t;
 
 

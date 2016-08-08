@@ -6,13 +6,25 @@
 #define TEST_CLIENT_PROJECTILE_H
 
 
+#include <SFML/Graphics.hpp>
+#include <SFML/Graphics.hpp>
+
 class Projectile {
     public:
-        float posx;
-        float posy;
-        float angle;
+        int16_t type;
+        sf::Vector2f position;
+        sf::Vector2f origin;
+        bool  valid;
+        sf::RectangleShape projectile;
 
-        Projectile(float posx, float posy, float angle);
+        Projectile(int16_t type,  sf::Vector2f position,sf::Vector2f origin);
+        void update(sf::Time elapsedTime);
+
+    private:
+        sf::Vector2f velocity;
+        float range = 200;
+        float speed = 500;
+        float angle = 0;
 };
 
 

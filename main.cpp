@@ -14,9 +14,6 @@
 int moves;
 int msgnm = 0, lastServerMsgid = -1;
 
-sf::RectangleShape projectile(sf::Vector2f(6,6));
-
-
 /***SOCKET**/
 int clientSocket, nBytes;
 int16_t playerID = 0;
@@ -37,7 +34,7 @@ int msgid;
 sf::RenderWindow mWindow(sf::VideoMode(800, 600), "President Evil", sf::Style::Close);
 const sf::Time TimePerFrame = sf::seconds(1.f/60.f);
 std::queue<command_t> commandQueue;
-std::queue<Projectile> projectileQueue;
+std::map<int32_t,Projectile> projectiles;
 std::vector<Player> players;
 pthread_mutex_t commandQueueMutex;
 pthread_t listeningThread;
@@ -62,19 +59,18 @@ void initSocket()
 void render()
 {
     mWindow.clear();
-    for (auto &player : players)
+
+    for(auto const &projectile : projectiles)
+    {
+        if(projectile.second.valid)
+            mWindow.draw(projectile.second.projectile);
+    }
+
+    for (auto const &player : players)
     {
         mWindow.draw(player.circle);
     }
 
-    while(!projectileQueue.empty())
-    {
-        Projectile p = projectileQueue.front();
-        projectileQueue.pop();
-        projectile.setPosition(p.posx,p.posy);
-        projectile.setRotation(p.angle);
-        mWindow.draw(projectile);
-    }
     mWindow.display();
 }
 
@@ -111,7 +107,16 @@ void processServerEvents()
         if(command.type == c_input_command)
             players[command.oid].circle.setPosition(command.posx,command.posy);
         else if (command.type == s_projectile_command)
-            projectileQueue.push(Projectile(command.posx,command.posy,command.angle));
+        {
+            sf::Vector2f position = sf::Vector2f(command.posx,command.posy);
+            sf::Vector2f origin = sf::Vector2f(command.originx,command.originy);
+            Projectile projectile = Projectile(command.oid,position,origin);
+            if(projectiles.count(command.msgNum) == 0)
+            {
+                printf("insertando %d!",msgnm);
+                projectiles.insert(std::pair<int32_t, Projectile>(command.msgNum, projectile));
+            }
+        }
     }
     pthread_mutex_unlock(&commandQueueMutex);
 }
@@ -154,8 +159,8 @@ void *listenToServer(void * args)
         int32_t  msgNum;
         short offset = 0;
         charsToInt(inputBuff,msgNum,offset);
-        if(msgNum > lastServerMsgid)
-        {
+        //if(msgNum > lastServerMsgid)
+        //{
             lastServerMsgid = msgid;
             int16_t command_type;
             offset += 4;
@@ -163,10 +168,11 @@ void *listenToServer(void * args)
             offset += 2;
             bool eom = false;
 
-            if(command_type == c_input_command || command_type == s_projectile_command) {
+            if(command_type == c_input_command) {
                 do
                 {
                     command srvCmd;
+                    srvCmd.msgNum = msgNum;
                     srvCmd.type = command_type;
                     charsToShort(inputBuff, srvCmd.oid, offset);
                     if (srvCmd.oid != -1) {
@@ -187,7 +193,35 @@ void *listenToServer(void * args)
 
                 } while (!eom);
             }
-        }
+            else if(command_type == s_projectile_command)
+            {
+                do
+                {
+                    command srvCmd;
+                    srvCmd.msgNum = msgNum;
+                    srvCmd.type = command_type;
+                    charsToShort(inputBuff, srvCmd.oid, offset);
+                    if (srvCmd.oid != -1) {
+                        offset += 2;
+                        charsToFloat(inputBuff, srvCmd.posx, offset);
+                        offset += 4;
+                        charsToFloat(inputBuff, srvCmd.posy, offset);
+                        offset += 4;
+                        charsToFloat(inputBuff, srvCmd.originx, offset);
+                        offset += 4;
+                        charsToFloat(inputBuff, srvCmd.originy, offset);
+                        offset += 4;
+                        pthread_mutex_lock(&commandQueueMutex);
+                        commandQueue.push(srvCmd);
+                        pthread_mutex_unlock(&commandQueueMutex);
+                    }
+                    else {
+                        eom = true;
+                    }
+
+                } while (!eom);
+            }
+        //}
     }
 
     return 0;
@@ -198,7 +232,23 @@ void init()
     pthread_mutex_init(&commandQueueMutex, NULL);
     players.push_back(Player(0,0,0,sf::Color::Blue));
     players.push_back(Player(1,0,0,sf::Color::Red));
-    projectile.setFillColor(sf::Color::Cyan);
+}
+
+void update(sf::Time elapsedTime)
+{
+
+    for (auto &projectile : projectiles)
+    {
+        if (projectile.second.valid)
+        {
+            projectile.second.update(elapsedTime);
+        }
+        else
+        {
+            //projectiles.erase(projectile.first);
+        }
+    }
+
 }
 
 int main()
@@ -224,7 +274,7 @@ int main()
             processEvents();
             sendCommands();
             should_render = true;
-            //update(TimePerFrame);
+            update(TimePerFrame);
 
         }
         //updateStatistics(elapsedTime);
