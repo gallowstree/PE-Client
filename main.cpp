@@ -263,16 +263,16 @@ void init()
 void deleteInvalidProjectiles()
 {
     //delete invalid projectiles
-    for (auto it = projectiles.cbegin(); it != projectiles.cend() ; )
+    if(projectiles.size() >= 100)
     {
-        if (!(*it).second.valid)
-        {
-            printf("proyectil %d eliminado\n",(*it).first);
-            projectiles.erase(it++);
-        }
-        else
-        {
-            ++it;
+        for (auto it = projectiles.cbegin(); it != projectiles.cend();) {
+            if (!(*it).second.valid) {
+                printf("proyectil %d eliminado\n", (*it).first);
+                projectiles.erase(it++);
+            }
+            else {
+                ++it;
+            }
         }
     }
 }
@@ -289,7 +289,7 @@ void update(sf::Time elapsedTime)
         }
     }
 
-    //deleteInvalidProjectiles();
+    deleteInvalidProjectiles();
 
 }
 

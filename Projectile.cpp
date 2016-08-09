@@ -30,6 +30,6 @@ void  Projectile::update  (sf::Time elapsedTime)
     if (sqrtf(distance.x*distance.x + distance.y*distance.y) >= range)
     {
         valid = false;
-        printf("%d invalid!!!!!!!!!!!!\n",bulletID);
+        //printf("%d invalid!!!!!!!!!!!!\n",bulletID);
     }
 }
