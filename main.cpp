@@ -19,8 +19,8 @@ int clientSocket, nBytes;
 int16_t playerID = 0;
 int16_t const c_input_command = 0;
 int16_t const s_projectile_command = 1;
-const char * c_ip = "192.168.1.12";
-const char * s_ip = "192.168.1.90";
+const char * c_ip = "192.168.2.2";
+const char * s_ip = "192.168.2.1";
 const int s_port = 50420;
 const int c_port = 50421;
 
@@ -113,6 +113,7 @@ void processServerEvents()
             sf::Vector2f position = sf::Vector2f(command.posx,command.posy);
             sf::Vector2f origin = sf::Vector2f(command.originx,command.originy);
             Projectile projectile = Projectile(command.bulletID,command.bulletType,position,origin);
+            printf("insertando proyectil %d \n",command.bulletID);
             projectiles.insert(std::pair<int16_t , Projectile>(command.bulletID, projectile));
         }
     }
@@ -266,6 +267,7 @@ void deleteInvalidProjectiles()
     {
         if (!(*it).second.valid)
         {
+            printf("proyectil %d eliminado\n",(*it).first);
             projectiles.erase(it++);
         }
         else
@@ -287,7 +289,7 @@ void update(sf::Time elapsedTime)
         }
     }
 
-    deleteInvalidProjectiles();
+    //deleteInvalidProjectiles();
 
 }
 

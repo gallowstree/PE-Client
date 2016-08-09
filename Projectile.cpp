@@ -23,13 +23,13 @@ void  Projectile::update  (sf::Time elapsedTime)
 {
     position += velocity * elapsedTime.asSeconds();
     projectile.setPosition(position);
-    printf("position: %f, %f\n", position.x, position.y);
+    //printf("position: %f, %f\n", position.x, position.y);
 
     sf::Vector2f distance = position - origin;
 
     if (sqrtf(distance.x*distance.x + distance.y*distance.y) >= range)
     {
         valid = false;
-        printf("invalid!!!!!!!!!!!!\n");
+        printf("%d invalid!!!!!!!!!!!!\n",bulletID);
     }
 }
