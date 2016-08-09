@@ -13,6 +13,11 @@ origin(origin),
 valid(true),
 projectile(sf::Vector2f(6,6))
 {
+    sf::Vector2f facing = position - origin;
+
+    float rads = atan2f(facing.y, facing.x);
+    printf("radianes %f\n",rads);
+    angle  = rads * 180/M_PI;
     velocity = sf::Vector2f(speed * cosf(angle), speed * sinf(angle));
     projectile.setFillColor(sf::Color::Cyan);
     projectile.setRotation(angle);

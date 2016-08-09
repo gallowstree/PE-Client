@@ -5,10 +5,15 @@
 #include "Player.h"
 
 
-Player::Player(int16_t playerID, float posx, float posy, sf::Color color):
+Player::Player(int16_t playerID, float posx, float posy,sf::Texture &texture):
 playerID(playerID),
-circle(10)
+sprite()
 {
-    circle.setPosition(posx,posy);
-    circle.setFillColor(color);
+    sprite.setPosition(posx,posy);
+    sprite.setTexture(texture);
+}
+
+void Player::setTexture(const sf::Texture &texture)
+{
+    sprite.setTexture(texture);
 }

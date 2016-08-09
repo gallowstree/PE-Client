@@ -16,7 +16,7 @@ typedef struct command {
     int16_t type;
     float posx;
     float posy;
-    float angle;
+    float rotation;
     float originx;
     float originy;
 } command_t;
