@@ -28,8 +28,8 @@ int clientSocket, nBytes;
 int16_t playerID = 0;
 int16_t const c_input_command = 0;
 int16_t const s_projectile_command = 1;
-const char * c_ip = "127.0.0.1";
-const char * s_ip = "127.0.0.1";
+const char * c_ip = "192.168.43.125";
+const char * s_ip = "192.168.43.125";
 const int s_port = 50420;
 const int c_port = 50421;
 ResourceHolder<sf::Texture, Textures> textureHolder;
@@ -102,13 +102,13 @@ void processEvents()
     }
 
     moves = 0x0000;
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
         moves |= 0x1;
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::S))
         moves |= 0x2;
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
         moves |= 0x4;
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
         moves |= 0x8;
     if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
         moves |= 0x10;
