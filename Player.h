@@ -12,11 +12,12 @@
 class Player {
     public:
         int16_t playerID;
-        sf::CircleShape circle;
+        float rotation = 0;
+        sf::Sprite sprite;
 
 
-
-        Player(int16_t playerID,float posx,float posy,sf::Color);
+        Player(int16_t playerID,float posx,float posy,sf::Texture &texture);
+        void setTexture(const sf::Texture &texture);
 };
 
 #endif //TEST_CLIENT_PLAYER_H

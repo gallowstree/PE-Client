@@ -5,24 +5,34 @@
 #include <netinet/in.h>
 #include <string.h>
 #include <arpa/inet.h>
-#include <SFML/Graphics.hpp>
 #include "serialization.h"
 #include "command.h"
 #include "Player.h"
 #include "Projectile.h"
+#include "SFUtils.h"
+#include "ResourceHolder.h"
+
+enum Textures
+{
+    CROSSHAIR,
+    PLAYER_RED_SG
+};
+
 
 int moves;
 int msgnm = 0, lastServerMsgid = -1;
+sf::Sprite cursorSprite;
 
 /***SOCKET**/
 int clientSocket, nBytes;
 int16_t playerID = 0;
 int16_t const c_input_command = 0;
 int16_t const s_projectile_command = 1;
-const char * c_ip = "192.168.2.2";
-const char * s_ip = "192.168.2.1";
+const char * c_ip = "127.0.0.1";
+const char * s_ip = "127.0.0.1";
 const int s_port = 50420;
 const int c_port = 50421;
+ResourceHolder<sf::Texture, Textures> textureHolder;
 
 const int COMMAND_DATA_SIZE= 1400;
 char outputBuff[COMMAND_DATA_SIZE];
@@ -30,6 +40,7 @@ char inputBuff[COMMAND_DATA_SIZE];
 struct sockaddr_in serverAddr;
 socklen_t addr_size;
 int msgid;
+float rotation;
 
 sf::RenderWindow mWindow(sf::VideoMode(800, 600), "President Evil", sf::Style::Close);
 const sf::Time TimePerFrame = sf::seconds(1.f/60.f);
@@ -68,11 +79,15 @@ void render()
             mWindow.draw(projectile.second.projectile);
     }
 
-    for (auto const &player : players)
+    for (auto &player : players)
     {
-        mWindow.draw(player.circle);
+        double angle = player.rotation * 180/M_PI;
+        sf::IntRect spriteRect = player.sprite.getTextureRect();
+        player.sprite.setOrigin(sf::Vector2f(spriteRect.width/ 2, spriteRect.height / 2));
+        player.sprite.setRotation(angle);
+        mWindow.draw(player.sprite);
     }
-
+    mWindow.draw(cursorSprite);
     mWindow.display();
 }
 
@@ -97,6 +112,12 @@ void processEvents()
         moves |= 0x8;
     if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
         moves |= 0x10;
+
+    sf::Vector2f mousePositionFloat = mWindow.mapPixelToCoords((sf::Mouse::getPosition(mWindow)));
+    sf::Vector2f spriteCenter = getSpriteCenter(players[playerID].sprite);
+    sf::Vector2f facing = mousePositionFloat - spriteCenter;
+    rotation = atan2f(facing.y, facing.x);
+
 }
 
 void processServerEvents()
@@ -107,7 +128,10 @@ void processServerEvents()
         command_t command = commandQueue.front();
         commandQueue.pop();
         if(command.type == c_input_command)
-            players[command.playerID].circle.setPosition(command.posx,command.posy);
+        {
+            players[command.playerID].sprite.setPosition(command.posx, command.posy);
+            players[command.playerID].rotation = command.rotation;
+        }
         else if (command.type == s_projectile_command)
         {
             sf::Vector2f position = sf::Vector2f(command.posx,command.posy);
@@ -130,6 +154,8 @@ void sendCommands()
     intToChars(msgnm,outputBuff,offset);
     offset+=4;
     intToChars(moves,outputBuff,offset);
+    offset+=4;
+    floatToChars(rotation,outputBuff,offset);
     offset+=4;
     pthread_mutex_lock(&projectileACKMutex);
     while(!projectileACKQueue.empty())
@@ -170,6 +196,7 @@ void *listenToServer(void * args)
     {
         /* Try to receive any incoming UDP datagram. Address and port of
           requesting client will be stored on serverStorage variable */
+
         nBytes = recvfrom(udpSocket, inputBuff, COMMAND_DATA_SIZE, 0, (struct sockaddr *)&serverStorage, &addr_size);
 
         int32_t  msgNum;
@@ -197,7 +224,7 @@ void *listenToServer(void * args)
                         offset += 4;
                         charsToFloat(inputBuff, srvCmd.posy, offset);
                         offset += 4;
-                        charsToFloat(inputBuff, srvCmd.angle, offset);
+                        charsToFloat(inputBuff, srvCmd.rotation, offset);
                         offset += 4;
                         pthread_mutex_lock(&commandQueueMutex);
                         commandQueue.push(srvCmd);
@@ -231,9 +258,11 @@ void *listenToServer(void * args)
                     offset += 4;
                     charsToFloat(inputBuff, srvCmd.originy, offset);
                     offset += 4;
+
                     pthread_mutex_lock(&commandQueueMutex);
                     if(projectiles.count(srvCmd.bulletID) == 0)
                     {
+                        printf("x1 : %f y1 : %f, x2: %f y2: %f ",srvCmd.posx,srvCmd.posy,srvCmd.originx,srvCmd.posy);
                         commandQueue.push(srvCmd);
                     }
                     pthread_mutex_unlock(&commandQueueMutex);
@@ -252,12 +281,28 @@ void *listenToServer(void * args)
     return 0;
 }
 
+void updateCrosshair()
+{
+    sf::Vector2f mousePositionFloat = mWindow.mapPixelToCoords((sf::Mouse::getPosition(mWindow)));
+    sf::IntRect cursorSpriteRect = cursorSprite.getTextureRect();
+    cursorSprite.setPosition(mousePositionFloat - sf::Vector2f(cursorSpriteRect.width*1.5f , cursorSpriteRect.height*1.5f));
+}
+
+void loadTextures()
+{
+    textureHolder.load(Textures::CROSSHAIR, "files/crosshair.png");
+    textureHolder.load(Textures::PLAYER_RED_SG, "files/sprite.png");
+}
+
 void init()
 {
+    loadTextures();
+    cursorSprite.setTexture(textureHolder.get(Textures::CROSSHAIR));
     pthread_mutex_init(&commandQueueMutex, NULL);
     pthread_mutex_init(&projectileACKMutex, NULL);
-    players.push_back(Player(0,0,0,sf::Color::Blue));
-    players.push_back(Player(1,0,0,sf::Color::Red));
+
+    players.push_back(Player(0,0,0,textureHolder.get(Textures::PLAYER_RED_SG)));
+    players.push_back(Player(1,100,100,textureHolder.get(Textures::PLAYER_RED_SG)));
 }
 
 void deleteInvalidProjectiles()
@@ -290,7 +335,7 @@ void update(sf::Time elapsedTime)
     }
 
     deleteInvalidProjectiles();
-
+    updateCrosshair();
 }
 
 
