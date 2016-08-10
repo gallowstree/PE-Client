@@ -5,6 +5,7 @@
 #include <netinet/in.h>
 #include <string.h>
 #include <arpa/inet.h>
+#include <math.h>
 #include "serialization.h"
 #include "command.h"
 #include "Player.h"
@@ -25,10 +26,10 @@ sf::Sprite cursorSprite;
 
 /***SOCKET**/
 int clientSocket, nBytes;
-int16_t playerID = 0;
+int16_t playerID = 1;
 int16_t const c_input_command = 0;
 int16_t const s_projectile_command = 1;
-const char * c_ip = "192.168.43.125";
+const char * c_ip = "192.168.43.14";
 const char * s_ip = "192.168.43.125";
 const int s_port = 50420;
 const int c_port = 50421;
