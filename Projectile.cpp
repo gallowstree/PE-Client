@@ -18,9 +18,9 @@ projectile(sf::Vector2f(6,6))
 
     float rads = atan2f(facing.y, facing.x);
     printf("radianes %f\n",rads);
+    velocity = sf::Vector2f(speed * cosf(rads), speed * sinf(rads));
+    projectile.setFillColor(sf::Color::Yellow);
     angle  = rads * 180/M_PI;
-    velocity = sf::Vector2f(speed * cosf(angle), speed * sinf(angle));
-    projectile.setFillColor(sf::Color::Cyan);
     projectile.setRotation(angle);
     projectile.setPosition(position);
 }
