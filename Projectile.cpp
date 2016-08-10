@@ -3,6 +3,7 @@
 //
 
 #include <zconf.h>
+#include <math.h>
 #include "Projectile.h"
 
 Projectile::Projectile(int16_t bulletID, int16_t type,  sf::Vector2f position,sf::Vector2f origin):
