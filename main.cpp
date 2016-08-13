@@ -235,7 +235,7 @@ void *listenToServer(void * args)
     /*Create UDP socket*/
     int udpSocket;
     struct sockaddr_in serverAddr2;
-    struct sockaddr_storage serverStorage;
+    struct sockaddr_storage serverStorage2;
     udpSocket = socket(PF_INET, SOCK_DGRAM, 0);
     /*Configure settings in address struct*/
     serverAddr2.sin_family = AF_INET;
@@ -247,14 +247,14 @@ void *listenToServer(void * args)
     bind(udpSocket, (struct sockaddr *) &serverAddr2, sizeof(serverAddr2));
 
     /*Initialize size variable to be used later on*/
-    addr_size = sizeof serverStorage;
+    socklen_t addr_size2 = sizeof serverStorage2;
 
     while(1)
     {
         /* Try to receive any incoming UDP datagram. Address and port of
           requesting client will be stored on serverStorage variable */
 
-        nBytes = recvfrom(udpSocket, inputBuff, COMMAND_DATA_SIZE, 0, (struct sockaddr *)&serverStorage, &addr_size);
+        nBytes = recvfrom(udpSocket, inputBuff, COMMAND_DATA_SIZE, 0, (struct sockaddr *)&serverStorage2, &addr_size2);
 
         int32_t  msgNum;
         short offset = 0;
