@@ -12,6 +12,7 @@
 #include "Projectile.h"
 #include "SFUtils.h"
 #include "ResourceHolder.h"
+#include <fstream>
 
 enum Textures
 {
@@ -26,11 +27,19 @@ sf::Sprite cursorSprite;
 
 /***SOCKET**/
 int clientSocket, nBytes;
-int16_t playerID = 1;
-int16_t const c_input_command = 0;
-int16_t const s_projectile_command = 1;
-const char * c_ip = "192.168.43.14";
-const char * s_ip = "192.168.43.125";
+int16_t playerID = 0;
+
+//Client commands
+const int16_t  c_input_command = 0;
+const int16_t c_join_game_command = 2;
+
+//Server commands
+const int16_t s_players_command = 0;
+const int16_t  s_projectile_command = 1;
+const int16_t s_player_id_command = 2;
+
+char * c_ip;
+char * s_ip;
 const int s_port = 50420;
 const int c_port = 50421;
 ResourceHolder<sf::Texture, Textures> textureHolder;
@@ -52,6 +61,42 @@ std::vector<Player> players;
 pthread_mutex_t commandQueueMutex;
 pthread_mutex_t projectileACKMutex;
 pthread_t listeningThread;
+
+void requestJoinGame()
+{
+    int16_t offset = 0;
+    shortToChars(c_join_game_command,outputBuff,offset);
+    offset += 2;
+    shortToChars(-1,outputBuff,offset);
+    offset += 2;
+    sendto(clientSocket,outputBuff,1024,0,(struct sockaddr *)&serverAddr,addr_size);
+}
+
+
+void readConfig()
+{
+    std::ifstream configFile("pe-client.config");
+    std::string line;
+
+    while (std::getline(configFile, line))
+    {
+        if (line.find("client-ip=") == 0)
+        {
+            u_long end = line.find(";");
+            c_ip = (char *) malloc((end - 10) * sizeof(char));
+            strcpy(c_ip, line.substr(10, end - 10).c_str());
+            printf("Client IP: %s\n", c_ip);
+        }
+        else if (line.find("server-ip=") == 0)
+        {
+            u_long end = line.find(";");
+            s_ip = (char *) malloc((end - 10) * sizeof(char));
+            strcpy(s_ip, line.substr(10, end - 10).c_str());
+            printf("Server IP: %s\n", c_ip);
+        }
+    }
+}
+
 
 void initSocket()
 {
@@ -147,6 +192,12 @@ void processServerEvents()
 
 void sendCommands()
 {
+    if (playerID == -1)
+    {
+        requestJoinGame();
+        //return;
+    }
+
     int16_t offset = 0;
     shortToChars(c_input_command,outputBuff,offset);
     offset+=2;
@@ -210,7 +261,7 @@ void *listenToServer(void * args)
         offset += 2;
         bool eom = false;
 
-        if(command_type == c_input_command) {
+        if(command_type == s_players_command) {
             if(msgNum > lastServerMsgid)
             {
                 do {
@@ -277,6 +328,14 @@ void *listenToServer(void * args)
             projectileACKQueue.push(msgNum);
             pthread_mutex_unlock(&projectileACKMutex);
         }
+        else if (command_type == s_player_id_command)
+        {
+            command srvCmd;
+            charsToShort(inputBuff, srvCmd.playerID, offset);
+            pthread_mutex_lock(&commandQueueMutex);
+            commandQueue.push(srvCmd);
+            pthread_mutex_unlock(&commandQueueMutex);
+        }
     }
 
     return 0;
@@ -340,15 +399,16 @@ void update(sf::Time elapsedTime)
 }
 
 
-
 int main()
 {
+    readConfig();
     init();
+    initSocket();
 
     sf::Clock clock;
     sf::Time timeSinceLastUpdate = sf::Time::Zero;
     pthread_create(&listeningThread, NULL, listenToServer, NULL);
-    initSocket();
+
 
     mWindow.setVerticalSyncEnabled(true);
     bool should_render = true;
