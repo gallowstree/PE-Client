@@ -226,7 +226,6 @@ void sendCommands()
     pthread_mutex_unlock(&projectileACKMutex);
     shortToChars(-1,outputBuff,offset);
     sendto(clientSocket,outputBuff,COMMAND_DATA_SIZE,0,(struct sockaddr *)&serverAddr,addr_size);
-    printf("%s\n",strerror(errno));
     msgnm++;
 }
 
