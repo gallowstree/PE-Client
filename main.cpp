@@ -27,7 +27,7 @@ sf::Sprite cursorSprite;
 
 /***SOCKET**/
 int clientSocket, nBytes;
-int16_t playerID = 0;
+int16_t playerID = -1;
 
 //Client commands
 const int16_t  c_input_command = 0;
@@ -68,8 +68,7 @@ void requestJoinGame()
     shortToChars(c_join_game_command,outputBuff,offset);
     offset += 2;
     shortToChars(-1,outputBuff,offset);
-    offset += 2;
-    sendto(clientSocket,outputBuff,1024,0,(struct sockaddr *)&serverAddr,addr_size);
+    sendto(clientSocket,outputBuff,COMMAND_DATA_SIZE,0,(struct sockaddr *)&serverAddr,addr_size);
 }
 
 
@@ -92,7 +91,7 @@ void readConfig()
             u_long end = line.find(";");
             s_ip = (char *) malloc((end - 10) * sizeof(char));
             strcpy(s_ip, line.substr(10, end - 10).c_str());
-            printf("Server IP: %s\n", c_ip);
+            printf("Server IP: %s\n", s_ip);
         }
     }
 }
@@ -186,6 +185,10 @@ void processServerEvents()
             printf("insertando proyectil %d \n",command.bulletID);
             projectiles.insert(std::pair<int16_t , Projectile>(command.bulletID, projectile));
         }
+        else if (command.type == s_player_id_command)
+        {
+            playerID = command.playerID;
+        }
     }
     pthread_mutex_unlock(&commandQueueMutex);
 }
@@ -195,8 +198,9 @@ void sendCommands()
     if (playerID == -1)
     {
         requestJoinGame();
-        //return;
+        return;
     }
+
 
     int16_t offset = 0;
     shortToChars(c_input_command,outputBuff,offset);
@@ -221,7 +225,8 @@ void sendCommands()
     }
     pthread_mutex_unlock(&projectileACKMutex);
     shortToChars(-1,outputBuff,offset);
-    sendto(clientSocket,outputBuff,1024,0,(struct sockaddr *)&serverAddr,addr_size);
+    sendto(clientSocket,outputBuff,COMMAND_DATA_SIZE,0,(struct sockaddr *)&serverAddr,addr_size);
+    printf("%s\n",strerror(errno));
     msgnm++;
 }
 
@@ -331,6 +336,8 @@ void *listenToServer(void * args)
         else if (command_type == s_player_id_command)
         {
             command srvCmd;
+            srvCmd.msgNum = msgNum;
+            srvCmd.type = command_type;
             charsToShort(inputBuff, srvCmd.playerID, offset);
             pthread_mutex_lock(&commandQueueMutex);
             commandQueue.push(srvCmd);
