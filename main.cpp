@@ -13,6 +13,9 @@
 #include "SFUtils.h"
 #include "ResourceHolder.h"
 #include <fstream>
+#include "Area.h"
+#include "Entity.h"
+#include "Wall.h"
 
 enum Textures
 {
@@ -25,6 +28,10 @@ int moves = 0;
 sf::View camera;
 sf::Vector2f camCenter;
 sf::FloatRect bounds(0,0,2400.0f, 2400.0f);
+std::vector<std::vector<Entity*>> static_objects;
+std::vector<Entity> world_entities;
+std::vector<Area*> areas;
+std::vector<const char *> maps = {"maps/level1.txt","maps/level2.txt"};
 int msgnm = 0, lastServerMsgid = -1;
 sf::Sprite cursorSprite;
 
@@ -137,6 +144,24 @@ void render()
 
     calculateCamCenter();
     sf::FloatRect visibleRect(camCenter.x - mWindow.getSize().x / 2, camCenter.y - mWindow.getSize().y / 2, mWindow.getSize().x, mWindow.getSize().y);
+
+    for (auto &area : areas)
+    {
+        if (area->rect.intersects(visibleRect))
+        {
+            area->draw(mWindow, true);
+        }
+    }
+
+    for (const auto &staticEntity : world_entities)
+    {
+        auto drawRect = sf::RectangleShape(sf::Vector2f(staticEntity.boundingBox.width, staticEntity.boundingBox.height));
+        drawRect.setPosition(staticEntity.boundingBox.left, staticEntity.boundingBox.top);
+        drawRect.setFillColor(sf::Color::Cyan);
+
+        mWindow.draw(drawRect);
+    }
+
     mWindow.setView(camera);
     camera.setCenter(camCenter);
 
@@ -206,7 +231,6 @@ void processServerEvents()
             sf::Vector2f position = sf::Vector2f(command.posx,command.posy);
             sf::Vector2f origin = sf::Vector2f(command.originx,command.originy);
             Projectile projectile = Projectile(command.bulletID,command.bulletType,position,origin);
-            printf("insertando proyectil %d \n",command.bulletID);
             projectiles.insert(std::pair<int16_t , Projectile>(command.bulletID, projectile));
         }
         else if (command.type == s_player_id_command)
@@ -342,7 +366,6 @@ void *listenToServer(void * args)
                     pthread_mutex_lock(&commandQueueMutex);
                     if(projectiles.count(srvCmd.bulletID) == 0)
                     {
-                        printf("x1 : %f y1 : %f, x2: %f y2: %f ",srvCmd.posx,srvCmd.posy,srvCmd.originx,srvCmd.posy);
                         commandQueue.push(srvCmd);
                     }
                     pthread_mutex_unlock(&commandQueueMutex);
@@ -384,12 +407,99 @@ void loadTextures()
     textureHolder.load(Textures::PLAYER_RED_SG, "files/sprite.png");
 }
 
+std::vector<int16_t> areasForEntity(const Entity &entity)
+{
+    std::vector<int16_t> areaslocal;
+
+    int i = 0;
+    for (auto &area : areas)
+    {
+
+        if (area->rect.intersects(entity.boundingBox))
+        {
+            areaslocal.push_back(i);
+        }
+
+        i++;
+    }
+    //printf("\n");
+    return areaslocal;
+}
+
+int parseMapParameter(std::string & line)
+{
+    ulong commaPos = line.find(',');
+    char * parameter = (char *)malloc((commaPos+1)*sizeof(char));
+    strcpy(parameter,line.substr(0,commaPos).c_str());
+    line.erase(0, line.find(',') + 1);
+    int value = atoi(parameter);
+    free(parameter);
+    return value;
+}
+
+void readMap(int map)
+{
+    std::ifstream mapFile(maps[map]);
+    std::string line;
+
+    while (std::getline(mapFile, line))
+    {
+        int objectType = parseMapParameter(line);
+        int left =  parseMapParameter(line);
+        int top =  parseMapParameter(line);
+        int width =   parseMapParameter(line);
+        int height =  atoi(line.c_str());
+
+        if (objectType == 0) //wall
+            world_entities.push_back(Wall(left, top, width, height));
+
+    }
+}
+void createStaticObjects()
+{
+
+
+    readMap(0);
+
+    for (auto& entity : world_entities)
+    {
+        if (entity.isStatic)
+        {
+            for (auto& area : areasForEntity(entity))
+            {
+                static_objects[area].push_back(&entity);
+            }
+        }
+    }
+
+}
+
 void init()
 {
     loadTextures();
 
     camera.reset(sf::FloatRect(0,0, mWindow.getSize().x, mWindow.getSize().y));
     camera.setViewport(sf::FloatRect(0,0, 1.0f, 1.0f));
+
+    int noAreasX = 0;
+    int noAreasY = 0;
+
+    float area_size = 400;
+
+    noAreasX = bounds.width / area_size;
+    noAreasY = bounds.height / area_size;
+
+    for (int x = 0; x < noAreasX; x++)
+    {
+        for (int y = 0; y < noAreasY; y++)
+        {
+            Area* newArea = new Area(x*area_size, y*area_size, area_size, area_size);
+            areas.push_back(newArea);
+            static_objects.push_back(std::vector<Entity*>());
+        }
+    }
+
+    createStaticObjects();
 
     cursorSprite.setTexture(textureHolder.get(Textures::CROSSHAIR));
     pthread_mutex_init(&commandQueueMutex, NULL);
