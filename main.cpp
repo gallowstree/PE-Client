@@ -21,7 +21,10 @@ enum Textures
 };
 
 
-int moves;
+int moves = 0;
+sf::View camera;
+sf::Vector2f camCenter;
+sf::FloatRect bounds(0,0,2400.0f, 2400.0f);
 int msgnm = 0, lastServerMsgid = -1;
 sf::Sprite cursorSprite;
 
@@ -53,7 +56,7 @@ int msgid;
 float rotation;
 
 sf::RenderWindow mWindow(sf::VideoMode(800, 600), "President Evil", sf::Style::Close);
-const sf::Time TimePerFrame = sf::seconds(1.f/60.f);
+const sf::Time TimePerFrame = sf::seconds(1.f/50.f);
 std::queue<command_t> commandQueue;
 std::queue<int32_t> projectileACKQueue;
 std::map<int16_t,Projectile> projectiles;
@@ -112,11 +115,30 @@ void initSocket()
     addr_size = sizeof serverAddr;
 }
 
+void calculateCamCenter()
+{
+    camCenter = players[playerID].sprite.getPosition();
+
+    if (players[playerID].sprite.getPosition().x < mWindow.getSize().x /2)
+        camCenter.x = mWindow.getSize().x /2;
+    else if (players[playerID].sprite.getPosition().x > bounds.width - mWindow.getSize().x /2)
+        camCenter.x = players[playerID].sprite.getPosition().x;//bounds.width - 300;
+
+    if (players[playerID].sprite.getPosition().y < mWindow.getSize().y /2)
+        camCenter.y = mWindow.getSize().y /2;
+    else if (players[playerID].sprite.getPosition().y > bounds.height - mWindow.getSize().y /2)
+        camCenter.y = players[playerID].sprite.getPosition().y;//bounds.height - 300;
+}
 
 
 void render()
 {
     mWindow.clear();
+
+    calculateCamCenter();
+    sf::FloatRect visibleRect(camCenter.x - mWindow.getSize().x / 2, camCenter.y - mWindow.getSize().y / 2, mWindow.getSize().x, mWindow.getSize().y);
+    mWindow.setView(camera);
+    camera.setCenter(camCenter);
 
     for(auto const &projectile : projectiles)
     {
@@ -135,6 +157,8 @@ void render()
     mWindow.draw(cursorSprite);
     mWindow.display();
 }
+
+
 
 void processEvents()
 {
@@ -363,6 +387,10 @@ void loadTextures()
 void init()
 {
     loadTextures();
+
+    camera.reset(sf::FloatRect(0,0, mWindow.getSize().x, mWindow.getSize().y));
+    camera.setViewport(sf::FloatRect(0,0, 1.0f, 1.0f));
+
     cursorSprite.setTexture(textureHolder.get(Textures::CROSSHAIR));
     pthread_mutex_init(&commandQueueMutex, NULL);
     pthread_mutex_init(&projectileACKMutex, NULL);
