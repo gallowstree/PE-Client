@@ -9,7 +9,7 @@ Player::Player(int16_t playerID, float posx, float posy,sf::Texture &texture):
 playerID(playerID),
 sprite()
 {
-    sprite.setPosition(posx,posy);
+    boundingBox = BoundingBox(posx, posy, 50, 50);
     sprite.setTexture(texture);
 }
 

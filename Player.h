@@ -8,8 +8,10 @@
 
 #include <cstdint>
 #include <SFML/Graphics.hpp>
+#include "BoundingBox.h"
+#include "Entity.h"
 
-class Player {
+class Player : public Entity {
     public:
         int16_t playerID;
         float rotation = 0;

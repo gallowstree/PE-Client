@@ -175,6 +175,7 @@ void render()
     {
         double angle = player.rotation * 180/M_PI;
         sf::IntRect spriteRect = player.sprite.getTextureRect();
+        player.sprite.setPosition(player.boundingBox.left + player.boundingBox.width/2, player.boundingBox.top + player.boundingBox.height/2);
         player.sprite.setOrigin(sf::Vector2f(spriteRect.width/ 2, spriteRect.height / 2));
         player.sprite.setRotation(angle);
         mWindow.draw(player.sprite);
@@ -223,7 +224,8 @@ void processServerEvents()
         commandQueue.pop();
         if(command.type == c_input_command)
         {
-            players[command.playerID].sprite.setPosition(command.posx, command.posy);
+            players[command.playerID].boundingBox.left = command.posx;
+            players[command.playerID].boundingBox.top = command.posy;
             players[command.playerID].rotation = command.rotation;
         }
         else if (command.type == s_projectile_command)
