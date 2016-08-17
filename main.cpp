@@ -20,7 +20,8 @@
 enum Textures
 {
     CROSSHAIR,
-    PLAYER_RED_SG
+    PLAYER_RED_SG,
+    WALL
 };
 
 
@@ -157,7 +158,7 @@ void render()
     {
         auto drawRect = sf::RectangleShape(sf::Vector2f(staticEntity.boundingBox.width, staticEntity.boundingBox.height));
         drawRect.setPosition(staticEntity.boundingBox.left, staticEntity.boundingBox.top);
-        drawRect.setFillColor(sf::Color::Cyan);
+        drawRect.setFillColor(sf::Color(144,144,144));
 
         mWindow.draw(drawRect);
     }

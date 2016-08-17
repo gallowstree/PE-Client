@@ -11,10 +11,10 @@ void Area::draw(sf::RenderTarget &window, bool debugGrid)
     {
         auto shape = sf::RectangleShape(sf::Vector2f(rect.width, rect.height));
         shape.setPosition(rect.left, rect.top);
-        shape.setFillColor(sf::Color(200, 200, 200));
-        shape.setOutlineColor(sf::Color(180, 100, 120));
+        shape.setFillColor(sf::Color(0,0,0));
+        shape.setOutlineColor(sf::Color(0, 255, 18));
 
-        shape.setOutlineThickness(5);
+        shape.setOutlineThickness(2);
         window.draw(shape);
     }
 }
