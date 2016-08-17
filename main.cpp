@@ -63,7 +63,7 @@ int msgid;
 float rotation;
 
 sf::RenderWindow mWindow(sf::VideoMode(800, 600), "President Evil", sf::Style::Close);
-const sf::Time TimePerFrame = sf::seconds(1.f/50.f);
+const sf::Time TimePerFrame = sf::seconds(1.f/30.f);
 std::queue<command_t> commandQueue;
 std::queue<int32_t> projectileACKQueue;
 std::map<int16_t,Projectile> projectiles;
@@ -143,7 +143,7 @@ void render()
     mWindow.clear();
 
     calculateCamCenter();
-    sf::FloatRect visibleRect(camCenter.x - mWindow.getSize().x / 2, camCenter.y - mWindow.getSize().y / 2, mWindow.getSize().x, mWindow.getSize().y);
+    sf::FloatRect visibleRect(camCenter.x - mWindow.getSize().x, camCenter.y - mWindow.getSize().y, mWindow.getSize().x * 2, mWindow.getSize().y * 2);
 
     for (auto &area : areas)
     {
@@ -428,7 +428,7 @@ std::vector<int16_t> areasForEntity(const Entity &entity)
 
 int parseMapParameter(std::string & line)
 {
-    ulong commaPos = line.find(',');
+    auto commaPos = line.find(',');
     char * parameter = (char *)malloc((commaPos+1)*sizeof(char));
     strcpy(parameter,line.substr(0,commaPos).c_str());
     line.erase(0, line.find(',') + 1);
