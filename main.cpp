@@ -59,6 +59,9 @@ const int COMMAND_DATA_SIZE= 1400;
 char outputBuff[COMMAND_DATA_SIZE];
 char inputBuff[COMMAND_DATA_SIZE];
 struct sockaddr_in serverAddr;
+
+void debug_drawPlayerBoundingBox(const Player &player);
+
 socklen_t addr_size;
 int msgid;
 float rotation;
@@ -174,17 +177,25 @@ void render()
 
     for (auto &player : players)
     {
+        debug_drawPlayerBoundingBox(player);
         double angle = player.rotation * 180/M_PI;
         sf::IntRect spriteRect = player.sprite.getTextureRect();
         player.sprite.setPosition(player.boundingBox.left + player.boundingBox.width/2, player.boundingBox.top + player.boundingBox.height/2);
         player.sprite.setOrigin(sf::Vector2f(spriteRect.width/ 2, spriteRect.height / 2));
         player.sprite.setRotation(angle);
         mWindow.draw(player.sprite);
+
     }
     mWindow.draw(cursorSprite);
     mWindow.display();
 }
 
+void debug_drawPlayerBoundingBox(const Player &player) {
+/*    auto bb = sf::RectangleShape(sf::Vector2f(player.boundingBox.width, player.boundingBox.height));
+    bb.setPosition(player.boundingBox.getPosition());
+    bb.setFillColor(sf::Color::Green);
+    mWindow.draw(bb);*/
+}
 
 
 void processEvents()
