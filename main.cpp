@@ -276,6 +276,9 @@ void sendCommands()
     floatToChars(rotation,outputBuff,offset);
     offset+=4;
     pthread_mutex_lock(&projectileACKMutex);
+    intToChars((int)projectileACKQueue.size(), outputBuff, offset);
+    offset+=4;
+
     while(!projectileACKQueue.empty())
     {
         shortToChars(s_projectile_command,outputBuff,offset);
@@ -471,8 +474,6 @@ void readMap(int map)
 }
 void createStaticObjects()
 {
-
-
     readMap(0);
 
     for (auto& entity : world_entities)
