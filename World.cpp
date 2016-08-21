@@ -6,6 +6,7 @@
 #include "World.h"
 #include "Wall.h"
 #include <fstream>
+#include <math.h>
 
 World::World(sf::RenderWindow&  window, std::vector<Player> * players):
 window(window),
