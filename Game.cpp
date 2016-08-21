@@ -3,6 +3,7 @@
 //
 
 #include <zconf.h>
+#include <math.h>
 #include "Game.h"
 
 
