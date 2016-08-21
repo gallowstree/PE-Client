@@ -24,7 +24,7 @@ class Projectile {
     private:
         sf::Vector2f velocity;
         float range = 400;
-        float speed = 500;
+        float speed = 700;
         float angle;
 };
 

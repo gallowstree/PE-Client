@@ -6,16 +6,16 @@
 #include <string.h>
 #include <arpa/inet.h>
 #include <math.h>
-#include "serialization.h"
 #include "command.h"
 #include "Player.h"
 #include "Projectile.h"
 #include "SFUtils.h"
 #include "ResourceHolder.h"
-#include <fstream>
 #include "Area.h"
-#include "Entity.h"
+#include "Menu.h"
 #include "Wall.h"
+#include <fstream>
+#include "serialization.h"
 
 enum Textures
 {
@@ -48,6 +48,7 @@ const int16_t c_join_game_command = 2;
 const int16_t s_players_command = 0;
 const int16_t  s_projectile_command = 1;
 const int16_t s_player_id_command = 2;
+const int16_t s_are_you_there = 3;
 
 char * c_ip;
 char * s_ip;
@@ -79,36 +80,13 @@ pthread_t listeningThread;
 void requestJoinGame()
 {
     int16_t offset = 0;
-    shortToChars(c_join_game_command,outputBuff,offset);
+    Serialization::shortToChars(c_join_game_command,outputBuff,offset);
     offset += 2;
-    shortToChars(-1,outputBuff,offset);
+    Serialization::shortToChars(-1,outputBuff,offset);
     sendto(clientSocket,outputBuff,COMMAND_DATA_SIZE,0,(struct sockaddr *)&serverAddr,addr_size);
 }
 
 
-void readConfig()
-{
-    std::ifstream configFile("pe-client.config");
-    std::string line;
-
-    while (std::getline(configFile, line))
-    {
-        if (line.find("client-ip=") == 0)
-        {
-            u_long end = line.find(";");
-            c_ip = (char *) malloc((end - 10) * sizeof(char));
-            strcpy(c_ip, line.substr(10, end - 10).c_str());
-            printf("Client IP: %s\n", c_ip);
-        }
-        else if (line.find("server-ip=") == 0)
-        {
-            u_long end = line.find(";");
-            s_ip = (char *) malloc((end - 10) * sizeof(char));
-            strcpy(s_ip, line.substr(10, end - 10).c_str());
-            printf("Server IP: %s\n", s_ip);
-        }
-    }
-}
 
 
 void initSocket()
@@ -265,31 +243,31 @@ void sendCommands()
 
 
     int16_t offset = 0;
-    shortToChars(c_input_command,outputBuff,offset);
+    Serialization::shortToChars(c_input_command,outputBuff,offset);
     offset+=2;
-    shortToChars(playerID,outputBuff,offset);
+    Serialization::shortToChars(playerID,outputBuff,offset);
     offset+=2;
-    intToChars(msgnm,outputBuff,offset);
+    Serialization::intToChars(msgnm,outputBuff,offset);
     offset+=4;
-    intToChars(moves,outputBuff,offset);
+    Serialization::intToChars(moves,outputBuff,offset);
     offset+=4;
-    floatToChars(rotation,outputBuff,offset);
+    Serialization::floatToChars(rotation,outputBuff,offset);
     offset+=4;
     pthread_mutex_lock(&projectileACKMutex);
-    intToChars((int)projectileACKQueue.size(), outputBuff, offset);
+    Serialization::intToChars((int)projectileACKQueue.size(), outputBuff, offset);
     offset+=4;
 
     while(!projectileACKQueue.empty())
     {
-        shortToChars(s_projectile_command,outputBuff,offset);
+        Serialization::shortToChars(s_projectile_command,outputBuff,offset);
         offset+=2;
         int32_t ack = projectileACKQueue.front();
         projectileACKQueue.pop();
-        intToChars(ack,outputBuff,offset);
+        Serialization::intToChars(ack,outputBuff,offset);
         offset+=4;
     }
     pthread_mutex_unlock(&projectileACKMutex);
-    shortToChars(-1,outputBuff,offset);
+    Serialization::shortToChars(-1,outputBuff,offset);
     sendto(clientSocket,outputBuff,COMMAND_DATA_SIZE,0,(struct sockaddr *)&serverAddr,addr_size);
     msgnm++;
 }
@@ -322,11 +300,11 @@ void *listenToServer(void * args)
 
         int32_t  msgNum;
         short offset = 0;
-        charsToInt(inputBuff,msgNum,offset);
+        Serialization::charsToInt(inputBuff,msgNum,offset);
         lastServerMsgid = msgid;
         int16_t command_type;
         offset += 4;
-        charsToShort(inputBuff, command_type, offset);
+        Serialization::charsToShort(inputBuff, command_type, offset);
         offset += 2;
         bool eom = false;
 
@@ -337,15 +315,15 @@ void *listenToServer(void * args)
                     command srvCmd;
                     srvCmd.msgNum = msgNum;
                     srvCmd.type = command_type;
-                    charsToShort(inputBuff, srvCmd.playerID, offset);
+                    Serialization::charsToShort(inputBuff, srvCmd.playerID, offset);
                     if (srvCmd.playerID != -1)
                     {
                         offset += 2;
-                        charsToFloat(inputBuff, srvCmd.posx, offset);
+                        Serialization::charsToFloat(inputBuff, srvCmd.posx, offset);
                         offset += 4;
-                        charsToFloat(inputBuff, srvCmd.posy, offset);
+                        Serialization::charsToFloat(inputBuff, srvCmd.posy, offset);
                         offset += 4;
-                        charsToFloat(inputBuff, srvCmd.rotation, offset);
+                        Serialization::charsToFloat(inputBuff, srvCmd.rotation, offset);
                         offset += 4;
                         pthread_mutex_lock(&commandQueueMutex);
                         commandQueue.push(srvCmd);
@@ -365,19 +343,19 @@ void *listenToServer(void * args)
                 command srvCmd;
                 srvCmd.msgNum = msgNum;
                 srvCmd.type = command_type;
-                charsToShort(inputBuff, srvCmd.bulletID, offset);
+                Serialization::charsToShort(inputBuff, srvCmd.bulletID, offset);
                 if (srvCmd.bulletID != -1)
                 {
                     offset += 2;
-                    charsToShort(inputBuff, srvCmd.bulletType, offset);
+                    Serialization::charsToShort(inputBuff, srvCmd.bulletType, offset);
                     offset += 2;
-                    charsToFloat(inputBuff, srvCmd.posx, offset);
+                    Serialization::charsToFloat(inputBuff, srvCmd.posx, offset);
                     offset += 4;
-                    charsToFloat(inputBuff, srvCmd.posy, offset);
+                    Serialization::charsToFloat(inputBuff, srvCmd.posy, offset);
                     offset += 4;
-                    charsToFloat(inputBuff, srvCmd.originx, offset);
+                    Serialization::charsToFloat(inputBuff, srvCmd.originx, offset);
                     offset += 4;
-                    charsToFloat(inputBuff, srvCmd.originy, offset);
+                    Serialization::charsToFloat(inputBuff, srvCmd.originy, offset);
                     offset += 4;
 
                     pthread_mutex_lock(&commandQueueMutex);
@@ -401,7 +379,7 @@ void *listenToServer(void * args)
             command srvCmd;
             srvCmd.msgNum = msgNum;
             srvCmd.type = command_type;
-            charsToShort(inputBuff, srvCmd.playerID, offset);
+            Serialization::charsToShort(inputBuff, srvCmd.playerID, offset);
             pthread_mutex_lock(&commandQueueMutex);
             commandQueue.push(srvCmd);
             pthread_mutex_unlock(&commandQueueMutex);
@@ -560,8 +538,8 @@ void update(sf::Time elapsedTime)
 
 int main()
 {
-    readConfig();
-    init();
+    Menu(mWindow).run(1);
+    /*init();
     initSocket();
 
     sf::Clock clock;
@@ -594,7 +572,7 @@ int main()
         }
 
     }
-
+*/
     return 0;
 }
 
