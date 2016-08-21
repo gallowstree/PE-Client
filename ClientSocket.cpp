@@ -49,7 +49,6 @@ void ClientSocket::run()
         if(recvfrom(udpSocket, buffer, COMMAND_BUFFER_SIZE, 0, (struct sockaddr *)&serverAddr, &addr_size) < 0)
         {
             Serialization::shortToChars(-1,buffer,0);
-            keepAlive=false;
         }
 
         if (listener != nullptr) {

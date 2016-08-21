@@ -18,8 +18,8 @@ private:
     const char * ip;
     int port;
     int serverSocket;
-    struct sockaddr_storage serverStorage;
-    socklen_t addr_size = sizeof serverStorage;
+    struct sockaddr_in serverAddr;
+    socklen_t addr_size = sizeof serverAddr;
 
 
 };

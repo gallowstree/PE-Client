@@ -8,24 +8,29 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics.hpp>
+#include "Entity.h"
 
-class Projectile {
+class Projectile : public Entity {
     public:
-        int16_t bulletID;
-        int16_t type;
-        sf::Vector2f position;
-        sf::Vector2f origin;
-        bool  valid;
-        sf::RectangleShape projectile;
+    int16_t bulletID;
+    int16_t playerId;
+    int16_t type;
+    sf::Vector2f position;
+    sf::Vector2f origin;
+    bool  valid;
+    sf::RectangleShape projectile;
 
-        Projectile(int16_t bulletID,int16_t type,  sf::Vector2f position,sf::Vector2f origin);
-        void update(sf::Time elapsedTime);
+    Projectile(int16_t bulletID,int16_t type,  sf::Vector2f position,sf::Vector2f origin, int16_t playerId);
+    void update(sf::Time elapsedTime);
+    void intersectedWith(Entity *other, sf::FloatRect intersection);
 
     private:
         sf::Vector2f velocity;
-        float range = 400;
-        float speed = 700;
+        float range = 700;
+        float speed = 800;
         float angle;
+
+
 };
 
 

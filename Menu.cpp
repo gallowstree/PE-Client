@@ -3,14 +3,9 @@
 //
 
 #include "Menu.h"
-#include "ServerSocket.h"
-#include "ClientSocket.h"
 #include "serialization.h"
-#include <string.h>
 #include <fstream>
-#include <cstdlib>
-#include <netinet/in.h>
-#include <arpa/inet.h>
+
 
 Menu::Menu(sf::RenderWindow& window):
 window(window)
@@ -336,11 +331,6 @@ void Menu::stage3()
     team[1].setTexture(teamTexture1);
     team[1].setPosition(490,250);
 
-
-
-    playersTeam[0] = 2;
-    playersTeam[1] = 1;
-
     strcpy(currPlayers1,"CURRENT PLAYERS  ");
     strcpy(currPlayers2,"CURRENT PLAYERS  ");
     currPlayers1[16] = (char) playersTeam[0] + 48; //concatenamos la cantidad de players del team 1
@@ -458,8 +448,9 @@ void Menu::receiveMessage(char buffer[], size_t nBytes, sockaddr_in* serverAddr)
     if(currentStage == 2)
     {
         Serialization::charsToShort(buffer, this->connResult, 0);
-        this->connResult = 1;
         if (this->connResult == 1) {
+            Serialization::charsToShort(buffer, this->playersTeam[0], 2);
+            Serialization::charsToShort(buffer, this->playersTeam[1], 4);
             this->currentStage = 3;
         }
     }
