@@ -15,6 +15,7 @@
 #include "Menu.h"
 #include "Wall.h"
 #include <fstream>
+#include <zconf.h>
 #include "serialization.h"
 
 enum Textures
@@ -35,6 +36,11 @@ std::vector<Area*> areas;
 std::vector<const char *> maps = {"maps/level1.txt","maps/level2.txt"};
 int msgnm = 0, lastServerMsgid = -1;
 sf::Sprite cursorSprite;
+
+/*************************NO TOCAR***************************/
+static const int COMMAND_BUFFER_SIZE = 1500;
+char buffer[COMMAND_BUFFER_SIZE];
+/************************************************************/
 
 /***SOCKET**/
 int clientSocket, nBytes;
@@ -88,21 +94,6 @@ void requestJoinGame()
 
 
 
-
-void initSocket()
-{
-    /*Create UDP socket*/
-    clientSocket = socket(PF_INET, SOCK_DGRAM, 0);
-
-    /*Configure settings in address struct*/
-    serverAddr.sin_family = AF_INET;
-    serverAddr.sin_port = htons(s_port);
-    serverAddr.sin_addr.s_addr = inet_addr(s_ip);
-    memset(serverAddr.sin_zero, '\0', sizeof serverAddr.sin_zero);
-
-    /*Initialize size variable to be used later on*/
-    addr_size = sizeof serverAddr;
-}
 
 void calculateCamCenter()
 {
@@ -535,10 +526,35 @@ void update(sf::Time elapsedTime)
     updateCrosshair();
 }
 
+void launchMenu()
+{
+
+}
 
 int main()
 {
-    Menu(mWindow).run(1);
+
+    /*****************MENU******************/
+    Menu menu(mWindow);
+    menu.run(1);
+    loopStage2:
+    menu.run(2);
+    ServerSocket sSocket(menu.s_ip, 50420);
+    ClientSocket cSocket(menu.c_ip, 50421, &menu);
+    cSocket.timeout = 2;
+    pthread_t listening_thread;
+    pthread_create(&listening_thread, nullptr, &ClientSocket::runThread, &cSocket);
+    Serialization::shortToChars(3, buffer, 0);
+    sSocket.send(buffer, COMMAND_BUFFER_SIZE);
+    sleep(2);
+    if(menu.currentStage == 2)
+        goto loopStage2;
+
+    cSocket.timeout = 0;
+    menu.run(3);
+    /*************END MENU***************/
+    //Serialization::shortToChars(s_are_you_there, buffer, 0);
+    //sSocket.send(buffer, COMMAND_BUFFER_SIZE);
     /*init();
     initSocket();
 

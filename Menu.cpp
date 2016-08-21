@@ -8,6 +8,7 @@
 #include "serialization.h"
 #include <string.h>
 #include <fstream>
+#include <cstdlib>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
@@ -17,6 +18,7 @@ window(window)
     readConfig();
     menuIconTexture.loadFromFile("files/skull-icon.png");
     menuFont.loadFromFile("files/sansation.ttf");
+    teamTexture1.loadFromFile("files/sprite.png");
     menuIcon.setTexture(menuIconTexture);
 
 }
@@ -26,8 +28,10 @@ void Menu::run(int stage)
     currentStage = stage;
     if(currentStage == 1)
         stage1();
-    if (currentStage == 2)
+    else if (currentStage == 2)
         stage2();
+    else if (currentStage == 3)
+        stage3();
 }
 
 void Menu::stage1()
@@ -145,10 +149,13 @@ void Menu::stage2()
     ipConf[4].setCharacterSize(35);
 
 
+    connResultTxt.setCharacterSize(20);
+    connResultTxt.setFont(menuFont);
+
     sf::RectangleShape ipRect(sf::Vector2f(260,35));
     ipRect.setFillColor(sf::Color::White);
-    bool startGame = false;
-    while (!startGame)
+    bool selectTeam = false;
+    while (!selectTeam)
     {
         sf::Event event;
         while (window.pollEvent(event))
@@ -244,12 +251,7 @@ void Menu::stage2()
                         case sf::Keyboard::Key::Return:
                             if(selectedOption == 2)
                             {
-                                ServerSocket sSocket(s_ip,50420);
-                                ClientSocket cSocket(c_ip,50421,this);
-                                pthread_t listening_thread;
-                                pthread_create(&listening_thread, nullptr, &ClientSocket::runThread, &cSocket);
-                                Serialization::shortToChars(s_are_you_there,buffer,0);
-                                sSocket.send(buffer,COMMAND_BUFFER_SIZE);
+                                selectTeam = true;
                             }
                             break;
                     }
@@ -290,6 +292,122 @@ void Menu::stage2()
             window.draw(ipConf[i]);
 
         }
+
+
+        if(this->connResult == -1)
+        {
+            connResultTxt.setString("Timeout: could not connect to server :/");
+            connResultTxt.setColor(sf::Color::Red);
+            connResultTxt.setPosition(230,480);
+        }
+        else if(this->connResult == 1)
+        {
+            connResultTxt.setString("Connection Successful :D");
+            connResultTxt.setColor(sf::Color::White);
+            connResultTxt.setPosition(280,480);
+        }
+        else if(this->connResult == 2)
+        {
+            connResultTxt.setString("Error: the arena is full, try again later :(");
+            connResultTxt.setColor(sf::Color::Red);
+            connResultTxt.setPosition(225,480);
+        }
+        else
+        {
+            connResultTxt.setString("");
+        }
+        window.draw(connResultTxt);
+        window.display();
+    }
+}
+
+void Menu::stage3()
+{
+    selectedOption = 0;
+
+    mainTitle.setString("CHOOSE YOUR DESTINY");
+    mainTitle.setCharacterSize(40);
+    mainTitle.setPosition(170,20);
+    mainTitle.setColor(sf::Color::Red);
+    mainTitle.setFont(menuFont);
+
+    team[0].setTexture(teamTexture1);
+    team[0].setPosition(220,250);
+    team[1].setTexture(teamTexture1);
+    team[1].setPosition(490,250);
+
+
+
+    playersTeam[0] = 2;
+    playersTeam[1] = 1;
+
+    strcpy(currPlayers1,"CURRENT PLAYERS  ");
+    strcpy(currPlayers2,"CURRENT PLAYERS  ");
+    currPlayers1[16] = (char) playersTeam[0] + 48; //concatenamos la cantidad de players del team 1
+    currPlayers2[16] = (char) playersTeam[1] + 48; //concatenamos la cantidad de players del team 2
+
+    currentPlayers[0].setFont(menuFont);
+    currentPlayers[0].setString(currPlayers1);
+    currentPlayers[0].setColor(sf::Color::White);
+    currentPlayers[0].setCharacterSize(15);
+    currentPlayers[0].setPosition(190,350);
+
+    currentPlayers[1].setFont(menuFont);
+    currentPlayers[1].setString(currPlayers2);
+    currentPlayers[1].setCharacterSize(15);
+    currentPlayers[1].setPosition(460,350);
+
+    sf::RectangleShape selection(sf::Vector2f(200,200));
+    selection.setOutlineColor(sf::Color::White);
+    selection.setFillColor(sf::Color::Transparent);
+    selection.setOutlineThickness(5);
+    bool startGame = false;
+    while (!startGame)
+    {
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+            switch (event.type)
+            {
+                case sf::Event::Closed:
+                    window.close();
+                    exit(0);
+                case sf::Event::KeyPressed:
+                    switch (event.key.code)
+                    {
+                        case sf::Keyboard::Key::Left:
+                            if (selectedOption > 0)
+                                selectedOption--;
+                            break;
+                        case sf::Keyboard::Key::Right:
+                            if (selectedOption + 1 < 2)
+                                selectedOption++;
+                            break;
+                        case sf::Keyboard::Key::Return:
+                            selectedTeam = selectedOption;
+                            startGame = true;
+                            break;
+                    }
+                default:
+                    break;
+            }
+        }
+
+
+        window.clear();
+
+        for(int i = 0; i < 2; i++)
+        {
+            window.draw(team[i]);
+            window.draw(currentPlayers[i]);
+            if(selectedOption == i)
+            {
+                selection.setPosition(team[i].getPosition().x -60, team[i].getPosition().y -50 );
+            }
+        }
+        window.draw(selection);
+        window.draw(mainTitle);
+
         window.display();
     }
 }
@@ -306,14 +424,12 @@ void Menu::readConfig()
             u_long end = line.find(";");
             c_ip = (char *) malloc(16 * sizeof(char));
             strcpy(c_ip, line.substr(10, end - 10).c_str());
-            printf("Client IP: %s\n", c_ip);
         }
         else if (line.find("server-ip=") == 0)
         {
             u_long end = line.find(";");
             s_ip = (char *) malloc(16 * sizeof(char));
             strcpy(s_ip, line.substr(10, end - 10).c_str());
-            printf("Server IP: %s\n", s_ip);
         }
     }
 }
@@ -338,7 +454,13 @@ void Menu::addChar(char * str, char c, int max)
 
 void Menu::receiveMessage(char buffer[], size_t nBytes, sockaddr_in* serverAddr)
 {
-    int16_t response;
-    Serialization::charsToShort(buffer,response,0);
-    printf("respuesta %d",response);
+
+    if(currentStage == 2)
+    {
+        Serialization::charsToShort(buffer, this->connResult, 0);
+        this->connResult = 1;
+        if (this->connResult == 1) {
+            this->currentStage = 3;
+        }
+    }
 }

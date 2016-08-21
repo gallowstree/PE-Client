@@ -7,36 +7,47 @@
 
 #include <SFML/Graphics.hpp>
 #include <netinet/in.h>
+#include <memory.h>
 #include "ClientSocket.h"
+#include "ServerSocket.h"
 
 class Menu : public SocketListener {
     static const int MENU_SIZE = 2;
-    static const int COMMAND_BUFFER_SIZE = 1500;
+
 public:
     Menu(sf::RenderWindow& window);
 
     void stage1();
     void stage2();
+    void stage3();
     void run(int stage);
+    char * c_ip;
+    char * s_ip;
+    int currentStage = 0;
+    int16_t selectedTeam = 0;
 
 private:
-    const int16_t s_are_you_there = 3; //comando para ver si el server esta vivo
-    char buffer[COMMAND_BUFFER_SIZE];
     int selectedOption = 0;
-    int currentStage = 0;
+    char * currPlayers1 = (char *)malloc(strlen("CURRENT PLAYERS   ")+1);
+    char * currPlayers2 = (char *)malloc(strlen("CURRENT PLAYERS   ")+1);
     sf::RenderWindow&  window;
     sf::Texture	menuIconTexture;
     sf::Sprite menuIcon;
     sf::Text menu[MENU_SIZE];
     sf::Text ipConf[5];
     sf::Text mainTitle;
+    sf::Text connResultTxt;
     sf::Font menuFont;
-    char * c_ip;
-    char * s_ip;
+    sf::Sprite team[2];
+    sf::Texture teamTexture1;
+    sf::Texture teamTexture2;
+    sf::Text currentPlayers[2];
+    int16_t connResult = 0;
     void deleteLastChar(char * str);
     void addChar(char * str, char c, int max);
     void readConfig();
     void receiveMessage(char buffer[], size_t nBytes, sockaddr_in* serverAddr);
+    int16_t playersTeam[2];
 };
 
 

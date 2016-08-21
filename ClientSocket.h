@@ -17,17 +17,16 @@ public:
 class ClientSocket {
 
 public:
-
-    bool tuputamadre ;
+    int keepAlive = 1 ;
+    int timeout = 0;
+    const char * ip;
+    int port;
     SocketListener * listener;
     ClientSocket(const char * ip, int port, SocketListener * listener);
     void run();
 
     static void * runThread(void * clientSocket);
 
-private:
-    const char * ip;
-    int port;
 };
 
 
