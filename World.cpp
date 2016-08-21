@@ -86,17 +86,20 @@ int World::parseMapParameter(std::string & line)
 void World::calculateCamCenter()
 {
     auto pVector = (*players);
-    camCenter = pVector[playerID].sprite.getPosition();
+    if(findPlayer(playerID,players))
+    {
+        camCenter = pVector[playerID].sprite.getPosition();
 
-    if (pVector[playerID].sprite.getPosition().x < window.getSize().x /2)
-        camCenter.x = window.getSize().x /2;
-    else if (pVector[playerID].sprite.getPosition().x > bounds.width - window.getSize().x /2)
-        camCenter.x = pVector[playerID].sprite.getPosition().x;//bounds.width - 300;
+        if (pVector[playerID].sprite.getPosition().x < window.getSize().x / 2)
+            camCenter.x = window.getSize().x / 2;
+        else if (pVector[playerID].sprite.getPosition().x > bounds.width - window.getSize().x / 2)
+            camCenter.x = pVector[playerID].sprite.getPosition().x;//bounds.width - 300;
 
-    if (pVector[playerID].sprite.getPosition().y < window.getSize().y /2)
-        camCenter.y = window.getSize().y /2;
-    else if (pVector[playerID].sprite.getPosition().y > bounds.height - window.getSize().y /2)
-        camCenter.y = pVector[playerID].sprite.getPosition().y;//bounds.height - 300;
+        if (pVector[playerID].sprite.getPosition().y < window.getSize().y / 2)
+            camCenter.y = window.getSize().y / 2;
+        else if (pVector[playerID].sprite.getPosition().y > bounds.height - window.getSize().y / 2)
+            camCenter.y = pVector[playerID].sprite.getPosition().y;//bounds.height - 300;
+    }
 }
 
 void World::createStaticObjects()
@@ -255,4 +258,14 @@ std::vector<int16_t> World::areasForEntity(const Entity &entity)
     }
 
     return areaslocal;
+}
+
+bool World::findPlayer(int16_t playerID, std::vector<Player> * players)
+{
+    for(auto &player : *players)
+    {
+        if(player.playerID == playerID)
+            return true;
+    }
+    return false;
 }

@@ -143,9 +143,21 @@ void Game::processServerEvents()
         commandQueue.pop();
         if(command.type == CommandCode::c_input_command)
         {
-            players[command.playerID].boundingBox.left = command.posx;
-            players[command.playerID].boundingBox.top = command.posy;
-            players[command.playerID].rotation = command.rotation;
+            int16_t pID = command.playerID & 0x00FF;
+            int16_t team = (command.playerID & (1<<8)) >> 8;
+            printf("playerid %d team %d",pID,team);
+            if(!world.findPlayer(command.playerID,&players))
+            {
+                sf::Texture texture;
+                if(team == 0)
+                    texture = world.textureHolder.get(Textures::PLAYER_RED_SG);
+                else
+                    texture = world.textureHolder.get(Textures::PLAYER_RED_SG);
+                players.push_back(Player(pID, command.posx, command.posy, texture));
+            }
+            players[pID].boundingBox.left = command.posx;
+            players[pID].boundingBox.top = command.posy;
+            players[pID].rotation = command.rotation;
         }
         else if (command.type == CommandCode::s_projectile_command)
         {

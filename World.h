@@ -26,6 +26,8 @@ public:
     void render();
     void update(sf::Time elapsedTime);
     void updateProjectiles(const sf::Time &elapsedTime);
+    bool findPlayer(int16_t playerID, std::vector<Player> * players);
+    ResourceHolder<sf::Texture, Textures> textureHolder;
 
 private:
     std::vector<Player> * players;
@@ -38,7 +40,6 @@ private:
     sf::Vector2f camCenter;
     std::vector<Entity> world_entities;
     std::vector<const char *> maps = {"maps/level1.txt","maps/level2.txt"};
-    ResourceHolder<sf::Texture, Textures> textureHolder;
     std::vector<Area*> areas;
     std::vector<std::vector<Entity*>> static_entities;
     std::vector<std::vector<Entity*>> moving_entities;
@@ -52,6 +53,7 @@ private:
     void checkProjectileCollisions(Projectile &proj);
     void indexMovingEntities();
     std::vector<int16_t> areasForEntity(const Entity &entity);
+
 };
 
 
