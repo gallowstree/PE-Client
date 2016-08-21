@@ -76,7 +76,7 @@ void Game::sendCommands()
 
 
     int16_t offset = 0;
-    Serialization::shortToChars(CommandCode::c_input_command,buffer,offset);
+    Serialization::shortToChars(c_input_command,buffer,offset);
     offset+=2;
     Serialization::shortToChars(playerID,buffer,offset);
     offset+=2;
@@ -92,7 +92,7 @@ void Game::sendCommands()
 
     while(!projectileACKQueue.empty())
     {
-        Serialization::shortToChars(CommandCode::s_projectile_command,buffer,offset);
+        Serialization::shortToChars(s_projectile_command,buffer,offset);
         offset+=2;
         int32_t ack = projectileACKQueue.front();
         projectileACKQueue.pop();
@@ -142,20 +142,20 @@ void Game::processServerEvents()
     {
         command_t command = commandQueue.front();
         commandQueue.pop();
-        if(command.type == CommandCode::c_input_command)
+        if(command.type == c_input_command)
         {
             players[command.playerID].boundingBox.left = command.posx;
             players[command.playerID].boundingBox.top = command.posy;
             players[command.playerID].rotation = command.rotation;
         }
-        else if (command.type == CommandCode::s_projectile_command)
+        else if (command.type == s_projectile_command)
         {
             sf::Vector2f position = sf::Vector2f(command.posx,command.posy);
             sf::Vector2f origin = sf::Vector2f(command.originx,command.originy);
             Projectile projectile = Projectile(command.bulletID,command.bulletType,position,origin, command.playerID);
             projectiles.insert(std::pair<int16_t , Projectile>(command.bulletID, projectile));
         }
-        else if (command.type == CommandCode::s_player_id_command)
+        else if (command.type == s_player_id_command)
         {
             printf("entrando");
             playerID = command.playerID;
@@ -176,7 +176,7 @@ void Game::receiveMessage(char buffer[], size_t nBytes, sockaddr_in* serverAddr)
     offset += 2;
     bool eom = false;
 
-    if(command_type == CommandCode::s_players_command) {
+    if(command_type == s_players_command) {
         if(msgNum > lastServerMsgid)
         {
             do {
@@ -204,7 +204,7 @@ void Game::receiveMessage(char buffer[], size_t nBytes, sockaddr_in* serverAddr)
             } while (!eom);
         }
     }
-    else if(command_type == CommandCode::s_projectile_command)
+    else if(command_type == s_projectile_command)
     {
         do
         {
@@ -244,7 +244,7 @@ void Game::receiveMessage(char buffer[], size_t nBytes, sockaddr_in* serverAddr)
         projectileACKQueue.push(msgNum);
         pthread_mutex_unlock(&projectileACKMutex);
     }
-    else if (command_type == CommandCode::s_player_id_command)
+    else if (command_type == s_player_id_command)
     {
         command srvCmd;
         srvCmd.msgNum = msgNum;
@@ -258,7 +258,7 @@ void Game::receiveMessage(char buffer[], size_t nBytes, sockaddr_in* serverAddr)
 void Game::requestJoinGame()
 {
     int16_t offset = 0;
-    Serialization::shortToChars(CommandCode::c_join_game_command,buffer,offset);
+    Serialization::shortToChars(c_join_game_command,buffer,offset);
     offset += 2;
     Serialization::shortToChars(-1,buffer,offset);
     sSocket->send(buffer,COMMAND_BUFFER_SIZE);

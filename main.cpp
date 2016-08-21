@@ -29,7 +29,7 @@ int main()
     cSocket.timeout = 2;
     pthread_t listening_thread;
     pthread_create(&listening_thread, nullptr, &ClientSocket::runThread, &cSocket);
-    Serialization::shortToChars(CommandCode::c_are_you_there, buffer, 0);
+    Serialization::shortToChars(c_are_you_there, buffer, 0);
     sSocket.send(buffer, COMMAND_BUFFER_SIZE);
     sleep(2);
     if (menu.currentStage == 2)
