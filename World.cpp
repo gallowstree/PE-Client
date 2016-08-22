@@ -8,11 +8,11 @@
 #include <fstream>
 #include <math.h>
 
-World::World(sf::RenderWindow&  window, std::vector<Player> * players):
+World::World(sf::RenderWindow&  window, std::vector<Player> * players,  std::map<int16_t, Projectile> *projectiles):
 window(window),
-players(players)
+players(players),
+projectiles(projectiles)
 {
-
     int noAreasX = 0;
     int noAreasY = 0;
 
@@ -139,7 +139,6 @@ void World::deleteInvalidProjectiles()
 
 void World::render()
 {
-    window.clear();
 
     calculateCamCenter();
     sf::FloatRect visibleRect(camCenter.x - window.getSize().x, camCenter.y - window.getSize().y, window.getSize().x * 2, window.getSize().y * 2);

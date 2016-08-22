@@ -20,7 +20,7 @@ enum Textures
 class World
 {
 public:
-    World(sf::RenderWindow&  window, std::vector<Player> * players);
+    World(sf::RenderWindow&  window, std::vector<Player> * players, std::map<int16_t, Projectile> *projectiles);
     sf::RenderWindow&  window;
     int playerID = -1;
     void render();

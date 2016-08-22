@@ -37,6 +37,8 @@ int main()
 
     cSocket.timeout = 0;
     menu.run(3);
+
+
     Game game(mWindow,&sSocket,menu.selectedTeam);
     cSocket.listener = &game;
     game.getID();

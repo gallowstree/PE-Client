@@ -395,6 +395,8 @@ void Menu::stage3()
                 selection.setPosition(team[i].getPosition().x -60, team[i].getPosition().y -50 );
             }
         }
+
+        printf("Menuuu\n");
         window.draw(selection);
         window.draw(mainTitle);
 

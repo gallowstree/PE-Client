@@ -16,7 +16,7 @@ Game::Game(sf::RenderWindow&  window,ServerSocket * sSocket, int selectedTeam):
 window(window),
 sSocket(sSocket),
 selectedTeam(selectedTeam),
-world(World(window,&players))
+world(World(window,&players, &projectiles))
 {
     pthread_mutex_init(&commandQueueMutex, NULL);
     pthread_mutex_init(&projectileACKMutex, NULL);
@@ -149,12 +149,12 @@ void Game::processServerEvents()
             printf("playerid %d team %d",pID,team);
             if(!world.findPlayer(command.playerID,&players))
             {
-                sf::Texture texture;
+
                 if(team == 0)
-                    texture = world.textureHolder.get(Textures::PLAYER_RED_SG);
+                    players.push_back(Player(pID, command.posx, command.posy, world.textureHolder.get(Textures::PLAYER_RED_SG)));
                 else
-                    texture = world.textureHolder.get(Textures::PLAYER_RED_SG);
-                players.push_back(Player(pID, command.posx, command.posy, texture));
+                    players.push_back(Player(pID, command.posx, command.posy, world.textureHolder.get(Textures::PLAYER_RED_SG)));
+
             }
             players[pID].boundingBox.left = command.posx;
             players[pID].boundingBox.top = command.posy;
