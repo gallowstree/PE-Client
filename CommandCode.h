@@ -22,6 +22,7 @@ public:
 const int16_t s_players_command = 0;
 const int16_t  s_projectile_command = 1;
 const int16_t s_player_id_command = 2;
+const int16_t s_game_over = 2;
 
 const int16_t  c_input_command = 0;
 const int16_t c_join_game_command = 2;

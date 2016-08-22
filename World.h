@@ -29,6 +29,8 @@ public:
     void updateProjectiles(const sf::Time &elapsedTime);
     bool findPlayer(int16_t playerID, std::vector<Player> * players);
     ResourceHolder<sf::Texture, Textures> textureHolder;
+    sf::Text message;
+    sf::Font messageFont;
 
 private:
     std::vector<Player> * players;

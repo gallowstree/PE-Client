@@ -169,6 +169,21 @@ void Game::processServerEvents()
         {
             playerID = command.playerID;
         }
+        else if (command.type == s_game_over)
+        {
+            if(command.team == 0)
+            {
+                world.message.setString("FIN DEL JUEGO, GANO EQUIPO ROJO");
+            }
+            else if (command.team == 1)
+            {
+                world.message.setString("FIN DEL JUEGO, GANO EQUIPO VERDE");
+            }
+            else
+            {
+                world.message.setString("FIN DEL JUEGO, EMPATE");
+            }
+        }
     }
     pthread_mutex_unlock(&commandQueueMutex);
 }
@@ -265,6 +280,13 @@ void Game::receiveMessage(char buffer[], size_t nBytes, sockaddr_in* serverAddr)
         Serialization::charsToShort(buffer, srvCmd.playerID, offset);
         if(playerID == -1)
             playerID = srvCmd.playerID;
+    }
+    else if (command_type == s_game_over)
+    {
+        command srvCmd;
+        srvCmd.msgNum = msgNum;
+        srvCmd.type = command_type;
+        Serialization::charsToShort(buffer, srvCmd.team, offset);
     }
 }
 

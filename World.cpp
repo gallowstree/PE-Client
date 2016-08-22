@@ -13,6 +13,14 @@ window(window),
 players(players),
 projectiles(projectiles)
 {
+
+    messageFont.loadFromFile("files/sansation.ttf");
+    message.setFont(messageFont);
+    message.setCharacterSize(700);
+    message.setColor(sf::Color::White);
+    message.setPosition(100,40);
+    message.setString("");
+
     readMap(0);
 
     int noAreasX = 0;
@@ -184,6 +192,7 @@ void World::render()
         window.draw(player.sprite);
 
     }
+    window.draw(message);
     window.draw(cursorSprite);
 }
 
