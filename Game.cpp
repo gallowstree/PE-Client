@@ -147,7 +147,7 @@ void Game::processServerEvents()
             int16_t pID = command.playerID & 0x00FF;
             int16_t team = (command.playerID & (1<<8)) >> 8;
             printf("playerid %d team %d",pID,team);
-            if(!world.findPlayer(command.playerID,&players))
+            if(!world.findPlayer(pID,&players))
             {
 
                 if(team == 0)

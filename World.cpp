@@ -180,7 +180,6 @@ void World::render()
 
     }
     window.draw(cursorSprite);
-    window.display();
 }
 
 void World::update(sf::Time elapsedTime)

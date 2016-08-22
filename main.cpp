@@ -16,6 +16,12 @@ const int c_port = 50421;
 
 sf::RenderWindow mWindow(sf::VideoMode(800, 600), "President Evil", sf::Style::Close);
 
+
+void runMenu(ServerSocket &sSocket, ClientSocket &cSocket)
+{
+
+}
+
 int main()
 {
 
