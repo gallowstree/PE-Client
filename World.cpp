@@ -51,7 +51,8 @@ void World::updateCrosshair()
 void World::loadTextures()
 {
     textureHolder.load(Textures::CROSSHAIR, "files/crosshair.png");
-    textureHolder.load(Textures::PLAYER_RED_SG, "files/sprite.png");
+    textureHolder.load(Textures::PLAYER_RED, "files/sprite.png");
+    textureHolder.load(Textures::PLAYER_GREEN, "files/sprite2.png");
 }
 
 void World::readMap(int map)

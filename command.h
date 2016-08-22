@@ -14,6 +14,7 @@ typedef struct command {
     int16_t bulletID;
     int16_t bulletType;
     int16_t type;
+    int16_t team;
     float posx;
     float posy;
     float rotation;

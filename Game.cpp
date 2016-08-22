@@ -144,20 +144,19 @@ void Game::processServerEvents()
         commandQueue.pop();
         if(command.type == c_input_command)
         {
-            int16_t pID = command.playerID & 0x00FF;
-            int16_t team = (command.playerID & (1<<8)) >> 8;
-            if(!world.findPlayer(pID,&players))
+
+            if(!world.findPlayer(command.playerID,&players))
             {
 
-                if(team == 0)
-                    players.push_back(Player(pID, command.posx, command.posy, world.textureHolder.get(Textures::PLAYER_RED_SG)));
+                if(command.team == 0)
+                    players.push_back(Player(command.playerID, command.posx, command.posy, world.textureHolder.get(Textures::PLAYER_RED)));
                 else
-                    players.push_back(Player(pID, command.posx, command.posy, world.textureHolder.get(Textures::PLAYER_RED_SG)));
+                    players.push_back(Player(command.playerID, command.posx, command.posy, world.textureHolder.get(Textures::PLAYER_GREEN)));
 
             }
-            players[pID].boundingBox.left = command.posx;
-            players[pID].boundingBox.top = command.posy;
-            players[pID].rotation = command.rotation;
+            players[command.playerID].boundingBox.left = command.posx;
+            players[command.playerID].boundingBox.top = command.posy;
+            players[command.playerID].rotation = command.rotation;
         }
         else if (command.type == s_projectile_command)
         {
@@ -193,9 +192,13 @@ void Game::receiveMessage(char buffer[], size_t nBytes, sockaddr_in* serverAddr)
                 command srvCmd;
                 srvCmd.msgNum = msgNum;
                 srvCmd.type = command_type;
-                Serialization::charsToShort(buffer, srvCmd.playerID, offset);
-                if (srvCmd.playerID != -1)
+                int16_t playerInfo = 0;
+                Serialization::charsToShort(buffer, playerInfo, offset);
+
+                if (playerInfo != -1)
                 {
+                    srvCmd.playerID = playerInfo & 0x00FF;
+                    srvCmd.team = (playerInfo & (1<<8)) >> 8;
                     offset += 2;
                     Serialization::charsToFloat(buffer, srvCmd.posx, offset);
                     offset += 4;
@@ -269,6 +272,8 @@ void Game::requestJoinGame()
 {
     int16_t offset = 0;
     Serialization::shortToChars(c_join_game_command,buffer,offset);
+    offset += 2;
+    Serialization::shortToChars(selectedTeam,buffer,offset);
     offset += 2;
     Serialization::shortToChars(-1,buffer,offset);
     sSocket->send(buffer,COMMAND_BUFFER_SIZE);

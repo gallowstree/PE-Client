@@ -14,7 +14,8 @@
 enum Textures
 {
     CROSSHAIR,
-    PLAYER_RED_SG
+    PLAYER_RED,
+    PLAYER_GREEN
 };
 
 class World

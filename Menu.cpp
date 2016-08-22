@@ -14,6 +14,7 @@ window(window)
     menuIconTexture.loadFromFile("files/skull-icon.png");
     menuFont.loadFromFile("files/sansation.ttf");
     teamTexture1.loadFromFile("files/sprite.png");
+    teamTexture2.loadFromFile("files/sprite2.png");
     menuIcon.setTexture(menuIconTexture);
 
 }
@@ -328,7 +329,7 @@ void Menu::stage3()
 
     team[0].setTexture(teamTexture1);
     team[0].setPosition(220,250);
-    team[1].setTexture(teamTexture1);
+    team[1].setTexture(teamTexture2);
     team[1].setPosition(490,250);
 
     strcpy(currPlayers1,"CURRENT PLAYERS  ");
@@ -396,7 +397,6 @@ void Menu::stage3()
             }
         }
 
-        printf("Menuuu\n");
         window.draw(selection);
         window.draw(mainTitle);
 
