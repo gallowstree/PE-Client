@@ -16,10 +16,10 @@ projectiles(projectiles)
 
     messageFont.loadFromFile("files/sansation.ttf");
     message.setFont(messageFont);
-    message.setCharacterSize(700);
+    message.setCharacterSize(30);
     message.setColor(sf::Color::White);
-    message.setPosition(100,40);
-    message.setString("");
+    message.setPosition(50,40);
+    message.setString("HOLA");
 
     readMap(0);
 

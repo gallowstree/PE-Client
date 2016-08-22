@@ -287,6 +287,9 @@ void Game::receiveMessage(char buffer[], size_t nBytes, sockaddr_in* serverAddr)
         srvCmd.msgNum = msgNum;
         srvCmd.type = command_type;
         Serialization::charsToShort(buffer, srvCmd.team, offset);
+        pthread_mutex_lock(&commandQueueMutex);
+        commandQueue.push(srvCmd);
+        pthread_mutex_unlock(&commandQueueMutex);
     }
 }
 
