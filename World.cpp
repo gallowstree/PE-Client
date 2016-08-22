@@ -13,8 +13,13 @@ window(window),
 players(players),
 projectiles(projectiles)
 {
+    readMap(0);
+
     int noAreasX = 0;
     int noAreasY = 0;
+
+    noAreasX = static_cast<int>(bounds.width / area_size);
+    noAreasY = static_cast<int>(bounds.height / area_size);
 
     camera.reset(sf::FloatRect(0,0, window.getSize().x, window.getSize().y));
     camera.setViewport(sf::FloatRect(0,0, 1.0f, 1.0f));
@@ -105,7 +110,6 @@ void World::calculateCamCenter()
 
 void World::createStaticObjects()
 {
-    readMap(0);
 
     for (auto& entity : world_entities)
     {
@@ -243,11 +247,9 @@ void World::checkProjectileCollisions(Projectile &proj)
 std::vector<int16_t> World::areasForEntity(const Entity &entity)
 {
     std::vector<int16_t> areaslocal;
-
     int i = 0;
     for (auto &area : areas)
     {
-
         if (area->rect.intersects(entity.boundingBox))
         {
             areaslocal.push_back(i);
