@@ -3,6 +3,7 @@
 //
 
 #include "Area.h"
+#include "World.h"
 
 
 void Area::draw(sf::RenderTarget &window, bool debugGrid)
@@ -17,9 +18,19 @@ void Area::draw(sf::RenderTarget &window, bool debugGrid)
         shape.setOutlineThickness(2);
         window.draw(shape);
     }
+
+    for (auto& floor : floors)
+    {
+        World::textureHolder.get(Textures::FLOOR_PURPLE_CHESS).setRepeated(true);
+        auto sprite = sf::Sprite(World::textureHolder.get(Textures::FLOOR_PURPLE_CHESS));
+        sprite.setTextureRect(sf::IntRect(rect.left,rect.top, rect.width, rect.height));
+        sprite.setPosition(rect.left, rect.top);
+        window.draw(sprite);
+    }
 }
 
 Area::Area(float d, float d1, float d2, float d3)
 {
     rect = sf::FloatRect(d, d1, d2, d3);
+    floors.push_back(new Entity());
 }

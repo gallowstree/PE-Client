@@ -8,6 +8,9 @@
 #include <fstream>
 #include <math.h>
 
+
+ResourceHolder<sf::Texture, Textures> World::textureHolder;
+
 World::World(sf::RenderWindow&  window, std::vector<Player> * players,  std::map<int16_t, Projectile> *projectiles):
 window(window),
 players(players),
@@ -58,10 +61,11 @@ void World::updateCrosshair()
 
 void World::loadTextures()
 {
-    textureHolder.load(Textures::CROSSHAIR, "files/crosshair.png");
-    textureHolder.load(Textures::PLAYER_RED, "files/sprite.png");
-    textureHolder.load(Textures::PLAYER_GREEN, "files/sprite2.png");
-    textureHolder.load(Textures::SMALL_BULLET, "files/small_bullet.png");
+    World::textureHolder.load(Textures::CROSSHAIR, "files/crosshair.png");
+    World::textureHolder.load(Textures::PLAYER_RED, "files/sprite.png");
+    World::textureHolder.load(Textures::PLAYER_GREEN, "files/sprite2.png");
+    World::textureHolder.load(Textures::BULLET_SMALL, "files/small_bullet.png");
+    World::textureHolder.load(Textures::FLOOR_PURPLE_CHESS, "files/floor-purple-chess.png");
 
 }
 
@@ -86,6 +90,8 @@ void World::readMap(int map)
 
         if (objectType == 0) //wall
             world_entities.push_back(Wall(left, top, width, height));
+//        else if (objectType == 1) //floor
+
     }
 }
 
@@ -196,7 +202,8 @@ void World::render()
             player.sprite.setRotation(angle);
             window.draw(player.sprite);
 
-            player.nickText.setPosition(player.boundingBox.getPosition().x, player.boundingBox.getPosition().y - 20);
+            player.nickText.setPosition(player.boundingBox.getPosition().x,
+                                        player.boundingBox.getPosition().y + player.sprite.getTextureRect().height);
             player.nickText.setFont(messageFont);
             player.nickText.setCharacterSize(14);
             player.nickText.setColor(sf::Color::White);

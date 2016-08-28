@@ -168,7 +168,7 @@ void Game::processServerEvents()
             sf::Vector2f position = sf::Vector2f(command.posx,command.posy);
             sf::Vector2f origin = sf::Vector2f(command.originx,command.originy);
             Projectile projectile = Projectile(command.bulletID,command.bulletType,position,origin, command.playerID);
-            projectile.sprite.setTexture(world.textureHolder.get(Textures::SMALL_BULLET));
+            projectile.sprite.setTexture(world.textureHolder.get(Textures::BULLET_SMALL));
             
             projectiles.insert(std::pair<int16_t , Projectile>(command.bulletID, projectile));
         }
