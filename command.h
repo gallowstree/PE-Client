@@ -21,6 +21,7 @@ typedef struct command {
     float rotation;
     float originx;
     float originy;
+    char nickname[7];
 } command_t;
 
 
