@@ -18,6 +18,7 @@ sf::RenderWindow mWindow(sf::VideoMode(800, 600), "President Evil", sf::Style::C
 
 int main()
 {
+    World::loadTextures();
     Menu menu(mWindow);
     menu.run(1);
     loopStage2:
@@ -44,6 +45,7 @@ int main()
     game.run();
     if(game.restart)
     {
+        cSocket.listener = &menu;
         goto loopStage2;
     }
     return 0;

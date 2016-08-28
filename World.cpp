@@ -5,6 +5,7 @@
 #include <cstring>
 #include "World.h"
 #include "Wall.h"
+#include "FloorSection.h"
 #include <fstream>
 #include <math.h>
 
@@ -40,7 +41,6 @@ projectiles(projectiles)
     }
 
     createStaticObjects();
-    loadTextures();
     cursorSprite.setTexture(textureHolder.get(Textures::CROSSHAIR));
     menuIcon.setTexture(textureHolder.get(Textures::SKULL));
     worldFont.loadFromFile("files/sansation.ttf");
@@ -60,6 +60,7 @@ void World::loadTextures()
     World::textureHolder.load(Textures::PLAYER_GREEN, "files/sprite2.png");
     World::textureHolder.load(Textures::BULLET_SMALL, "files/small_bullet.png");
     World::textureHolder.load(Textures::FLOOR_PURPLE_CHESS, "files/floor-purple-chess.png");
+    World::textureHolder.load(Textures::SKULL, "files/skull-icon.png");
 }
 
 void World::readMap(int map)
@@ -83,8 +84,8 @@ void World::readMap(int map)
 
         if (objectType == 0) //wall
             world_entities.push_back(Wall(left, top, width, height));
-//        else if (objectType == 1) //floor
-
+        else if (objectType == 1) //floor
+            world_entities.push_back(FloorSection(Textures::FLOOR_PURPLE_CHESS));
     }
 }
 
@@ -123,7 +124,7 @@ void World::createStaticObjects()
 
     for (auto& entity : world_entities)
     {
-        if (entity.isStatic)
+        if (entity.type == EntityType::Wall_T)
         {
             for (auto& area : areasForEntity(entity))
             {

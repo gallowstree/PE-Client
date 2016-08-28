@@ -37,6 +37,8 @@ public:
     sf::Font worldFont;
     static ResourceHolder<sf::Texture, Textures> textureHolder;
 
+    static void loadTextures();
+
 private:
     std::vector<Player> * players;
     std::map<int16_t,Projectile> * projectiles;
@@ -54,7 +56,7 @@ private:
     sf::Sprite menuIcon;
 
     void updateCrosshair();
-    static void loadTextures();
+
     void readMap(int map);
     void calculateCamCenter();
     void createStaticObjects();
