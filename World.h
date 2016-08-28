@@ -29,6 +29,7 @@ public:
     void update(sf::Time elapsedTime);
     void updateProjectiles(const sf::Time &elapsedTime);
     bool findPlayer(int16_t playerID, std::vector<Player> * players);
+    void gameOver(int16_t winner);
     ResourceHolder<sf::Texture, Textures> textureHolder;
     sf::Text message;
     sf::Font messageFont;

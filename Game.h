@@ -22,6 +22,7 @@ public:
     Game(sf::RenderWindow&  window,ServerSocket * sSocket, int selectedTeam);
     std::vector<Player> players;
     ServerSocket * sSocket;
+    bool restart = true;
     int selectedTeam = 0;
     void receiveMessage(char buffer[], size_t nBytes, sockaddr_in* serverAddr);
     void run();
