@@ -37,6 +37,10 @@ void ClientSocket::run()
         printf("Error reusando socket %s\n",strerror(errno));
     }
 
+    if (setsockopt(udpSocket, SOL_SOCKET, SO_REUSEPORT, &reuse, sizeof(int))) {
+        printf("Error reusando puerto %s\n",strerror(errno));
+    }
+
     bind(udpSocket, (struct sockaddr *) &clientAddr, sizeof(clientAddr));
 
     socklen_t addr_size = sizeof serverAddr;
