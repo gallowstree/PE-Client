@@ -10,6 +10,7 @@
 #include <memory.h>
 #include "ClientSocket.h"
 #include "ServerSocket.h"
+#include <regex.h>
 
 class Menu : public SocketListener {
     static const int MENU_SIZE = 2;
@@ -23,8 +24,10 @@ public:
     void run(int stage);
     char * c_ip;
     char * s_ip;
+    char * nick;
     int currentStage = 0;
     int16_t selectedTeam = 0;
+
 
 private:
     int selectedOption = 0;
@@ -36,18 +39,20 @@ private:
     sf::Text menu[MENU_SIZE];
     sf::Text ipConf[7];
     sf::Text mainTitle;
-    sf::Text connResultTxt;
+    sf::Text message;
     sf::Font menuFont;
     sf::Sprite team[2];
     sf::Texture teamTexture1;
     sf::Texture teamTexture2;
     sf::Text currentPlayers[2];
     int16_t connResult = 0;
-    void deleteLastChar(char * str);
-    void addChar(char * str, char c, int max);
+    void deleteLastChar();
+    void addChar(char c);
     void readConfig();
     void receiveMessage(char buffer[], size_t nBytes, sockaddr_in* serverAddr);
     int16_t playersTeam[2];
+    regex_t ipRegex;
+    int ipRegexMatch = 0;
 };
 
 

@@ -17,6 +17,14 @@ window(window)
     teamTexture2.loadFromFile("files/sprite2.png");
     menuIcon.setTexture(menuIconTexture);
 
+    ipRegexMatch = regcomp(&ipRegex, "^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)."
+            "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)."
+            "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)."
+            "(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$", REG_EXTENDED);
+    if (ipRegexMatch) {
+        fprintf(stderr, "Could not compile regex\n");
+        exit(1);
+    }
 }
 
 void Menu::run(int stage)
@@ -125,14 +133,14 @@ void Menu::stage2()
     ipConf[1].setCharacterSize(35);
 
     ipConf[2].setFont(menuFont);
-    ipConf[2].setString("");
+    ipConf[2].setString(nick);
     ipConf[2].setPosition(275,400);
     ipConf[2].setColor(sf::Color::White);
     ipConf[2].setCharacterSize(35);
 
     ipConf[3].setFont(menuFont);
     ipConf[3].setString("JOIN SERVER");
-    ipConf[3].setPosition(290,500);
+    ipConf[3].setPosition(290,475);
     ipConf[3].setColor(sf::Color::White);
     ipConf[3].setCharacterSize(35);
 
@@ -154,12 +162,15 @@ void Menu::stage2()
     ipConf[6].setColor(sf::Color::White);
     ipConf[6].setCharacterSize(35);
 
-    connResultTxt.setCharacterSize(20);
-    connResultTxt.setFont(menuFont);
+    message.setCharacterSize(20);
+    message.setFont(menuFont);
+    message.setPosition(230,520);
 
     sf::RectangleShape ipRect(sf::Vector2f(260,35));
     ipRect.setFillColor(sf::Color::White);
     bool selectTeam = false;
+    nick = (char *)calloc(7,sizeof(char));
+
     while (!selectTeam)
     {
         sf::Event event;
@@ -182,81 +193,155 @@ void Menu::stage2()
                                 selectedOption++;
                             break;
                         case sf::Keyboard::Key::BackSpace:
-                                if(selectedOption == 0)
-                                    deleteLastChar(c_ip);
-                                if(selectedOption == 1)
-                                    deleteLastChar(s_ip);
+                            deleteLastChar();
                             break;
                         case sf::Keyboard::Num0:
-                            if(selectedOption == 0)
-                                addChar(c_ip,'0',15);
-                            if(selectedOption == 1)
-                                addChar(s_ip,'0',15);
+                            addChar('0');
                             break;
                         case sf::Keyboard::Num1:
-                            if(selectedOption == 0)
-                                addChar(c_ip,'1',15);
-                            if(selectedOption == 1)
-                                addChar(s_ip,'1',15);
+                            addChar('1');
                             break;
                         case sf::Keyboard::Num2:
-                            if(selectedOption == 0)
-                                addChar(c_ip,'2',15);
-                            if(selectedOption == 1)
-                                addChar(s_ip,'2',15);
+                            addChar('2');
                             break;
                         case sf::Keyboard::Num3:
-                            if(selectedOption == 0)
-                                addChar(c_ip,'3',15);
-                            if(selectedOption == 1)
-                                addChar(s_ip,'3',15);
+                            addChar('3');
                             break;
                         case sf::Keyboard::Num4:
-                            if(selectedOption == 0)
-                                addChar(c_ip,'4',15);
-                            if(selectedOption == 1)
-                                addChar(s_ip,'4',15);
+                            addChar('4');
                             break;
                         case sf::Keyboard::Num5:
-                            if(selectedOption == 0)
-                                addChar(c_ip,'5',15);
-                            if(selectedOption == 1)
-                                addChar(s_ip,'5',15);
+                            addChar('5');
                             break;
                         case sf::Keyboard::Num6:
-                            if(selectedOption == 0)
-                                addChar(c_ip,'6',15);
-                            if(selectedOption == 1)
-                                addChar(s_ip,'6',15);
+                            addChar('6');
                             break;
                         case sf::Keyboard::Num7:
-                            if(selectedOption == 0)
-                                addChar(c_ip,'7',15);
-                            if(selectedOption == 1)
-                                addChar(s_ip,'7',15);
+                            addChar('7');
                             break;
                         case sf::Keyboard::Num8:
-                            if(selectedOption == 0)
-                                addChar(c_ip,'8',15);
-                            if(selectedOption == 1)
-                                addChar(s_ip,'8',15);
+                            addChar('8');
                             break;
                         case sf::Keyboard::Num9:
-                            if(selectedOption == 0)
-                                addChar(c_ip,'9',15);
-                            if(selectedOption == 1)
-                                addChar(s_ip,'9',15);
+                            addChar('9');
                             break;
                         case sf::Keyboard::Period:
-                            if(selectedOption == 0)
-                                addChar(c_ip,'.',15);
-                            if(selectedOption == 1)
-                                addChar(s_ip,'.',15);
+                            addChar('.');
+                            break;
+                        case sf::Keyboard::A:
+                            addChar('a');
+                            break;
+                        case sf::Keyboard::B:
+                            addChar('b');
+                            break;
+                        case sf::Keyboard::C:
+                            addChar('c');
+                            break;
+                        case sf::Keyboard::D:
+                            addChar('d');
+                            break;
+                        case sf::Keyboard::E:
+                            addChar('e');
+                            break;
+                        case sf::Keyboard::F:
+                            addChar('f');
+                            break;
+                        case sf::Keyboard::G:
+                            addChar('g');
+                            break;
+                        case sf::Keyboard::H:
+                            addChar('h');
+                            break;
+                        case sf::Keyboard::I:
+                            addChar('i');
+                            break;
+                        case sf::Keyboard::J:
+                            addChar('j');
+                            break;
+                        case sf::Keyboard::K:
+                            addChar('k');
+                            break;
+                        case sf::Keyboard::L:
+                            addChar('l');
+                            break;
+                        case sf::Keyboard::M:
+                            addChar('m');
+                            break;
+                        case sf::Keyboard::N:
+                            addChar('n');
+                            break;
+                        case sf::Keyboard::O:
+                            addChar('o');
+                            break;
+                        case sf::Keyboard::P:
+                            addChar('p');
+                            break;
+                        case sf::Keyboard::Q:
+                            addChar('q');
+                            break;
+                        case sf::Keyboard::R:
+                            addChar('r');
+                            break;
+                        case sf::Keyboard::S:
+                            addChar('s');
+                            break;
+                        case sf::Keyboard::T:
+                            addChar('t');
+                            break;
+                        case sf::Keyboard::U:
+                            addChar('u');
+                            break;
+                        case sf::Keyboard::V:
+                            addChar('v');
+                            break;
+                        case sf::Keyboard::W:
+                            addChar('w');
+                            break;
+                        case sf::Keyboard::X:
+                            addChar('x');
+                            break;
+                        case sf::Keyboard::Y:
+                            addChar('y');
+                            break;
+                        case sf::Keyboard::Z:
+                            addChar('z');
+                            break;
+                        case sf::Keyboard::Dash:
+                            addChar('-');
                             break;
                         case sf::Keyboard::Key::Return:
+                            message.setString("");
+                            message.setColor(sf::Color::Red);
                             if(selectedOption == 3)
                             {
-                                selectTeam = true;
+                                ipRegexMatch = regexec(&ipRegex, c_ip, 0, NULL, 0);
+                                if(!ipRegexMatch)
+                                {
+                                    ipRegexMatch = regexec(&ipRegex, s_ip, 0, NULL, 0);
+                                    if(!ipRegexMatch)
+                                    {
+                                        if(strlen(nick) > 0)
+                                        {
+                                            printf("nick size %d\n",strlen(nick));
+                                            selectTeam = true;
+                                        }
+                                        else
+                                        {
+                                            message.setString("Please enter your nickname");
+                                            message.setPosition(270,520);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        message.setString("Invalid server IP");
+                                        message.setPosition(325,520);
+                                    }
+                                }
+                                else
+                                {
+                                    message.setString("Invalid client IP");
+                                    message.setPosition(325,520);
+                                }
                             }
                             break;
                     }
@@ -267,7 +352,7 @@ void Menu::stage2()
 
         ipConf[0].setString(c_ip);
         ipConf[1].setString(s_ip);
-
+        ipConf[2].setString(nick);
         window.clear();
 
         window.draw(mainTitle);
@@ -301,27 +386,25 @@ void Menu::stage2()
 
         if(this->connResult == -1)
         {
-            connResultTxt.setString("Timeout: could not connect to server :/");
-            connResultTxt.setColor(sf::Color::Red);
-            connResultTxt.setPosition(230,480);
+            message.setString("Timeout: could not connect to server :(");
+            message.setColor(sf::Color::Red);
+            message.setPosition(230,520);
+
         }
         else if(this->connResult == 1)
         {
-            connResultTxt.setString("Connection Successful :D");
-            connResultTxt.setColor(sf::Color::White);
-            connResultTxt.setPosition(280,480);
+            message.setString("Connection Successful :D");
+            message.setColor(sf::Color::White);
+            message.setPosition(230,520);
         }
         else if(this->connResult == 2)
         {
-            connResultTxt.setString("Error: the arena is full, try again later :(");
-            connResultTxt.setColor(sf::Color::Red);
-            connResultTxt.setPosition(225,480);
+            message.setString("Error: the arena is full, try again later :(");
+            message.setColor(sf::Color::Red);
+            message.setPosition(230,520);
         }
-        else
-        {
-            connResultTxt.setString("");
-        }
-        window.draw(connResultTxt);
+
+        window.draw(message);
         window.display();
     }
 }
@@ -435,17 +518,43 @@ void Menu::readConfig()
     }
 }
 
-void Menu::deleteLastChar(char * str)
+void Menu::deleteLastChar()
 {
-    if(strlen(str) > 0)
+    char * str = NULL;
+    if(selectedOption == 0)
+        str = c_ip;
+    else if(selectedOption == 1)
+        str = s_ip;
+    else if(selectedOption == 2)
+        str = nick;
+
+    if(str != NULL && strlen(str) > 0)
     {
         str[strlen(str)-1] = '\0';
     }
 }
 
-void Menu::addChar(char * str, char c, int max)
+void Menu::addChar(char c)
 {
-    if(strlen(str) < max)
+    char * str = NULL;
+    int16_t max;
+    if(selectedOption == 0)
+    {
+        str = c_ip;
+        max = 15;
+    }
+    else if(selectedOption == 1)
+    {
+        str = s_ip;
+        max = 15;
+    }
+    else if(selectedOption == 2)
+    {
+        str = nick;
+        max = 6;
+    }
+
+    if(str != NULL && strlen(str) < max)
     {
         str[strlen(str)+1] = '\0';
         str[strlen(str)] = c;

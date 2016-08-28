@@ -152,7 +152,6 @@ void Game::processServerEvents()
                     players.push_back(Player(command.playerID, command.posx, command.posy, world.textureHolder.get(Textures::PLAYER_RED)));
                 else
                     players.push_back(Player(command.playerID, command.posx, command.posy, world.textureHolder.get(Textures::PLAYER_GREEN)));
-
             }
             else
             {
