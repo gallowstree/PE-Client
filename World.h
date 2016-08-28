@@ -17,8 +17,8 @@ enum Textures
     PLAYER_RED,
     PLAYER_GREEN,
     BULLET_SMALL,
-    FLOOR_PURPLE_CHESS
-
+    FLOOR_PURPLE_CHESS,
+    SKULL
 };
 
 class World
@@ -31,11 +31,10 @@ public:
     void update(sf::Time elapsedTime);
     void updateProjectiles(const sf::Time &elapsedTime);
     bool findPlayer(int16_t playerID, std::vector<Player> * players);
-    void gameOver(int16_t winner);
+    bool gameOver(int16_t winner);
 
-    sf::Text message;
-    sf::Font messageFont;
-
+    sf::Text goverText[4];
+    sf::Font worldFont;
     static ResourceHolder<sf::Texture, Textures> textureHolder;
 
 private:
@@ -52,6 +51,7 @@ private:
     std::vector<Area*> areas;
     std::vector<std::vector<Entity*>> static_entities;
     std::vector<std::vector<Entity*>> moving_entities;
+    sf::Sprite menuIcon;
 
     void updateCrosshair();
     static void loadTextures();

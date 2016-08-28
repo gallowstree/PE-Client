@@ -17,13 +17,6 @@ players(players),
 projectiles(projectiles)
 {
 
-    messageFont.loadFromFile("files/sansation.ttf");
-    message.setFont(messageFont);
-    message.setCharacterSize(30);
-    message.setColor(sf::Color::White);
-    message.setPosition(50,40);
-    message.setString("");
-
     readMap(0);
 
     int noAreasX = 0;
@@ -49,7 +42,8 @@ projectiles(projectiles)
     createStaticObjects();
     loadTextures();
     cursorSprite.setTexture(textureHolder.get(Textures::CROSSHAIR));
-
+    menuIcon.setTexture(textureHolder.get(Textures::SKULL));
+    worldFont.loadFromFile("files/sansation.ttf");
 }
 
 void World::updateCrosshair()
@@ -66,7 +60,6 @@ void World::loadTextures()
     World::textureHolder.load(Textures::PLAYER_GREEN, "files/sprite2.png");
     World::textureHolder.load(Textures::BULLET_SMALL, "files/small_bullet.png");
     World::textureHolder.load(Textures::FLOOR_PURPLE_CHESS, "files/floor-purple-chess.png");
-
 }
 
 void World::readMap(int map)
@@ -201,17 +194,16 @@ void World::render()
             player.sprite.setOrigin(sf::Vector2f(spriteRect.width / 2, spriteRect.height / 2));
             player.sprite.setRotation(angle);
             window.draw(player.sprite);
-
             player.nickText.setPosition(player.boundingBox.getPosition().x,
                                         player.boundingBox.getPosition().y + player.sprite.getTextureRect().height);
-            player.nickText.setFont(messageFont);
+            player.nickText.setFont(worldFont);
+
             player.nickText.setCharacterSize(14);
             player.nickText.setColor(sf::Color::White);
             window.draw(player.nickText);
         }
 
     }
-    window.draw(message);
     window.draw(cursorSprite);
 }
 
@@ -300,7 +292,99 @@ bool World::findPlayer(int16_t playerID, std::vector<Player> * players)
     return false;
 }
 
-void World::gameOver(int16_t winner)
-{
-    printf("winner%d",winner);
+bool World::gameOver(int16_t winner) {
+    calculateCamCenter();
+    goverText[0].setFont(worldFont);
+    goverText[0].setString("PLAY AGAIN");
+    goverText[0].setPosition(camCenter.x - 95, camCenter.y + 20);
+    goverText[0].setColor(sf::Color::White);
+    goverText[0].setCharacterSize(35);
+
+    goverText[1].setFont(worldFont);
+    goverText[1].setString("EXIT");
+    goverText[1].setPosition(camCenter.x - 40, camCenter.y+ 90);
+    goverText[1].setColor(sf::Color::White);
+    goverText[1].setCharacterSize(35);
+
+    goverText[2].setFont(worldFont);
+    goverText[2].setString("GAME OVER");
+    goverText[2].setPosition(camCenter.x - 270, camCenter.y - 200);
+    goverText[2].setColor(sf::Color::White);
+    goverText[2].setCharacterSize(90);
+
+    goverText[3].setFont(worldFont);
+    goverText[3].setColor(sf::Color::White);
+    goverText[3].setCharacterSize(35);
+
+    sf::RectangleShape alphaback(sf::Vector2f(camera.getSize().x,camera.getSize().y));
+    alphaback.setPosition(camera.getCenter().x - camera.getSize().x / 2, camera.getCenter().y - camera.getSize().y / 2);
+
+
+
+    if (winner == 0) {
+        goverText[3].setString("WINNER: RED TEAM");
+        goverText[3].setPosition(camCenter.x-170,camCenter.y-80);
+        alphaback.setFillColor(sf::Color(255,0,0,50));
+    }
+    else if (winner == 1)
+    {
+        goverText[3].setString("WINNER: GREEN TEAM");
+        goverText[3].setPosition(camCenter.x-185,camCenter.y-80);
+        alphaback.setFillColor(sf::Color(0,255,0,50));
+    }
+    else {
+        goverText[3].setString("DRAW MATCH");
+        goverText[3].setPosition(camCenter.x-115,camCenter.y-80);
+        alphaback.setFillColor(sf::Color(0,0,255,50));
+    }
+
+    int selectedOption =0;
+    bool next = false;
+    bool response = false;
+    while (!next)
+    {
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+            switch (event.type)
+            {
+                case sf::Event::Closed:
+                    window.close();
+                    exit(0);
+                case sf::Event::KeyPressed:
+                    switch (event.key.code)
+                    {
+                        case sf::Keyboard::Key::Up:
+                            if (selectedOption > 0)
+                                selectedOption--;
+                            break;
+                        case sf::Keyboard::Key::Down:
+                            if (selectedOption + 1 < 2)
+                                selectedOption++;
+                            break;
+                        case sf::Keyboard::Key::Return:
+                            if (selectedOption == 0)
+                            {
+                                response = true;
+                            }
+                            next = true;
+                    }
+                default:
+                    break;
+            }
+        }
+
+        window.clear();
+        render();
+        window.draw(alphaback);
+        for (int i = 0; i < 4; i++) {
+            window.draw(goverText[i]);
+            if (i == selectedOption) {
+                menuIcon.setPosition(goverText[i].getPosition().x - 55, goverText[i].getPosition().y + 2);
+            }
+        }
+        window.draw(menuIcon);
+        window.display();
+    }
+    return response;
 }

@@ -114,6 +114,8 @@ void Menu::stage1()
 
 void Menu::stage2()
 {
+    message.setString("");
+    window.setView(window.getDefaultView());
     selectedOption = 0;
 
     mainTitle.setString("IP SETTINGS");
