@@ -29,7 +29,7 @@ int main()
     pthread_create(&listening_thread, nullptr, &ClientSocket::runThread, &cSocket);
     Serialization::shortToChars(c_are_you_there, buffer, 0);
     printf("mandando nick %s\n",menu.nick);
-    memcpy(buffer + 2, menu.nick,strlen(menu.nick));
+    strcpy(buffer + 2, menu.nick);
     sSocket.send(buffer, COMMAND_BUFFER_SIZE);
     sleep(2);
     if (menu.currentStage == 2)
