@@ -19,7 +19,7 @@ projectiles(projectiles)
     message.setCharacterSize(30);
     message.setColor(sf::Color::White);
     message.setPosition(50,40);
-    message.setString("HOLA");
+    message.setString("");
 
     readMap(0);
 
@@ -184,12 +184,16 @@ void World::render()
 
     for (auto &player : *players)
     {
-        double angle = player.rotation * 180/M_PI;
-        sf::IntRect spriteRect = player.sprite.getTextureRect();
-        player.sprite.setPosition(player.boundingBox.left + player.boundingBox.width/2, player.boundingBox.top + player.boundingBox.height/2);
-        player.sprite.setOrigin(sf::Vector2f(spriteRect.width/ 2, spriteRect.height / 2));
-        player.sprite.setRotation(angle);
-        window.draw(player.sprite);
+        if(player.valid)
+        {
+            double angle = player.rotation * 180 / M_PI;
+            sf::IntRect spriteRect = player.sprite.getTextureRect();
+            player.sprite.setPosition(player.boundingBox.left + player.boundingBox.width / 2,
+                                      player.boundingBox.top + player.boundingBox.height / 2);
+            player.sprite.setOrigin(sf::Vector2f(spriteRect.width / 2, spriteRect.height / 2));
+            player.sprite.setRotation(angle);
+            window.draw(player.sprite);
+        }
 
     }
     window.draw(message);

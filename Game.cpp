@@ -154,6 +154,7 @@ void Game::processServerEvents()
                     players.push_back(Player(command.playerID, command.posx, command.posy, world.textureHolder.get(Textures::PLAYER_GREEN)));
 
             }
+            players[command.playerID].valid = command.validPlayer;
             players[command.playerID].boundingBox.left = command.posx;
             players[command.playerID].boundingBox.top = command.posy;
             players[command.playerID].rotation = command.rotation;
@@ -213,7 +214,8 @@ void Game::receiveMessage(char buffer[], size_t nBytes, sockaddr_in* serverAddr)
                 if (playerInfo != -1)
                 {
                     srvCmd.playerID = playerInfo & 0x00FF;
-                    srvCmd.team = (playerInfo & (1<<8)) >> 8;
+                    srvCmd.team = playerInfo & 0x0100;
+                    srvCmd.validPlayer = playerInfo & 0x0200;
                     offset += 2;
                     Serialization::charsToFloat(buffer, srvCmd.posx, offset);
                     offset += 4;

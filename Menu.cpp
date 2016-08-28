@@ -120,30 +120,39 @@ void Menu::stage2()
 
     ipConf[1].setFont(menuFont);
     ipConf[1].setString(s_ip);
-    ipConf[1].setPosition(275,300);
+    ipConf[1].setPosition(275,275);
     ipConf[1].setColor(sf::Color::White);
     ipConf[1].setCharacterSize(35);
 
-
     ipConf[2].setFont(menuFont);
-    ipConf[2].setString("TEST SERVER");
-    ipConf[2].setPosition(290,400);
+    ipConf[2].setString("");
+    ipConf[2].setPosition(275,400);
     ipConf[2].setColor(sf::Color::White);
     ipConf[2].setCharacterSize(35);
 
     ipConf[3].setFont(menuFont);
-    ipConf[3].setString("YOUR IP");
-    ipConf[3].setPosition(320,100);
+    ipConf[3].setString("JOIN SERVER");
+    ipConf[3].setPosition(290,500);
     ipConf[3].setColor(sf::Color::White);
     ipConf[3].setCharacterSize(35);
 
-
     ipConf[4].setFont(menuFont);
-    ipConf[4].setString("SERVER IP");
-    ipConf[4].setPosition(310,250);
+    ipConf[4].setString("YOUR IP");
+    ipConf[4].setPosition(320,100);
     ipConf[4].setColor(sf::Color::White);
     ipConf[4].setCharacterSize(35);
 
+    ipConf[5].setFont(menuFont);
+    ipConf[5].setString("SERVER IP");
+    ipConf[5].setPosition(310,225);
+    ipConf[5].setColor(sf::Color::White);
+    ipConf[5].setCharacterSize(35);
+
+    ipConf[6].setFont(menuFont);
+    ipConf[6].setString("NICKNAME");
+    ipConf[6].setPosition(300,350);
+    ipConf[6].setColor(sf::Color::White);
+    ipConf[6].setCharacterSize(35);
 
     connResultTxt.setCharacterSize(20);
     connResultTxt.setFont(menuFont);
@@ -169,7 +178,7 @@ void Menu::stage2()
                                 selectedOption--;
                             break;
                         case sf::Keyboard::Key::Down:
-                            if (selectedOption + 1 < 3)
+                            if (selectedOption + 1 < 4)
                                 selectedOption++;
                             break;
                         case sf::Keyboard::Key::BackSpace:
@@ -245,7 +254,7 @@ void Menu::stage2()
                                 addChar(s_ip,'.',15);
                             break;
                         case sf::Keyboard::Key::Return:
-                            if(selectedOption == 2)
+                            if(selectedOption == 3)
                             {
                                 selectTeam = true;
                             }
@@ -262,10 +271,10 @@ void Menu::stage2()
         window.clear();
 
         window.draw(mainTitle);
-        for(int i =0; i < 5;i++)
+        for(int i =0; i < 7;i++)
         {
             ipConf[i].setColor(sf::Color::White);
-            if(i < 2)
+            if(i < 3)
             {
                 ipRect.setPosition(ipConf[i].getPosition().x - 10, ipConf[i].getPosition().y + 5);
                 if (selectedOption == i)
@@ -280,7 +289,7 @@ void Menu::stage2()
 
                 window.draw(ipRect);
             }
-            if(selectedOption == 2 && i == selectedOption)
+            if(selectedOption == 3 && i == selectedOption)
             {
                 menuIcon.setPosition(ipConf[i].getPosition().x - 55, ipConf[i].getPosition().y + 2);
                 window.draw(menuIcon);

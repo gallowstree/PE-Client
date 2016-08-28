@@ -14,6 +14,7 @@
 class Player : public Entity {
     public:
         int16_t playerID;
+        bool valid = 0;
         float rotation = 0;
         sf::Sprite sprite;
 

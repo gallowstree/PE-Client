@@ -34,7 +34,7 @@ private:
     sf::Texture	menuIconTexture;
     sf::Sprite menuIcon;
     sf::Text menu[MENU_SIZE];
-    sf::Text ipConf[5];
+    sf::Text ipConf[7];
     sf::Text mainTitle;
     sf::Text connResultTxt;
     sf::Font menuFont;
