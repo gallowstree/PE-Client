@@ -25,6 +25,8 @@ window(window)
         fprintf(stderr, "Could not compile regex\n");
         exit(1);
     }
+
+    nick = (char *)malloc(sizeof(char)*7);
 }
 
 void Menu::run(int stage)
@@ -169,7 +171,8 @@ void Menu::stage2()
     sf::RectangleShape ipRect(sf::Vector2f(260,35));
     ipRect.setFillColor(sf::Color::White);
     bool selectTeam = false;
-    nick = (char *)calloc(7,sizeof(char));
+
+    memset(nick,0,7);
 
     while (!selectTeam)
     {

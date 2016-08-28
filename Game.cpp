@@ -219,12 +219,9 @@ void Game::receiveMessage(char buffer[], size_t nBytes, sockaddr_in* serverAddr)
                     Serialization::charsToFloat(buffer, srvCmd.rotation, offset);
                     offset += 4;
 
-
-                    memset(srvCmd.nickname, 0, 7);
+                    memset(srvCmd.nickname, 0, 6);
                     strcpy(srvCmd.nickname, buffer + offset);
-                    printf("nickname: %s\n", srvCmd.nickname);
                     offset += strlen(srvCmd.nickname) + 1;
-
                     pthread_mutex_lock(&commandQueueMutex);
                     commandQueue.push(srvCmd);
                     pthread_mutex_unlock(&commandQueueMutex);
