@@ -154,6 +154,13 @@ void Game::processServerEvents()
                     players.push_back(Player(command.playerID, command.posx, command.posy, world.textureHolder.get(Textures::PLAYER_GREEN)));
 
             }
+            else
+            {
+                if(command.team == 0)
+                    players[command.playerID].setTexture( world.textureHolder.get(Textures::PLAYER_RED));
+                else
+                    players[command.playerID].setTexture( world.textureHolder.get(Textures::PLAYER_GREEN));
+            }
             players[command.playerID].valid = command.validPlayer;
             players[command.playerID].boundingBox.left = command.posx;
             players[command.playerID].boundingBox.top = command.posy;
