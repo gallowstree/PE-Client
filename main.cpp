@@ -33,8 +33,10 @@ int main()
     sSocket.send(buffer, COMMAND_BUFFER_SIZE);
     sleep(2);
     if (menu.currentStage == 2)
+    {
+        pthread_cancel(listening_thread);
         goto loopStage2;
-
+    }
     cSocket.timeout = 0;
     menu.run(3);
 
@@ -45,6 +47,7 @@ int main()
     game.run();
     if(game.restart)
     {
+        pthread_cancel(listening_thread);
         cSocket.listener = &menu;
         goto loopStage2;
     }
