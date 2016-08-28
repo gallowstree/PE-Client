@@ -27,6 +27,7 @@ window(window)
     }
 
     nick = (char *)malloc(sizeof(char)*7);
+    memset(nick,0,7);
 }
 
 void Menu::run(int stage)
@@ -174,8 +175,6 @@ void Menu::stage2()
     sf::RectangleShape ipRect(sf::Vector2f(260,35));
     ipRect.setFillColor(sf::Color::White);
     bool selectTeam = false;
-
-    memset(nick,0,7);
 
     while (!selectTeam)
     {
