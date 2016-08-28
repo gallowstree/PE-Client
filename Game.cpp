@@ -33,6 +33,15 @@ void Game::run()
     bool should_render = true;
     while (!gameOver)
     {
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+            switch (event.type) {
+                case sf::Event::Closed:
+                    window.close();
+                    exit(0);
+            }
+        }
         sf::Time elapsedTime = clock.restart();
         timeSinceLastUpdate += elapsedTime;
         timeSinceLastProjectileUpdate += elapsedTime;
