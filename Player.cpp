@@ -12,6 +12,8 @@ sprite()
     type = EntityType::Player_T;
     boundingBox = BoundingBox(posx, posy, 50, 50);
     sprite.setTexture(texture);
+    nick = "nickolas";
+    nickText.setString(nick);
 }
 
 void Player::setTexture(const sf::Texture &texture)
