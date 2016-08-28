@@ -36,6 +36,9 @@ void ClientSocket::run()
     if (setsockopt(udpSocket,SOL_SOCKET,SO_REUSEADDR,&reuse,sizeof(int))) {
         printf("Error reusando socket %s\n",strerror(errno));
     }
+    if (setsockopt(udpSocket,SOL_SOCKET,SO_REUSEPORT,&reuse,sizeof(int))) {
+        printf("Error reusando socket %s\n",strerror(errno));
+    }
 
     bind(udpSocket, (struct sockaddr *) &clientAddr, sizeof(clientAddr));
 
@@ -62,6 +65,7 @@ void ClientSocket::run()
             listener->receiveMessage(buffer, nBytes, &serverAddr);
         }
     }
+    printf("bye bye\n");
 }
 
 void *ClientSocket::runThread(void *clientSocket) {
