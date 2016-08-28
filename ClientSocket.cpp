@@ -46,7 +46,9 @@ void ClientSocket::run()
             printf("Error seteando timeout %s\n",strerror(errno));
         }
 
-        if(recvfrom(udpSocket, buffer, COMMAND_BUFFER_SIZE, 0, (struct sockaddr *)&serverAddr, &addr_size) < 0)
+        nBytes = recvfrom(udpSocket, buffer, COMMAND_BUFFER_SIZE, 0, (struct sockaddr *)&serverAddr, &addr_size);
+
+        if(nBytes < 0)
         {
             Serialization::shortToChars(-1,buffer,0);
         }

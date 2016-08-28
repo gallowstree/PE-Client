@@ -35,8 +35,6 @@ projectiles(projectiles)
         {
             Area* newArea = new Area(x*area_size, y*area_size, area_size, area_size);
             areas.push_back(newArea);
-            static_entities.push_back(std::vector<Entity*>());
-            moving_entities.push_back(std::vector<Entity*>());
         }
     }
 
@@ -116,6 +114,9 @@ void World::calculateCamCenter()
             camCenter.y = window.getSize().y / 2;
         else if (pVector[playerID].sprite.getPosition().y > bounds.height - window.getSize().y / 2)
             camCenter.y = pVector[playerID].sprite.getPosition().y;//bounds.height - 300;
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
+            camCenter = window.mapPixelToCoords((sf::Mouse::getPosition(window)));
     }
 }
 
@@ -128,7 +129,8 @@ void World::createStaticObjects()
         {
             for (auto& area : areasForEntity(entity))
             {
-                static_entities[area].push_back(&entity);
+                //static_entities[area].push_back(&entity);
+                areas[area]->walls.push_back(&entity);
             }
         }
     }
@@ -228,12 +230,16 @@ void World::updateProjectiles(const sf::Time &elapsedTime) {
 
 void World::indexMovingEntities()
 {
-    moving_entities.clear();
+    for (auto& area: areas)
+    {
+        area->moving_entities.clear();
+    }
+
     for (auto& entity : *players)
     {
         for (auto& area : areasForEntity(entity))
         {
-            moving_entities[area].push_back(&entity);
+            areas[area]->moving_entities.push_back(&entity);
         }
     }
 }
@@ -243,7 +249,7 @@ void World::checkProjectileCollisions(Projectile &proj)
     if (!proj.valid) return;
     for (auto& area: areasForEntity(proj))
     {
-        for (auto& other_entity : static_entities[area])
+        for (auto& other_entity : areas[area]->walls)
         {
             sf::FloatRect intersection;
             if (other_entity->boundingBox.intersects(proj.boundingBox, intersection))
@@ -253,7 +259,7 @@ void World::checkProjectileCollisions(Projectile &proj)
         }
         if (!proj.valid) return;
 
-        for (auto& target : moving_entities[area])
+        for (auto& target : areas[area]->moving_entities)
         {
             sf::FloatRect intersection;
             if (target->boundingBox.intersects(proj.boundingBox, intersection))

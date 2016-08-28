@@ -18,6 +18,7 @@ public:
     std::vector<Entity*> walls;
     std::vector<Entity*> pickups;
     std::vector<Entity*> floors;
+    std::vector<Entity*> moving_entities;
 };
 
 

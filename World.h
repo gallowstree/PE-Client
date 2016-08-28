@@ -51,8 +51,6 @@ private:
     std::vector<Entity> world_entities;
     std::vector<const char *> maps = {"maps/level1.txt","maps/level2.txt"};
     std::vector<Area*> areas;
-    std::vector<std::vector<Entity*>> static_entities;
-    std::vector<std::vector<Entity*>> moving_entities;
     sf::Sprite menuIcon;
 
     void updateCrosshair();

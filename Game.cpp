@@ -188,6 +188,9 @@ void Game::processServerEvents()
 
 void Game::receiveMessage(char buffer[], size_t nBytes, sockaddr_in* serverAddr)
 {
+    if (nBytes == 0)
+        return;
+
     int32_t  msgNum;
     short offset = 0;
     Serialization::charsToInt(buffer,msgNum,offset);
