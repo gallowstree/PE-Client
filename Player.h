@@ -21,7 +21,7 @@ class Player : public Entity {
         sf::Text nickText;
 
 
-        Player(int16_t playerID,float posx,float posy,sf::Texture &texture);
+        Player(int16_t playerID,float posx,float posy,sf::Texture &texture, const char* nick);
         void setTexture(const sf::Texture &texture);
 };
 

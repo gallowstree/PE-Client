@@ -147,11 +147,9 @@ void Game::processServerEvents()
 
             if(!world.findPlayer(command.playerID,&players))
             {
-
-                if(command.team == 0)
-                    players.push_back(Player(command.playerID, command.posx, command.posy, world.textureHolder.get(Textures::PLAYER_RED)));
-                else
-                    players.push_back(Player(command.playerID, command.posx, command.posy, world.textureHolder.get(Textures::PLAYER_GREEN)));
+                char * nick = (char *)calloc(strlen(command.nickname)+1, sizeof(char));
+                strcpy(nick,command.nickname);
+                players.push_back(Player(command.playerID, command.posx, command.posy, world.textureHolder.get(command.team == 0 ? Textures::PLAYER_RED : Textures::PLAYER_GREEN) , nick));
             }
             else
             {
@@ -220,6 +218,13 @@ void Game::receiveMessage(char buffer[], size_t nBytes, sockaddr_in* serverAddr)
                     offset += 4;
                     Serialization::charsToFloat(buffer, srvCmd.rotation, offset);
                     offset += 4;
+
+
+                    memset(srvCmd.nickname, 0, 7);
+                    strcpy(srvCmd.nickname, buffer + offset);
+                    printf("nickname: %s\n", srvCmd.nickname);
+                    offset += strlen(srvCmd.nickname) + 1;
+
                     pthread_mutex_lock(&commandQueueMutex);
                     commandQueue.push(srvCmd);
                     pthread_mutex_unlock(&commandQueueMutex);
