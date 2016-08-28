@@ -178,18 +178,7 @@ void Game::processServerEvents()
         }
         else if (command.type == s_game_over)
         {
-            if(command.team == 0)
-            {
-                world.message.setString("FIN DEL JUEGO, GANO EQUIPO ROJO");
-            }
-            else if (command.team == 1)
-            {
-                world.message.setString("FIN DEL JUEGO, GANO EQUIPO VERDE");
-            }
-            else
-            {
-                world.message.setString("FIN DEL JUEGO, EMPATE");
-            }
+            world.gameOver(command.team);
         }
     }
     pthread_mutex_unlock(&commandQueueMutex);

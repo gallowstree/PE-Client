@@ -292,3 +292,8 @@ bool World::findPlayer(int16_t playerID, std::vector<Player> * players)
     }
     return false;
 }
+
+void World::gameOver(int16_t winner)
+{
+    printf("winner%d",winner);
+}

@@ -24,8 +24,6 @@ void runMenu(ServerSocket &sSocket, ClientSocket &cSocket)
 
 int main()
 {
-
-    /*****************MENU******************/
     Menu menu(mWindow);
     menu.run(1);
     loopStage2:
@@ -37,7 +35,6 @@ int main()
     pthread_create(&listening_thread, nullptr, &ClientSocket::runThread, &cSocket);
     Serialization::shortToChars(c_are_you_there, buffer, 0);
     memcpy(buffer + 2, menu.nick,strlen(menu.nick));
-    printf("el nick %s",menu.nick);
     sSocket.send(buffer, COMMAND_BUFFER_SIZE);
     sleep(2);
     if (menu.currentStage == 2)
@@ -51,6 +48,9 @@ int main()
     cSocket.listener = &game;
     game.getID();
     game.run();
+    if(game.restart)
+        goto loopStage2;
+
     return 0;
 }
 
