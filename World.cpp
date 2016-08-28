@@ -122,15 +122,20 @@ void World::calculateCamCenter()
 
 void World::createStaticObjects()
 {
-
     for (auto& entity : world_entities)
     {
         if (entity.type == EntityType::Wall_T)
         {
             for (auto& area : areasForEntity(entity))
             {
-                //static_entities[area].push_back(&entity);
                 areas[area]->walls.push_back(&entity);
+            }
+        }
+        else if (entity.type == EntityType::FloorSection_T)
+        {
+            for (auto& area : areasForEntity(entity))
+            {
+                areas[area]->floors.push_back(&entity);
             }
         }
     }
@@ -166,15 +171,6 @@ void World::render()
         {
             area->draw(window, true);
         }
-    }
-
-    for (const auto &staticEntity : world_entities)
-    {
-        auto drawRect = sf::RectangleShape(sf::Vector2f(staticEntity.boundingBox.width, staticEntity.boundingBox.height));
-        drawRect.setPosition(staticEntity.boundingBox.left, staticEntity.boundingBox.top);
-        drawRect.setFillColor(sf::Color(144,144,144));
-
-        window.draw(drawRect);
     }
 
     window.setView(camera);

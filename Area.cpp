@@ -27,10 +27,18 @@ void Area::draw(sf::RenderTarget &window, bool debugGrid)
         sprite.setPosition(rect.left, rect.top);
         window.draw(sprite);
     }
+
+    for (auto& wall: walls)
+    {
+        auto drawRect = sf::RectangleShape(sf::Vector2f(wall->boundingBox.width, wall->boundingBox.height));
+        drawRect.setPosition(wall->boundingBox.left, wall->boundingBox.top);
+        drawRect.setFillColor(sf::Color(144,144,144));
+
+        window.draw(drawRect);
+    }
 }
 
 Area::Area(float d, float d1, float d2, float d3)
 {
     rect = sf::FloatRect(d, d1, d2, d3);
-    floors.push_back(new Entity());
 }
