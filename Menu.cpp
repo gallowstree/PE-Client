@@ -115,6 +115,7 @@ void Menu::stage1()
 void Menu::stage2()
 {
     message.setString("");
+    connResult = 0;
     window.setView(window.getDefaultView());
     selectedOption = 0;
 
