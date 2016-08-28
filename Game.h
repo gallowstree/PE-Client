@@ -41,6 +41,8 @@ private:
     char buffer[COMMAND_BUFFER_SIZE];
     int moves = 0;
     int msgnm = 0;
+    bool gameOver = false;
+    int16_t gameOverCode = 0;
     float rotation = 0;
 
     void sendCommands();

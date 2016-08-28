@@ -16,12 +16,6 @@ const int c_port = 50421;
 
 sf::RenderWindow mWindow(sf::VideoMode(800, 600), "President Evil", sf::Style::Close);
 
-
-void runMenu(ServerSocket &sSocket, ClientSocket &cSocket)
-{
-
-}
-
 int main()
 {
     Menu menu(mWindow);
@@ -49,8 +43,10 @@ int main()
     game.getID();
     game.run();
     if(game.restart)
+    {
+        menu = Menu(mWindow);
         goto loopStage2;
-
+    }
     return 0;
 }
 

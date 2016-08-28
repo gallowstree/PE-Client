@@ -31,8 +31,7 @@ void Game::run()
 
     window.setVerticalSyncEnabled(true);
     bool should_render = true;
-
-    while (window.isOpen())
+    while (!gameOver)
     {
         sf::Time elapsedTime = clock.restart();
         timeSinceLastUpdate += elapsedTime;
@@ -42,7 +41,6 @@ void Game::run()
             timeSinceLastUpdate -= TimePerFrame;
             processServerEvents();
             processEvents();
-
             //if (window.hasFocus())
             sendCommands();
             should_render = true;
@@ -64,6 +62,7 @@ void Game::run()
         }
 
     }
+    restart = world.gameOver(gameOverCode);
 }
 
 void Game::sendCommands()
@@ -178,7 +177,8 @@ void Game::processServerEvents()
         }
         else if (command.type == s_game_over)
         {
-            world.gameOver(command.team);
+            gameOver = true;
+            gameOverCode = command.team;
         }
     }
     pthread_mutex_unlock(&commandQueueMutex);
