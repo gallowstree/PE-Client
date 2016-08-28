@@ -44,7 +44,6 @@ int main()
     game.run();
     if(game.restart)
     {
-        menu = Menu(mWindow);
         goto loopStage2;
     }
     return 0;
