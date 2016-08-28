@@ -14,22 +14,22 @@ position(position),
 origin(origin),
 valid(true),
 playerId(playerId),
-projectile(sf::Vector2f(6,6))
+sprite()
 {
     boundingBox = BoundingBox(position.x, position.y, 6, 6);
     sf::Vector2f facing = position - origin;
     float rads = atan2f(facing.y, facing.x);
     velocity = sf::Vector2f(speed * cosf(rads), speed * sinf(rads));
-    projectile.setFillColor(sf::Color::Yellow);
+    //sprite.setFillColor(sf::Color::Yellow);
     angle  = rads * 180/M_PI;
-    projectile.setRotation(angle);
-    projectile.setPosition(position);
+    sprite.setRotation(angle);
+    sprite.setPosition(position);
 }
 
 void  Projectile::update  (sf::Time elapsedTime)
 {
     position += velocity * elapsedTime.asSeconds();
-    projectile.setPosition(position);
+    sprite.setPosition(position);
     boundingBox.left = position.x;
     boundingBox.top = position.y;
 

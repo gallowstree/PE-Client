@@ -61,6 +61,8 @@ void World::loadTextures()
     textureHolder.load(Textures::CROSSHAIR, "files/crosshair.png");
     textureHolder.load(Textures::PLAYER_RED, "files/sprite.png");
     textureHolder.load(Textures::PLAYER_GREEN, "files/sprite2.png");
+    textureHolder.load(Textures::SMALL_BULLET, "files/small_bullet.png");
+
 }
 
 void World::readMap(int map)
@@ -179,7 +181,7 @@ void World::render()
     for(auto const &projectile : *projectiles)
     {
         if(projectile.second.valid)
-            window.draw(projectile.second.projectile);
+            window.draw(projectile.second.sprite);
     }
 
     for (auto &player : *players)
@@ -193,6 +195,12 @@ void World::render()
             player.sprite.setOrigin(sf::Vector2f(spriteRect.width / 2, spriteRect.height / 2));
             player.sprite.setRotation(angle);
             window.draw(player.sprite);
+
+            player.nickText.setPosition(player.boundingBox.getPosition().x, player.boundingBox.getPosition().y - 20);
+            player.nickText.setFont(messageFont);
+            player.nickText.setCharacterSize(14);
+            player.nickText.setColor(sf::Color::White);
+            window.draw(player.nickText);
         }
 
     }

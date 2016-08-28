@@ -18,7 +18,7 @@ class Projectile : public Entity {
     sf::Vector2f position;
     sf::Vector2f origin;
     bool  valid;
-    sf::RectangleShape projectile;
+    sf::Sprite sprite;
 
     Projectile(int16_t bulletID,int16_t type,  sf::Vector2f position,sf::Vector2f origin, int16_t playerId);
     void update(sf::Time elapsedTime);
@@ -26,10 +26,9 @@ class Projectile : public Entity {
 
     private:
         sf::Vector2f velocity;
-        float range = 700;
-        float speed = 800;
+        float range = 1000;
+        float speed = 1000;
         float angle;
-
 
 };
 

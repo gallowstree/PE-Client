@@ -17,6 +17,8 @@ class Player : public Entity {
         bool valid = 0;
         float rotation = 0;
         sf::Sprite sprite;
+        const char * nick;
+        sf::Text nickText;
 
 
         Player(int16_t playerID,float posx,float posy,sf::Texture &texture);
