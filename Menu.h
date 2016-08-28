@@ -27,6 +27,8 @@ public:
     char * nick;
     int currentStage = 0;
     int16_t selectedTeam = 0;
+    int16_t connResult = 0;
+    sf::Text message;
 
 
 private:
@@ -39,13 +41,11 @@ private:
     sf::Text menu[MENU_SIZE];
     sf::Text ipConf[7];
     sf::Text mainTitle;
-    sf::Text message;
     sf::Font menuFont;
     sf::Sprite team[2];
     sf::Texture teamTexture1;
     sf::Texture teamTexture2;
     sf::Text currentPlayers[2];
-    int16_t connResult = 0;
     void deleteLastChar();
     void addChar(char c);
     void readConfig();

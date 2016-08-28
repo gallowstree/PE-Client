@@ -31,6 +31,11 @@ void ClientSocket::run()
     clientAddr.sin_addr.s_addr = inet_addr(ip);
     memset(clientAddr.sin_zero, '\0', sizeof clientAddr.sin_zero);
 
+    int reuse = 1;
+
+    if (setsockopt(udpSocket,SOL_SOCKET,SO_REUSEADDR,&reuse,sizeof(int))) {
+        printf("Error reusando socket %s\n",strerror(errno));
+    }
 
     bind(udpSocket, (struct sockaddr *) &clientAddr, sizeof(clientAddr));
 

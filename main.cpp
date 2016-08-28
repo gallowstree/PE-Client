@@ -48,6 +48,8 @@ int main()
     game.run();
     if(game.restart)
     {
+        menu.message.setString("");
+        menu.connResult = 0;
         pthread_cancel(listening_thread);
         cSocket.listener = &menu;
         goto loopStage2;
