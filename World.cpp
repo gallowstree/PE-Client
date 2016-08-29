@@ -197,13 +197,26 @@ void World::render()
             player.sprite.setOrigin(sf::Vector2f(spriteRect.width / 2, spriteRect.height / 2));
             player.sprite.setRotation(angle);
             window.draw(player.sprite);
-            player.nickText.setPosition(player.boundingBox.getPosition().x,
-                                        player.boundingBox.getPosition().y + player.sprite.getTextureRect().height);
+            player.nickText.setPosition(player.boundingBox.getPosition().x + player.boundingBox.getSize().x / 2 - player.nickText.getLocalBounds().width / 2,
+                                        player.boundingBox.getPosition().y + player.sprite.getTextureRect().height -7 );
             player.nickText.setFont(worldFont);
 
             player.nickText.setCharacterSize(14);
             player.nickText.setColor(sf::Color::White);
+
+            player.healthWrapper.setPosition(player.boundingBox.getPosition().x + 6,player.boundingBox.getPosition().y + player.sprite.getTextureRect().height -12);
+            player.healthBox.setPosition(player.healthWrapper.getPosition().x,player.healthWrapper.getPosition().y);
+
+            player.healthBox.setSize(sf::Vector2f(player.health * 40 / 100,2));
+            if(player.health >= 75 && player.health <= 100)
+                player.healthBox.setFillColor(sf::Color::Green);
+            else if(player.health >= 50 && player.health < 75)
+                player.healthBox.setFillColor(sf::Color::Yellow);
+            else
+                player.healthBox.setFillColor(sf::Color::Red);
             window.draw(player.nickText);
+            window.draw(player.healthWrapper);
+            window.draw(player.healthBox);
         }
 
     }
