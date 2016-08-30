@@ -226,7 +226,8 @@ void World::render()
                 player.sprite.setRotation(0);
                 player.sprite.setTexture(textureHolder.get(player.team == 0 ? Textures::RED_DEAD : Textures::GREEN_DEAD), true);
             }
-
+            player.nickText.setPosition(player.boundingBox.getPosition().x + player.boundingBox.getSize().x / 2 - player.nickText.getLocalBounds().width / 2,
+                                        player.boundingBox.getPosition().y + player.sprite.getTextureRect().height -7 );
 
             window.draw(player.nickText);
         }
