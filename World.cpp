@@ -8,6 +8,8 @@
 #include "FloorSection.h"
 #include <fstream>
 #include <math.h>
+#include <sstream>
+
 
 
 ResourceHolder<sf::Texture, Textures> World::textureHolder;
@@ -18,7 +20,7 @@ players(players),
 projectiles(projectiles)
 {
 
-    readMap(0);
+    readMap2(0);
 
     int noAreasX = 0;
     int noAreasY = 0;
@@ -58,46 +60,53 @@ void World::loadTextures()
     World::textureHolder.load(Textures::PLAYER_GREEN, "files/sprite2.png");
     World::textureHolder.load(Textures::BULLET_SMALL, "files/small_bullet.png");
     World::textureHolder.load(Textures::FLOOR_PURPLE_CHESS, "files/floor-purple-chess.png");
+    World::textureHolder.load(Textures::FLOOR_BLUE_BRICK, "files/floor-blue-brick.png");
     World::textureHolder.load(Textures::SKULL, "files/skull-icon.png");
     World::textureHolder.load(Textures::RED_DEAD, "files/red_dead.png");
     World::textureHolder.load(Textures::GREEN_DEAD, "files/green_dead.png");
 }
 
-void World::readMap(int map)
+
+void World::readMap2(int map)
 {
     std::ifstream mapFile(maps[map]);
     std::string line = "";
 
-    std::getline(mapFile, line);
-    bounds.width = this->parseMapParameter(line);
-    bounds.height = this->parseMapParameter(line);
-    area_size = atoi(line.c_str());
-
-
     while (std::getline(mapFile, line))
     {
-        int objectType = parseMapParameter(line);
-        int left =  parseMapParameter(line);
-        int top =  parseMapParameter(line);
-        int width =   parseMapParameter(line);
-        int height =  atoi(line.c_str());
+        std::vector<const char*> params;
+        std::stringstream ss(line);
+        std::string item;
+        while (getline(ss, item, ','))
+        {
+            auto paramString = (char *) malloc(item.length());
+            strcpy(paramString, item.c_str());
+            params.push_back(paramString);
+        }
 
-        if (objectType == 0) //wall
-            world_entities.push_back(Wall(left, top, width, height));
-        else if (objectType == 1) //floor
-            world_entities.push_back(FloorSection(Textures::FLOOR_PURPLE_CHESS));
+        if (strncmp(params[0], "1", strlen(params[0])) == 0) //World info
+        {
+            bounds.width  = atoi(params[1]);
+            bounds.height = atoi(params[2]);
+            area_size     = atoi(params[3]);
+
+            printf("%f, %f, %f \n", bounds.width, bounds.height, area_size);
+        }
+        else if (strncmp(params[0], "0", strlen(params[0])) == 0) //Wall
+        {
+            world_entities.push_back(new Wall(atoi(params[1]), atoi(params[2]), atoi(params[3]), atoi(params[4])));
+        }
+        else if (strncmp(params[0], "2", strlen(params[0])) == 0)//Floor
+        {
+            world_entities.push_back(new FloorSection(atoi(params[5]), atoi(params[1]), atoi(params[2]), atoi(params[3]), atoi(params[4])));
+        }
+
+        for (auto& param : params)
+        {
+            free((void *)param);
+        }
     }
-}
 
-int World::parseMapParameter(std::string & line)
-{
-    auto commaPos = line.find(',');
-    char * parameter = (char *)malloc((commaPos+1)*sizeof(char));
-    strcpy(parameter,line.substr(0,commaPos).c_str());
-    line.erase(0, line.find(',') + 1);
-    int value = atoi(parameter);
-    free(parameter);
-    return value;
 }
 
 void World::calculateCamCenter()
@@ -124,15 +133,20 @@ void World::calculateCamCenter()
 
 void World::createStaticObjects()
 {
-
     for (auto& entity : world_entities)
     {
-        if (entity.type == EntityType::Wall_T)
+        if (entity->type == EntityType::Wall_T)
         {
-            for (auto& area : areasForEntity(entity))
+            for (auto& area : areasForEntity(*entity))
             {
-                //static_entities[area].push_back(&entity);
-                areas[area]->walls.push_back(&entity);
+                areas[area]->walls.push_back(entity);
+            }
+        }
+        else if (entity->type == EntityType::FloorSection_T)
+        {
+            for (auto& area : areasForEntity(*entity))
+            {
+                areas[area]->floors.push_back((FloorSection*)entity);
             }
         }
     }
@@ -168,15 +182,6 @@ void World::render()
         {
             area->draw(window, true);
         }
-    }
-
-    for (const auto &staticEntity : world_entities)
-    {
-        auto drawRect = sf::RectangleShape(sf::Vector2f(staticEntity.boundingBox.width, staticEntity.boundingBox.height));
-        drawRect.setPosition(staticEntity.boundingBox.left, staticEntity.boundingBox.top);
-        drawRect.setFillColor(sf::Color(144,144,144));
-
-        window.draw(drawRect);
     }
 
     window.setView(camera);

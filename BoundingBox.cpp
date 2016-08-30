@@ -13,7 +13,7 @@ sf::Vector2f BoundingBox::getSize()
     return sf::Vector2f(width, height);
 }
 
-BoundingBox::BoundingBox(float left, float top, int width, int height) : sf::FloatRect(left, top, width, height) {
+BoundingBox::BoundingBox(float left, float top, float width, float height) : sf::FloatRect(left, top, width, height) {
 
 }
 

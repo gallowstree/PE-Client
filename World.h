@@ -5,23 +5,15 @@
 #ifndef TEST_CLIENT_WORLD_H
 #define TEST_CLIENT_WORLD_H
 
-
+#include "Textures.h"
 #include "Player.h"
 #include "ResourceHolder.h"
 #include "Projectile.h"
+#include "FloorSection.h"
 #include "Area.h"
 
-enum Textures
-{
-    CROSSHAIR,
-    PLAYER_RED,
-    PLAYER_GREEN,
-    BULLET_SMALL,
-    FLOOR_PURPLE_CHESS,
-    SKULL,
-    RED_DEAD,
-    GREEN_DEAD
-};
+class Area;
+
 
 class World
 {
@@ -44,26 +36,25 @@ public:
 private:
     std::vector<Player> * players;
     std::map<int16_t,Projectile> * projectiles;
-    int parseMapParameter(std::string & line);
     sf::FloatRect bounds;
     float area_size;
     sf::View camera;
     sf::Sprite cursorSprite;
     sf::Vector2f camCenter;
-    std::vector<Entity> world_entities;
+    std::vector<Entity*> world_entities;
     std::vector<const char *> maps = {"maps/level1.txt","maps/level2.txt"};
     std::vector<Area*> areas;
     sf::Sprite menuIcon;
 
     void updateCrosshair();
-
-    void readMap(int map);
     void calculateCamCenter();
     void createStaticObjects();
     void deleteInvalidProjectiles();
     void checkProjectileCollisions(Projectile &proj);
     void indexMovingEntities();
     std::vector<int16_t> areasForEntity(const Entity &entity);
+
+    void readMap2(int map);
 
 };
 
