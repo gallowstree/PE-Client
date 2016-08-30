@@ -17,6 +17,9 @@ public:
     Textures getTexture();
 
     FloorSection(int texture, float left, float top, float width, float height);
+
+
+
 private:
     int texture;
 };

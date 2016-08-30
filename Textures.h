@@ -13,7 +13,9 @@ enum Textures
     BULLET_SMALL,
     FLOOR_PURPLE_CHESS,
     FLOOR_BLUE_BRICK,
-    SKULL
+    SKULL,
+    RED_DEAD,
+    GREEN_DEAD
 };
 
 #endif //TEST_CLIENT_TEXTURES_H

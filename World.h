@@ -14,6 +14,7 @@
 
 class Area;
 
+
 class World
 {
 public:
@@ -40,7 +41,7 @@ private:
     sf::View camera;
     sf::Sprite cursorSprite;
     sf::Vector2f camCenter;
-    std::vector<Entity> world_entities;
+    std::vector<Entity*> world_entities;
     std::vector<const char *> maps = {"maps/level1.txt","maps/level2.txt"};
     std::vector<Area*> areas;
     sf::Sprite menuIcon;

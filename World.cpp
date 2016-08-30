@@ -62,6 +62,8 @@ void World::loadTextures()
     World::textureHolder.load(Textures::FLOOR_PURPLE_CHESS, "files/floor-purple-chess.png");
     World::textureHolder.load(Textures::FLOOR_BLUE_BRICK, "files/floor-blue-brick.png");
     World::textureHolder.load(Textures::SKULL, "files/skull-icon.png");
+    World::textureHolder.load(Textures::RED_DEAD, "files/red_dead.png");
+    World::textureHolder.load(Textures::GREEN_DEAD, "files/green_dead.png");
 }
 
 
@@ -92,11 +94,11 @@ void World::readMap2(int map)
         }
         else if (strncmp(params[0], "0", strlen(params[0])) == 0) //Wall
         {
-            world_entities.push_back(Wall(atoi(params[1]), atoi(params[2]), atoi(params[3]), atoi(params[4])));
+            world_entities.push_back(new Wall(atoi(params[1]), atoi(params[2]), atoi(params[3]), atoi(params[4])));
         }
         else if (strncmp(params[0], "2", strlen(params[0])) == 0)//Floor
         {
-            world_entities.push_back( FloorSection(atoi(params[5]), atoi(params[1]), atoi(params[2]), atoi(params[3]), atoi(params[4])));
+            world_entities.push_back(new FloorSection(atoi(params[5]), atoi(params[1]), atoi(params[2]), atoi(params[3]), atoi(params[4])));
         }
 
         for (auto& param : params)
@@ -133,18 +135,18 @@ void World::createStaticObjects()
 {
     for (auto& entity : world_entities)
     {
-        if (entity.type == EntityType::Wall_T)
+        if (entity->type == EntityType::Wall_T)
         {
-            for (auto& area : areasForEntity(entity))
+            for (auto& area : areasForEntity(*entity))
             {
-                areas[area]->walls.push_back(&entity);
+                areas[area]->walls.push_back(entity);
             }
         }
-        else if (entity.type == EntityType::FloorSection_T)
+        else if (entity->type == EntityType::FloorSection_T)
         {
-            for (auto& area : areasForEntity(entity))
+            for (auto& area : areasForEntity(*entity))
             {
-                areas[area]->floors.push_back((FloorSection*)&entity);
+                areas[area]->floors.push_back((FloorSection*)entity);
             }
         }
     }
@@ -211,17 +213,26 @@ void World::render()
 
             player.healthWrapper.setPosition(player.boundingBox.getPosition().x + 6,player.boundingBox.getPosition().y + player.sprite.getTextureRect().height -12);
             player.healthBox.setPosition(player.healthWrapper.getPosition().x,player.healthWrapper.getPosition().y);
+            if(player.health > 0)
+            {
+                player.healthBox.setSize(sf::Vector2f(player.health * 40 / 100, 2));
+                if (player.health >= 75 && player.health <= 100)
+                    player.healthBox.setFillColor(sf::Color::Green);
+                else if (player.health >= 50 && player.health < 75)
+                    player.healthBox.setFillColor(sf::Color::Yellow);
+                else
+                    player.healthBox.setFillColor(sf::Color::Red);
 
-            player.healthBox.setSize(sf::Vector2f(player.health * 40 / 100,2));
-            if(player.health >= 75 && player.health <= 100)
-                player.healthBox.setFillColor(sf::Color::Green);
-            else if(player.health >= 50 && player.health < 75)
-                player.healthBox.setFillColor(sf::Color::Yellow);
+                window.draw(player.healthWrapper);
+                window.draw(player.healthBox);
+            }
             else
-                player.healthBox.setFillColor(sf::Color::Red);
+            {
+                player.sprite.setTexture(textureHolder.get(player.team == 0 ? Textures::RED_DEAD : Textures::GREEN_DEAD), true);
+            }
+
+
             window.draw(player.nickText);
-            window.draw(player.healthWrapper);
-            window.draw(player.healthBox);
         }
 
     }
