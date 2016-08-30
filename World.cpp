@@ -223,7 +223,8 @@ void World::render()
             }
             else
             {
-                player.sprite.setTexture(textureHolder.get(player. == 0 ? Textures::RED_DEAD : Textures::GREEN_DEAD));
+                player.sprite.setRotation(0);
+                player.sprite.setTexture(textureHolder.get(player.team == 0 ? Textures::RED_DEAD : Textures::GREEN_DEAD), true);
             }
 
 
