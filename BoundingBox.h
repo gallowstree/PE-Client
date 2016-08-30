@@ -10,7 +10,7 @@
 class BoundingBox : public sf::FloatRect
 {
 public:
-    BoundingBox(float left = 0, float top = 0, int width = 0, int height = 0);
+    BoundingBox(float left = 0, float top = 0, float width = 0, float height = 0);
 
 
     sf::Vector2f getPosition();

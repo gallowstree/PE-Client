@@ -7,14 +7,18 @@
 
 
 #include "Entity.h"
+#include "Textures.h"
 #include "World.h"
+
 
 class FloorSection : public Entity
 {
 public:
-    Textures texture;
-    FloorSection(Textures texture);
+    Textures getTexture();
 
+    FloorSection(int texture, float left, float top, float width, float height);
+private:
+    int texture;
 };
 
 

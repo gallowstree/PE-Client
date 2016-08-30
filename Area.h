@@ -8,6 +8,9 @@
 
 #include <SFML/Graphics.hpp>
 #include "Entity.h"
+#include "FloorSection.h"
+
+class FloorSection;
 
 class Area
 {
@@ -17,7 +20,7 @@ public:
     sf::FloatRect rect;
     std::vector<Entity*> walls;
     std::vector<Entity*> pickups;
-    std::vector<Entity*> floors;
+    std::vector<FloorSection*> floors;
     std::vector<Entity*> moving_entities;
 };
 

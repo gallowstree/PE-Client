@@ -3,7 +3,6 @@
 //
 
 #include "Area.h"
-#include "World.h"
 
 
 void Area::draw(sf::RenderTarget &window, bool debugGrid)
@@ -21,10 +20,15 @@ void Area::draw(sf::RenderTarget &window, bool debugGrid)
 
     for (auto& floor : floors)
     {
-        World::textureHolder.get(Textures::FLOOR_PURPLE_CHESS).setRepeated(true);
-        auto sprite = sf::Sprite(World::textureHolder.get(Textures::FLOOR_PURPLE_CHESS));
-        sprite.setTextureRect(sf::IntRect(rect.left,rect.top, rect.width, rect.height));
-        sprite.setPosition(rect.left, rect.top);
+        World::textureHolder.get(floor->getTexture()).setRepeated(true);
+        printf("floors %i, %i\n", floor->getTexture() == FLOOR_BLUE_BRICK, floor->getTexture() == FLOOR_PURPLE_CHESS);
+
+        auto sprite = sf::Sprite(World::textureHolder.get(floor->getTexture()));
+        sprite.setTextureRect(sf::IntRect(floor->boundingBox.left,
+                                          floor->boundingBox.top,
+                                          floor->boundingBox.width,
+                                          floor->boundingBox.height));
+        sprite.setPosition(floor->boundingBox.left, floor->boundingBox.top);
         window.draw(sprite);
     }
 
