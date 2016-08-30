@@ -33,6 +33,15 @@ void Game::run()
     bool should_render = true;
     while (!gameOver)
     {
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+            switch (event.type) {
+                case sf::Event::Closed:
+                    window.close();
+                    exit(0);
+            }
+        }
         sf::Time elapsedTime = clock.restart();
         timeSinceLastUpdate += elapsedTime;
         timeSinceLastProjectileUpdate += elapsedTime;
@@ -158,6 +167,8 @@ void Game::processServerEvents()
                 else
                     players[command.playerID].setTexture( world.textureHolder.get(Textures::PLAYER_GREEN));
             }
+
+            players[command.playerID].health = command.health;
             players[command.playerID].valid = command.validPlayer;
             players[command.playerID].boundingBox.left = command.posx;
             players[command.playerID].boundingBox.top = command.posy;
@@ -188,7 +199,7 @@ void Game::processServerEvents()
 
 void Game::receiveMessage(char buffer[], size_t nBytes, sockaddr_in* serverAddr)
 {
-    if (nBytes == 0)
+    if (nBytes < 0)
         return;
 
     int32_t  msgNum;
@@ -222,6 +233,8 @@ void Game::receiveMessage(char buffer[], size_t nBytes, sockaddr_in* serverAddr)
                     offset += 4;
                     Serialization::charsToFloat(buffer, srvCmd.rotation, offset);
                     offset += 4;
+                    Serialization::charsToShort(buffer, srvCmd.health, offset);
+                    offset += 2;
 
                     memset(srvCmd.nickname, 0, 6);
                     strcpy(srvCmd.nickname, buffer + offset);

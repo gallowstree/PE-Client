@@ -14,6 +14,10 @@ nick(nick)
     boundingBox = BoundingBox(posx, posy, 50, 50);
     sprite.setTexture(texture);
     nickText.setString(nick);
+    healthWrapper.setSize(sf::Vector2f(40,2));
+    healthWrapper.setOutlineColor(sf::Color::White);
+    healthWrapper.setFillColor(sf::Color::Black);
+    healthWrapper.setOutlineThickness(1);
 }
 
 void Player::setTexture(const sf::Texture &texture)

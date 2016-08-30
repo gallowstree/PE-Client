@@ -19,7 +19,9 @@ class Player : public Entity {
         sf::Sprite sprite;
         const char * nick;
         sf::Text nickText;
-
+        sf::RectangleShape healthWrapper;
+        sf::RectangleShape healthBox;
+        int16_t health = 100;
 
         Player(int16_t playerID,float posx,float posy,sf::Texture &texture, const char* nick);
         void setTexture(const sf::Texture &texture);

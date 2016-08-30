@@ -21,7 +21,6 @@ void Area::draw(sf::RenderTarget &window, bool debugGrid)
     for (auto& floor : floors)
     {
         World::textureHolder.get(floor->getTexture()).setRepeated(true);
-        printf("floors %i, %i\n", floor->getTexture() == FLOOR_BLUE_BRICK, floor->getTexture() == FLOOR_PURPLE_CHESS);
 
         auto sprite = sf::Sprite(World::textureHolder.get(floor->getTexture()));
         sprite.setTextureRect(sf::IntRect(floor->boundingBox.left,
