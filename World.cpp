@@ -59,6 +59,8 @@ void World::loadTextures()
     World::textureHolder.load(Textures::BULLET_SMALL, "files/small_bullet.png");
     World::textureHolder.load(Textures::FLOOR_PURPLE_CHESS, "files/floor-purple-chess.png");
     World::textureHolder.load(Textures::SKULL, "files/skull-icon.png");
+    World::textureHolder.load(Textures::RED_DEAD, "files/red_dead.png");
+    World::textureHolder.load(Textures::GREEN_DEAD, "files/green_dead.png");
 }
 
 void World::readMap(int map)
@@ -206,17 +208,26 @@ void World::render()
 
             player.healthWrapper.setPosition(player.boundingBox.getPosition().x + 6,player.boundingBox.getPosition().y + player.sprite.getTextureRect().height -12);
             player.healthBox.setPosition(player.healthWrapper.getPosition().x,player.healthWrapper.getPosition().y);
+            if(player.health > 0)
+            {
+                player.healthBox.setSize(sf::Vector2f(player.health * 40 / 100, 2));
+                if (player.health >= 75 && player.health <= 100)
+                    player.healthBox.setFillColor(sf::Color::Green);
+                else if (player.health >= 50 && player.health < 75)
+                    player.healthBox.setFillColor(sf::Color::Yellow);
+                else
+                    player.healthBox.setFillColor(sf::Color::Red);
 
-            player.healthBox.setSize(sf::Vector2f(player.health * 40 / 100,2));
-            if(player.health >= 75 && player.health <= 100)
-                player.healthBox.setFillColor(sf::Color::Green);
-            else if(player.health >= 50 && player.health < 75)
-                player.healthBox.setFillColor(sf::Color::Yellow);
+                window.draw(player.healthWrapper);
+                window.draw(player.healthBox);
+            }
             else
-                player.healthBox.setFillColor(sf::Color::Red);
+            {
+                player.sprite.setTexture(textureHolder.get(player. == 0 ? Textures::RED_DEAD : Textures::GREEN_DEAD));
+            }
+
+
             window.draw(player.nickText);
-            window.draw(player.healthWrapper);
-            window.draw(player.healthBox);
         }
 
     }

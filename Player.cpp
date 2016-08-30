@@ -5,8 +5,9 @@
 #include "Player.h"
 
 
-Player::Player(int16_t playerID, float posx, float posy,sf::Texture &texture, const char * nick):
+Player::Player(int16_t playerID, int16_t team, float posx, float posy,sf::Texture &texture, const char * nick):
 playerID(playerID),
+team(team),
 sprite(),
 nick(nick)
 {

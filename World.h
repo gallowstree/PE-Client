@@ -18,7 +18,9 @@ enum Textures
     PLAYER_GREEN,
     BULLET_SMALL,
     FLOOR_PURPLE_CHESS,
-    SKULL
+    SKULL,
+    RED_DEAD,
+    GREEN_DEAD
 };
 
 class World

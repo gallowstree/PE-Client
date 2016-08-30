@@ -158,7 +158,7 @@ void Game::processServerEvents()
                 char * nick = (char *)calloc(strlen(command.nickname)+1, sizeof(char));
                 printf("%s esto recibo pue\n",command.nickname);
                 strcpy(nick,command.nickname);
-                players.push_back(Player(command.playerID, command.posx, command.posy, world.textureHolder.get(command.team == 0 ? Textures::PLAYER_RED : Textures::PLAYER_GREEN) , nick));
+                players.push_back(Player(command.playerID, command.team, command.posx, command.posy, world.textureHolder.get(command.team == 0 ? Textures::PLAYER_RED : Textures::PLAYER_GREEN) , nick));
             }
             else
             {
