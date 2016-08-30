@@ -22,7 +22,7 @@ class Player : public Entity {
         sf::RectangleShape healthWrapper;
         sf::RectangleShape healthBox;
         int16_t health = 100;
-        int16_t team;
+        int16_t team = 0;
         Player(int16_t playerID, int16_t team, float posx,float posy,sf::Texture &texture, const char* nick);
         void setTexture(const sf::Texture &texture);
 };
