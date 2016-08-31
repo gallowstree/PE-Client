@@ -118,7 +118,6 @@ void Menu::stage2()
 
     window.setView(window.getDefaultView());
     selectedOption = 0;
-
     mainTitle.setString("IP SETTINGS");
     mainTitle.setCharacterSize(40);
     mainTitle.setPosition(280,20);
@@ -401,11 +400,29 @@ void Menu::stage2()
             message.setColor(sf::Color::White);
             message.setPosition(230,520);
         }
-        else if(this->connResult == 2)
+        else if(this->connResult == 3)
         {
             message.setString("Error: the arena is full, try again later :(");
             message.setColor(sf::Color::Red);
             message.setPosition(230,520);
+        }
+        else if(this->connResult == 4)
+        {
+            message.setString("Error: Could not reuse client IP Address");
+            message.setColor(sf::Color::Red);
+            message.setPosition(240,520);
+        }
+        else if(this->connResult == 5)
+        {
+            message.setString("Error: Could not reuse client port");
+            message.setColor(sf::Color::Red);
+            message.setPosition(255,520);
+        }
+        else if(this->connResult == 6)
+        {
+            message.setString("Error: could not bind client socket");
+            message.setColor(sf::Color::Red);
+            message.setPosition(250,520);
         }
 
         window.draw(message);
@@ -572,10 +589,14 @@ void Menu::receiveMessage(char buffer[], size_t nBytes, sockaddr_in* serverAddr)
     if(currentStage == 2)
     {
         Serialization::charsToShort(buffer, this->connResult, 0);
-        if (this->connResult == 1) {
-            Serialization::charsToShort(buffer, this->playersTeam[0], 2);
-            Serialization::charsToShort(buffer, this->playersTeam[1], 4);
+        if (this->connResult == 1 || this->connResult == 2) {
+            if(this->connResult == 1)
+            {
+                Serialization::charsToShort(buffer, this->playersTeam[0], 2);
+                Serialization::charsToShort(buffer, this->playersTeam[1], 4);
+            }
             this->currentStage = 3;
         }
+
     }
 }

@@ -15,11 +15,17 @@ public:
 
 
 class ClientSocket {
-
+    int static const COMMAND_BUFFER_SIZE = 1500;
 public:
+    int udpSocket = 0;
+
+    char buffer[COMMAND_BUFFER_SIZE];
     int keepAlive = 1 ;
     int timeout = 0;
+    int isListening = 0;
     const char * ip;
+    struct sockaddr_in clientAddr,serverAddr;
+    socklen_t addr_size;
     int port;
     SocketListener * listener;
     ClientSocket(const char * ip, int port, SocketListener * listener);
