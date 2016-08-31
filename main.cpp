@@ -65,6 +65,7 @@ int main()
         cSocket.keepAlive = false;
         menu.message.setString("");
         menu.connResult = 0;
+        menu.menuSong.play();
         goto loopStage2;
     }
     return 0;
