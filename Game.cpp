@@ -180,7 +180,7 @@ void Game::processServerEvents()
             sf::Vector2f origin = sf::Vector2f(command.originx,command.originy);
             Projectile projectile = Projectile(command.bulletID,command.bulletType,position,origin, command.playerID);
             projectile.sprite.setTexture(world.textureHolder.get(Textures::BULLET_SMALL));
-            
+            world.shotGun.play();
             projectiles.insert(std::pair<int16_t , Projectile>(command.bulletID, projectile));
         }
         else if (command.type == s_player_id_command)

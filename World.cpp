@@ -44,6 +44,7 @@ projectiles(projectiles)
     cursorSprite.setTexture(textureHolder.get(Textures::CROSSHAIR));
     menuIcon.setTexture(textureHolder.get(Textures::SKULL));
     worldFont.loadFromFile("files/sansation.ttf");
+    loadSounds();
 }
 
 void World::updateCrosshair()
@@ -66,6 +67,12 @@ void World::loadTextures()
     World::textureHolder.load(Textures::GREEN_DEAD, "files/green_dead.png");
 }
 
+void World::loadSounds()
+{
+    shotGunBuffer.loadFromFile("files/sound/shotgun.wav");
+    shotGun.setBuffer(shotGunBuffer);
+    shotGun.setVolume(3);
+}
 
 void World::readMap2(int map)
 {

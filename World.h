@@ -11,6 +11,7 @@
 #include "Projectile.h"
 #include "FloorSection.h"
 #include "Area.h"
+#include	"SFML/Audio.hpp"
 
 class Area;
 
@@ -21,6 +22,7 @@ public:
     World(sf::RenderWindow&  window, std::vector<Player> * players, std::map<int16_t, Projectile> *projectiles);
     sf::RenderWindow&  window;
     int playerID = -1;
+    sf::Sound shotGun;
     void render();
     void update(sf::Time elapsedTime);
     void updateProjectiles(const sf::Time &elapsedTime);
@@ -41,6 +43,7 @@ private:
     sf::View camera;
     sf::Sprite cursorSprite;
     sf::Vector2f camCenter;
+    sf::SoundBuffer shotGunBuffer;
     std::vector<Entity*> world_entities;
     std::vector<const char *> maps = {"maps/level1.txt","maps/level2.txt"};
     std::vector<Area*> areas;
@@ -53,7 +56,7 @@ private:
     void checkProjectileCollisions(Projectile &proj);
     void indexMovingEntities();
     std::vector<int16_t> areasForEntity(const Entity &entity);
-
+    void loadSounds();
     void readMap2(int map);
 
 };

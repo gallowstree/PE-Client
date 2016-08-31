@@ -16,10 +16,7 @@ ClientSocket::ClientSocket(const char * ip, int port, SocketListener * listener)
     this->port = port;
     this->listener = listener;
 
-    printf("hello my port %d\n",port);
-
     udpSocket = socket(PF_INET, SOCK_DGRAM, 0);
-    printf("udpSocket2 %d\n",udpSocket);
     clientAddr.sin_family = AF_INET;
     clientAddr.sin_port = htons(port);
     clientAddr.sin_addr.s_addr = inet_addr(ip);
@@ -66,7 +63,7 @@ void ClientSocket::run()
         struct timeval tv;
         tv.tv_sec = timeout;
         tv.tv_usec = 0; //1 segundo de timeout
-        printf("udpSocket2 %d\n",udpSocket);
+
         if (setsockopt(udpSocket, SOL_SOCKET, SO_RCVTIMEO,&tv,sizeof(tv)) < 0) {
             printf("Error seteando timeout %s\n",strerror(errno));
         }
