@@ -11,6 +11,7 @@
 #include "ClientSocket.h"
 #include "ServerSocket.h"
 #include <regex.h>
+#include <SFML/Audio.hpp>
 
 class Menu : public SocketListener {
     static const int MENU_SIZE = 2;
@@ -29,7 +30,7 @@ public:
     int16_t selectedTeam = 0;
     int16_t connResult = 0;
     sf::Text message;
-
+    sf::Music menuSong;
 
 private:
     int selectedOption = 0;

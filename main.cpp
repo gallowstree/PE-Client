@@ -7,6 +7,7 @@
 #include "serialization.h"
 #include "CommandCode.h"
 #include "Game.h"
+#include <stdio.h>
 
 
 static const int COMMAND_BUFFER_SIZE = 1500;
@@ -21,6 +22,7 @@ int main()
 {
     World::loadTextures();
     Menu menu(mWindow);
+    menu.menuSong.play();
     menu.run(1);
     loopStage2:
     menu.run(2);
@@ -44,6 +46,8 @@ int main()
 
     if(menu.connResult == 1)
         menu.run(3);
+
+    menu.menuSong.stop();
 
     Game game(mWindow,&sSocket,menu.selectedTeam);
     ClientSocket cSocket(menu.c_ip, c_port, &game);

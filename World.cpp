@@ -11,7 +11,6 @@
 #include <sstream>
 
 
-
 ResourceHolder<sf::Texture, Textures> World::textureHolder;
 
 World::World(sf::RenderWindow&  window, std::vector<Player> * players,  std::map<int16_t, Projectile> *projectiles):
@@ -71,7 +70,7 @@ void World::loadSounds()
 {
     shotGunBuffer.loadFromFile("files/sound/shotgun.wav");
     shotGun.setBuffer(shotGunBuffer);
-    shotGun.setVolume(3);
+    shotGun.setVolume(30);
 }
 
 void World::readMap2(int map)

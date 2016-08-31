@@ -28,6 +28,9 @@ window(window)
 
     nick = (char *)malloc(sizeof(char)*7);
     memset(nick,0,7);
+
+    menuSong.openFromFile("files/sound/delay.ogg");
+    menuSong.setLoop(true);
 }
 
 void Menu::run(int stage)
