@@ -13,6 +13,7 @@
 #include "ServerSocket.h"
 #include "World.h"
 
+
 class Game : public SocketListener {
     static const int COMMAND_BUFFER_SIZE = 1500;
 
@@ -27,6 +28,7 @@ public:
     void receiveMessage(char buffer[], size_t nBytes, sockaddr_in* serverAddr);
     void run();
     void getID();
+    sf::Music bgMusic;
 
 private:
     World world;

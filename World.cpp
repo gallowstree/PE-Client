@@ -70,7 +70,13 @@ void World::loadSounds()
 {
     shotGunBuffer.loadFromFile("files/sound/shotgun.wav");
     shotGun.setBuffer(shotGunBuffer);
-    shotGun.setVolume(30);
+    shotGun.setVolume(50);
+
+    srand(time(NULL));
+    int track = rand() % playlist.size();
+    bgMusic->setVolume(30);
+    bgMusic->openFromFile(playlist[track]);
+    bgMusic->play();
 }
 
 void World::readMap2(int map)
@@ -408,6 +414,8 @@ bool World::gameOver(int16_t winner) {
                         case sf::Keyboard::Key::Return:
                             if (selectedOption == 0)
                             {
+                                bgMusic->stop();
+                                delete(bgMusic);
                                 response = true;
                             }
                             next = true;

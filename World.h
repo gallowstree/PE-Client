@@ -11,7 +11,8 @@
 #include "Projectile.h"
 #include "FloorSection.h"
 #include "Area.h"
-#include	"SFML/Audio.hpp"
+#include <SFML/Audio.hpp>
+
 
 class Area;
 
@@ -31,6 +32,7 @@ public:
 
     sf::Text goverText[4];
     sf::Font worldFont;
+    sf::Music * bgMusic = new sf::Music();
     static ResourceHolder<sf::Texture, Textures> textureHolder;
 
     static void loadTextures();
@@ -46,6 +48,7 @@ private:
     sf::SoundBuffer shotGunBuffer;
     std::vector<Entity*> world_entities;
     std::vector<const char *> maps = {"maps/level1.txt","maps/level2.txt"};
+    std::vector<const char *> playlist = {"files/sound/roller_mobster.ogg","files/sound/infiltrate_acid_spit.ogg"};
     std::vector<Area*> areas;
     sf::Sprite menuIcon;
 

@@ -32,6 +32,7 @@ public:
     sf::Text message;
     sf::Music menuSong;
 
+
 private:
     int selectedOption = 0;
     char * currPlayers1 = (char *)malloc(strlen("CURRENT PLAYERS   ")+1);

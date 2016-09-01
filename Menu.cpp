@@ -30,6 +30,7 @@ window(window)
     memset(nick,0,7);
 
     menuSong.openFromFile("files/sound/delay.ogg");
+    menuSong.setVolume(50);
     menuSong.setLoop(true);
 }
 
@@ -328,7 +329,6 @@ void Menu::stage2()
                                     {
                                         if(strlen(nick) > 0)
                                         {
-                                            printf("nick size %d\n",strlen(nick));
                                             selectTeam = true;
                                         }
                                         else
