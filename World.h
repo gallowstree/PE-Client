@@ -48,7 +48,7 @@ private:
     sf::SoundBuffer shotGunBuffer;
     std::vector<Entity*> world_entities;
     std::vector<const char *> maps = {"maps/level1.txt","maps/level2.txt"};
-    std::vector<const char *> playlist = {"files/sound/roller_mobster.ogg","files/sound/infiltrate_acid_spit.ogg"};
+    std::vector<const char *> playlist = {"files/sound/roller_mobster.ogg","files/sound/infiltrate_acid_spit.ogg","files/sound/cant_catch_me.ogg"};
     std::vector<Area*> areas;
     sf::Sprite menuIcon;
     sf::RectangleShape radar;
