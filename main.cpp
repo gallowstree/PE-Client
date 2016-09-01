@@ -7,7 +7,6 @@
 #include "serialization.h"
 #include "CommandCode.h"
 #include "Game.h"
-#include <stdio.h>
 
 
 static const int COMMAND_BUFFER_SIZE = 1500;
@@ -16,12 +15,14 @@ const int s_port = 50420;
 const int c_port = 50421;
 const int c_port_join = 50422;
 
-sf::RenderWindow mWindow(sf::VideoMode(800, 600), "President Evil", sf::Style::Close);
+sf::RenderWindow mWindow(sf::VideoMode(800, 600), "President Evil", sf::Style::Fullscreen | sf::Style::Close);
 
 int main()
 {
+    bool fullScreen = true;
+    mWindow.create(sf::VideoMode(800, 600), "President Evil",  sf::Style::Fullscreen | sf::Style::Close);
     World::loadTextures();
-    Menu menu(mWindow);
+    Menu menu(mWindow,&fullScreen);
     menu.menuSong.play();
     menu.run(1);
     loopStage2:
@@ -37,10 +38,8 @@ int main()
     if(cSocketJoin.isListening)
         cSocketJoin.run();
 
-    printf("connREsult %d\n",menu.connResult);
     if (menu.currentStage == 2)
     {
-        printf("connREsult 3 %d\n",menu.connResult);
         goto loopStage2;
     }
 
@@ -49,7 +48,7 @@ int main()
 
     menu.menuSong.stop();
 
-    Game game(mWindow,&sSocket,menu.selectedTeam);
+    Game game(mWindow,&fullScreen,&sSocket,menu.selectedTeam);
     ClientSocket cSocket(menu.c_ip, c_port, &game);
     cSocket.timeout = 0;
     cSocket.keepAlive = true;
@@ -68,6 +67,7 @@ int main()
         menu.menuSong.play();
         goto loopStage2;
     }
+
     return 0;
 }
 
