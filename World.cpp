@@ -131,23 +131,51 @@ void World::readMap2(int map)
 
 void World::calculateCamCenter()
 {
+
+
     auto pVector = (*players);
     if(findPlayer(playerID,players))
     {
-        camCenter = pVector[playerID].sprite.getPosition();
-
-        if (pVector[playerID].sprite.getPosition().x < window.getSize().x / 2)
-            camCenter.x = window.getSize().x / 2;
-        else if (pVector[playerID].sprite.getPosition().x > bounds.width - window.getSize().x / 2)
-            camCenter.x = pVector[playerID].sprite.getPosition().x;//bounds.width - 300;
-
-        if (pVector[playerID].sprite.getPosition().y < window.getSize().y / 2)
-            camCenter.y = window.getSize().y / 2;
-        else if (pVector[playerID].sprite.getPosition().y > bounds.height - window.getSize().y / 2)
-            camCenter.y = pVector[playerID].sprite.getPosition().y;//bounds.height - 300;
+        auto playerPosition = pVector[playerID].sprite.getPosition();
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
+        {
+            float maxCamMoveFactor = 0.25f;
+            auto maxCamMovement = sf::Vector2f( playerPosition.x + window.getSize().x * maxCamMoveFactor,
+                                                playerPosition.y + window.getSize().y * maxCamMoveFactor);
+
+            auto minCamMovement = sf::Vector2f( playerPosition.x - window.getSize().x * maxCamMoveFactor,
+                                                playerPosition.y - window.getSize().y * maxCamMoveFactor);
+
             camCenter = window.mapPixelToCoords((sf::Mouse::getPosition(window)));
+
+            if (camCenter.x > maxCamMovement.x)
+                camCenter.x = maxCamMovement.x;
+            else if (camCenter.x < minCamMovement.x)
+                camCenter.x = minCamMovement.x;
+
+            if (camCenter.y > maxCamMovement.y)
+                camCenter.y = maxCamMovement.y;
+            else if (camCenter.y < minCamMovement.y)
+                camCenter.y = minCamMovement.y;
+        }
+        else
+        {
+            auto halfWinSize = sf::Vector2f(window.getSize().x / 2, window.getSize().y / 2);
+            camCenter = playerPosition;
+
+
+            if (playerPosition.x < halfWinSize.x)
+                camCenter.x = halfWinSize.x;
+            else if (playerPosition.x > bounds.width - halfWinSize.x)
+                camCenter.x = playerPosition.x;
+
+            if (playerPosition.y < halfWinSize.y)
+                camCenter.y = halfWinSize.y;
+            else if (playerPosition.y > bounds.height - halfWinSize.y)
+                camCenter.y = playerPosition.y;
+        }
+
     }
 }
 
