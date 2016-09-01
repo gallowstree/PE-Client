@@ -50,7 +50,6 @@ void Game::run()
                             }
                             else
                                 world.camera.reset(sf::FloatRect(0,0, window.getSize().x, window.getSize().y));
-                            world.camera.setViewport(sf::FloatRect(0,0, 1.0f, 1.0f));
                             break;
                     }
                     break;
