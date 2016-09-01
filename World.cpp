@@ -43,6 +43,11 @@ projectiles(projectiles)
     cursorSprite.setTexture(textureHolder.get(Textures::CROSSHAIR));
     menuIcon.setTexture(textureHolder.get(Textures::SKULL));
     worldFont.loadFromFile("files/sansation.ttf");
+
+    radar.setSize((sf::Vector2f(bounds.width/20,bounds.height/20)));
+    radar.setFillColor(sf::Color(0,0,0,150));
+    radar.setOutlineThickness(1);
+    radar.setOutlineColor(sf::Color(255,255,255,150));
     loadSounds();
 }
 
@@ -70,15 +75,18 @@ void World::loadSounds()
 {
     shotGunBuffer.loadFromFile("files/sound/shotgun.wav");
     shotGun.setBuffer(shotGunBuffer);
-    shotGun.setVolume(50);
+    shotGun.setVolume(30);
+    selectTrack();
+}
 
+void World::selectTrack()
+{
     srand(time(NULL));
     int track = rand() % playlist.size();
-    bgMusic->setVolume(30);
+    bgMusic->setVolume(40);
     bgMusic->openFromFile(playlist[track]);
     bgMusic->play();
 }
-
 void World::readMap2(int map)
 {
     std::ifstream mapFile(maps[map]);
@@ -185,7 +193,6 @@ void World::deleteInvalidProjectiles()
 void World::render()
 {
 
-    calculateCamCenter();
     sf::FloatRect visibleRect(camCenter.x - window.getSize().x, camCenter.y - window.getSize().y, window.getSize().x * 2, window.getSize().y * 2);
 
     for (auto &area : areas)
@@ -196,8 +203,16 @@ void World::render()
         }
     }
 
+
+
+    window.draw(radar);
+
     window.setView(camera);
-    camera.setCenter(camCenter);
+
+
+    setRadarPosition();
+
+
 
     for(auto const &projectile : *projectiles)
     {
@@ -237,6 +252,11 @@ void World::render()
 
                 window.draw(player.healthWrapper);
                 window.draw(player.healthBox);
+
+                sf::RectangleShape radarPos(sf::Vector2f(4,4));
+                radarPos.setFillColor((player.team == 0) ? sf::Color::Red : sf::Color::Green);
+                radarPos.setPosition(radar.getPosition().x + player.boundingBox.left / 20 , radar.getPosition().y + player.boundingBox.top / 20 );
+                window.draw(radarPos);
             }
             else
             {
@@ -246,9 +266,12 @@ void World::render()
                                         player.boundingBox.getPosition().y + player.sprite.getTextureRect().height -7 );
 
             window.draw(player.nickText);
+
         }
 
     }
+    calculateCamCenter();
+    camera.setCenter(camCenter);
     window.draw(cursorSprite);
 }
 
@@ -256,6 +279,11 @@ void World::update(sf::Time elapsedTime)
 {
     deleteInvalidProjectiles();
     updateCrosshair();
+
+    if(bgMusic->getStatus() == sf::SoundSource::Status::Stopped)
+    {
+        selectTrack();
+    }
 }
 
 void World::updateProjectiles(const sf::Time &elapsedTime) {
@@ -339,6 +367,13 @@ bool World::findPlayer(int16_t playerID, std::vector<Player> * players)
             return true;
     }
     return false;
+}
+
+void World::setRadarPosition()
+{
+
+    radar.setPosition(camCenter.x + window.getSize().x / 2 - radar.getSize().x - 10,
+                      camCenter.y + window.getSize().y / 2 - radar.getSize().y - 10);
 }
 
 bool World::gameOver(int16_t winner) {

@@ -51,7 +51,8 @@ private:
     std::vector<const char *> playlist = {"files/sound/roller_mobster.ogg","files/sound/infiltrate_acid_spit.ogg"};
     std::vector<Area*> areas;
     sf::Sprite menuIcon;
-
+    sf::RectangleShape radar;
+    void setRadarPosition();
     void updateCrosshair();
     void calculateCamCenter();
     void createStaticObjects();
@@ -61,7 +62,7 @@ private:
     std::vector<int16_t> areasForEntity(const Entity &entity);
     void loadSounds();
     void readMap2(int map);
-
+    void selectTrack();
 };
 
 
