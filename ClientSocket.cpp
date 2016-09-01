@@ -8,6 +8,7 @@
 #include <cstring>
 #include <stdio.h>
 #include <errno.h>
+#include <sys/time.h>
 
 
 ClientSocket::ClientSocket(const char * ip, int port, SocketListener * listener)
