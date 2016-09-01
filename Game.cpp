@@ -12,8 +12,9 @@
 #include "command.h"
 #include "SFUtils.h"
 
-Game::Game(sf::RenderWindow&  window,ServerSocket * sSocket, int selectedTeam):
+Game::Game(sf::RenderWindow&  window,bool * fullScreen, ServerSocket * sSocket, int selectedTeam):
 window(window),
+fullScreen(fullScreen),
 sSocket(sSocket),
 selectedTeam(selectedTeam),
 world(World(window,&players, &projectiles))
@@ -37,6 +38,21 @@ void Game::run()
         while (window.pollEvent(event))
         {
             switch (event.type) {
+                case sf::Event::KeyPressed:
+                    switch (event.key.code)
+                    {
+                        case sf::Keyboard::Key::Space:
+                            *fullScreen = !(*fullScreen);
+                            window.create(sf::VideoMode(800, 600), "President Evil", (*fullScreen) ? sf::Style::Fullscreen | sf::Style::Close  : sf::Style::Close);
+                            if(*fullScreen)
+                            {
+                                //world.camera.reset(sf::FloatRect(0, 0, sf::VideoMode::getDesktopMode().width,sf::VideoMode::getDesktopMode().height));
+                            }
+                            else
+                                world.camera.reset(sf::FloatRect(0,0, window.getSize().x, window.getSize().y));
+                            break;
+                    }
+                    break;
                 case sf::Event::Closed:
                     window.close();
                     exit(0);
@@ -50,8 +66,8 @@ void Game::run()
             timeSinceLastUpdate -= TimePerFrame;
             processServerEvents();
             processEvents();
-            //if (window.hasFocus())
-            sendCommands();
+            if (window.hasFocus())
+                sendCommands();
             should_render = true;
             world.update(TimePerFrame);
 

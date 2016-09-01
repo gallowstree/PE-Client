@@ -34,7 +34,7 @@ public:
     sf::Font worldFont;
     sf::Music * bgMusic = new sf::Music();
     static ResourceHolder<sf::Texture, Textures> textureHolder;
-
+    sf::View camera;
     static void loadTextures();
 
 private:
@@ -42,7 +42,6 @@ private:
     std::map<int16_t,Projectile> * projectiles;
     sf::FloatRect bounds;
     float area_size;
-    sf::View camera;
     sf::Sprite cursorSprite;
     sf::Vector2f camCenter;
     sf::SoundBuffer shotGunBuffer;

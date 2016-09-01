@@ -7,8 +7,9 @@
 #include <fstream>
 
 
-Menu::Menu(sf::RenderWindow& window):
-window(window)
+Menu::Menu(sf::RenderWindow& window, bool * fullScreen):
+window(window),
+fullScreen(fullScreen)
 {
     readConfig();
     menuIconTexture.loadFromFile("files/skull-icon.png");
@@ -98,6 +99,11 @@ void Menu::stage1()
                                 window.close();
                                 exit(0);
                             }
+                            break;
+                        case sf::Keyboard::Key::Space:
+                            *fullScreen = !(*fullScreen);
+                            window.create(sf::VideoMode(800, 600), "President Evil", (*fullScreen) ? sf::Style::Fullscreen | sf::Style::Close : sf::Style::Default);
+                            break;
                     }
                 default:
                     break;
@@ -350,6 +356,10 @@ void Menu::stage2()
                                 }
                             }
                             break;
+                        case sf::Keyboard::Key::Space:
+                            *fullScreen = !(*fullScreen);
+                            window.create(sf::VideoMode(800, 600), "President Evil", (*fullScreen) ? sf::Style::Fullscreen | sf::Style::Close : sf::Style::Default);
+                            break;
                     }
                 default:
                     break;
@@ -493,6 +503,10 @@ void Menu::stage3()
                         case sf::Keyboard::Key::Return:
                             selectedTeam = selectedOption;
                             startGame = true;
+                            break;
+                        case sf::Keyboard::Key::Space:
+                            *fullScreen = !(*fullScreen);
+                            window.create(sf::VideoMode(800, 600), "President Evil", (*fullScreen) ? sf::Style::Fullscreen | sf::Style::Close : sf::Style::Default);
                             break;
                     }
                 default:

@@ -81,7 +81,6 @@ void ClientSocket::run()
         }
     }
     while(keepAlive);
-    printf("bye bye\n");
 }
 
 void *ClientSocket::runThread(void *clientSocket) {
