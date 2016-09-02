@@ -255,6 +255,10 @@ void Game::receiveMessage(char buffer[], size_t nBytes, sockaddr_in* serverAddr)
                     memset(srvCmd.nickname, 0, 6);
                     strcpy(srvCmd.nickname, buffer + offset);
                     offset += strlen(srvCmd.nickname) + 1;
+
+                    memcpy(&srvCmd.ammo, buffer + offset, 1);
+                    offset++;
+                    printf("ammo: %i\n", srvCmd.ammo);
                     pthread_mutex_lock(&commandQueueMutex);
                     commandQueue.push(srvCmd);
                     pthread_mutex_unlock(&commandQueueMutex);

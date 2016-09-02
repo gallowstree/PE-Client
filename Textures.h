@@ -15,7 +15,8 @@ enum Textures
     FLOOR_BLUE_BRICK,
     SKULL,
     RED_DEAD,
-    GREEN_DEAD
+    GREEN_DEAD,
+	HUD_AMMO
 };
 
 #endif //TEST_CLIENT_TEXTURES_H

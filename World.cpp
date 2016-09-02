@@ -69,6 +69,7 @@ void World::loadTextures()
     World::textureHolder.load(Textures::SKULL, "files/skull-icon.png");
     World::textureHolder.load(Textures::RED_DEAD, "files/red_dead.png");
     World::textureHolder.load(Textures::GREEN_DEAD, "files/green_dead.png");
+    World::textureHolder.load(Textures::HUD_AMMO, "files/hud_ammo.png");
 }
 
 void World::loadSounds()
@@ -221,6 +222,7 @@ void World::deleteInvalidProjectiles()
 void World::render()
 {
 
+
     sf::FloatRect visibleRect(camCenter.x - window.getSize().x, camCenter.y - window.getSize().y, window.getSize().x * 2, window.getSize().y * 2);
 
     for (auto &area : areas)
@@ -234,8 +236,8 @@ void World::render()
 
 
     window.draw(radar);
-
     window.setView(camera);
+
 
 
     setRadarPosition();
@@ -301,6 +303,9 @@ void World::render()
     calculateCamCenter();
     camera.setCenter(camCenter);
     window.draw(cursorSprite);
+
+    window.setView(window.getDefaultView());
+
 }
 
 void World::update(sf::Time elapsedTime)

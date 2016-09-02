@@ -51,6 +51,8 @@ private:
     std::vector<Area*> areas;
     sf::Sprite menuIcon;
     sf::RectangleShape radar;
+	sf::Text ammoText;
+	sf::Sprite ammoSpirte;
     void setRadarPosition();
     void updateCrosshair();
     void calculateCamCenter();

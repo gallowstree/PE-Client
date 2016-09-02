@@ -23,6 +23,7 @@ typedef struct command {
     float originx;
     float originy;
     char nickname[7];
+	unsigned char ammo;
 } command_t;
 
 
