@@ -23,7 +23,6 @@ public:
     World(sf::RenderWindow&  window, std::vector<Player> * players, std::map<int16_t, Projectile> *projectiles);
     sf::RenderWindow&  window;
     int playerID = -1;
-    sf::Sound shotGun;
     void render();
     void update(sf::Time elapsedTime);
     void updateProjectiles(const sf::Time &elapsedTime);
@@ -33,6 +32,9 @@ public:
     sf::View camera;
     static void loadTextures();
 
+	bool mouseIsDown;
+	sf::Sound sfxShotGun;
+	std::vector<int16_t> enabledPickups;
 private:
     std::vector<Player> * players;
     std::map<int16_t,Projectile> * projectiles;
@@ -40,7 +42,9 @@ private:
     float area_size;
     sf::Sprite cursorSprite;
     sf::Vector2f camCenter;
-    sf::SoundBuffer shotGunBuffer;
+    sf::SoundBuffer sfxShotGunBuffer;
+    sf::SoundBuffer sfxNoAmmoBuffer;
+	sf::Sound sfxNoAmmo;
     std::vector<Entity*> world_entities;
     std::vector<const char *> maps = {"maps/level1.txt","maps/level2.txt"};
     std::vector<const char *> playlist = {"files/sound/roller_mobster.ogg","files/sound/infiltrate_acid_spit.ogg","files/sound/cant_catch_me.ogg"};
@@ -65,6 +69,8 @@ private:
     void readMap2(int map);
     void selectTrack();
 
+
+	Player *getCurrentPlayer();
 
 };
 

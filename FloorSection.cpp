@@ -15,5 +15,17 @@ Textures FloorSection::getTexture() {
     return texture == 1 ? Textures ::FLOOR_PURPLE_CHESS : Textures ::FLOOR_BLUE_BRICK;
 }
 
+void FloorSection::initSprite(sf::Texture &texture)
+{
+    this->sprite = sf::Sprite(texture);
+    sprite.setTextureRect(sf::IntRect(boundingBox.left,
+                                      boundingBox.top,
+                                      boundingBox.width,
+                                      boundingBox.height));
+    sprite.setPosition(boundingBox.left, boundingBox.top);
+}
+
+
+
 
 

@@ -6,6 +6,7 @@
 #include "World.h"
 #include "Wall.h"
 #include "FloorSection.h"
+#include "Pickup.h"
 #include <fstream>
 #include <math.h>
 #include <sstream>
@@ -81,13 +82,20 @@ void World::loadTextures()
     World::textureHolder.load(Textures::RED_DEAD, "files/red_dead.png");
     World::textureHolder.load(Textures::GREEN_DEAD, "files/green_dead.png");
     World::textureHolder.load(Textures::HUD_AMMO, "files/hud-ammo.png");
+    World::textureHolder.load(Textures::PICKUP_AMMO, "files/ammo.png");
+    World::textureHolder.load(Textures::PICKUP_HEALTH, "files/health.png");
 }
 
 void World::loadSounds()
 {
-    shotGunBuffer.loadFromFile("files/sound/shotgun.wav");
-    shotGun.setBuffer(shotGunBuffer);
-    shotGun.setVolume(30);
+    sfxShotGunBuffer.loadFromFile("files/sound/shotgun.wav");
+    sfxShotGun.setBuffer(sfxShotGunBuffer);
+    sfxShotGun.setVolume(30);
+
+    sfxNoAmmoBuffer.loadFromFile("files/sound/empty-gun.ogg");
+    sfxNoAmmo.setBuffer(sfxNoAmmoBuffer);
+    sfxNoAmmo.setVolume(30);
+
     selectTrack();
 }
 
@@ -99,6 +107,7 @@ void World::selectTrack()
     bgMusic->openFromFile(playlist[track]);
     //bgMusic->play(); let me program to my music, motherfucker!
 }
+
 void World::readMap2(int map)
 {
     std::ifstream mapFile(maps[map]);
@@ -130,7 +139,18 @@ void World::readMap2(int map)
         }
         else if (strncmp(params[0], "2", strlen(params[0])) == 0)//Floor
         {
-            world_entities.push_back(new FloorSection(atoi(params[5]), atoi(params[1]), atoi(params[2]), atoi(params[3]), atoi(params[4])));
+            auto fs = new FloorSection(atoi(params[5]), atoi(params[1]), atoi(params[2]), atoi(params[3]), atoi(params[4]));
+            fs->initSprite(textureHolder.get(fs->getTexture()));
+            world_entities.push_back(fs);
+        }
+        else if (strncmp(params[0], "3", strlen(params[0])) == 0)//Pickup
+        {
+            auto pu = new Pickup(atoi(params[1]), atoi(params[2]), atoi(params[3]),
+                                 atoi(params[4]), atoi(params[5]), atoi(params[6]), atoi(params[7]),
+                                 atoi(params[8]));
+            pu->initSprite(textureHolder.get(pu->getTexture()));
+
+            world_entities.push_back(pu);
         }
 
         for (auto& param : params)
@@ -209,6 +229,14 @@ void World::createStaticObjects()
                 areas[area]->floors.push_back((FloorSection*)entity);
             }
         }
+        else if (entity->type == EntityType::Pickup_T)
+        {
+            for (auto& area : areasForEntity(*entity))
+            {
+                printf("pickup id %i %i\n", ((Pickup*)entity)->pickupId, ((Pickup*)entity)->enabled ? 1 : 0);
+                areas[area]->pickups.push_back((Pickup*)entity);
+            }
+        }
     }
 
 }
@@ -232,9 +260,13 @@ void World::deleteInvalidProjectiles()
 
 void World::render()
 {
-
-
     sf::FloatRect visibleRect(camCenter.x - window.getSize().x, camCenter.y - window.getSize().y, window.getSize().x * 2, window.getSize().y * 2);
+
+    for (auto& ent : world_entities)
+    {
+        if (ent->type == FloorSection_T)
+            ent->needsDrawing = true;
+    }
 
     for (auto &area : areas)
     {
@@ -317,9 +349,11 @@ void World::render()
 
     window.setView(window.getDefaultView());
 
-    if (players->size() > 0 && playerID != -1)
+    auto currentPlayer = getCurrentPlayer();
+
+    if (currentPlayer != nullptr)
     {
-        auto ammoString = std::to_string((*players)[playerID].ammo);
+        auto ammoString = std::to_string(currentPlayer->ammo);
         ammoText.setString(ammoString);
         window.draw(ammoText);
         window.draw(ammoSpirte);
@@ -337,6 +371,20 @@ void World::update(sf::Time elapsedTime)
     if(bgMusic->getStatus() == sf::SoundSource::Status::Stopped)
     {
         selectTrack();
+    }
+
+    if(sf::Mouse::isButtonPressed(sf::Mouse::Left) && !mouseIsDown)
+    {
+        mouseIsDown = true;
+        Player* player = getCurrentPlayer();
+        if (player != nullptr && player->ammo == 0)
+        {
+            sfxNoAmmo.play();
+        }
+    }
+    else
+    {
+        mouseIsDown = false;
     }
 }
 
@@ -528,3 +576,11 @@ bool World::gameOver(int16_t winner) {
     }
     return response;
 }
+
+Player *World::getCurrentPlayer() {
+    if (players->size() > 0 && playerID != -1)
+        return &(*players)[playerID];
+
+    return nullptr;
+}
+

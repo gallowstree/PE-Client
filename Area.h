@@ -9,6 +9,7 @@
 #include <SFML/Graphics.hpp>
 #include "Entity.h"
 #include "FloorSection.h"
+#include "Pickup.h"
 
 class FloorSection;
 
@@ -19,7 +20,7 @@ public:
     void draw(sf::RenderTarget &window, bool debugGrid);
     sf::FloatRect rect;
     std::vector<Entity*> walls;
-    std::vector<Entity*> pickups;
+    std::vector<Pickup*> pickups;
     std::vector<FloorSection*> floors;
     std::vector<Entity*> moving_entities;
 };

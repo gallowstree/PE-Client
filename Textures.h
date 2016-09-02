@@ -16,7 +16,9 @@ enum Textures
     SKULL,
     RED_DEAD,
     GREEN_DEAD,
-	HUD_AMMO
+	HUD_AMMO,
+	PICKUP_AMMO,
+	PICKUP_HEALTH
 };
 
 #endif //TEST_CLIENT_TEXTURES_H

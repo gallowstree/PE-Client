@@ -162,6 +162,7 @@ void Game::processEvents()
 void Game::processServerEvents()
 {
     pthread_mutex_lock(&commandQueueMutex);
+    world.enabledPickups.clear();
     while(!commandQueue.empty())
     {
         command_t command = commandQueue.front();
@@ -197,7 +198,7 @@ void Game::processServerEvents()
             sf::Vector2f origin = sf::Vector2f(command.originx,command.originy);
             Projectile projectile = Projectile(command.bulletID,command.bulletType,position,origin, command.playerID);
             projectile.sprite.setTexture(world.textureHolder.get(Textures::BULLET_SMALL));
-            world.shotGun.play();
+            world.sfxShotGun.play();
             projectiles.insert(std::pair<int16_t , Projectile>(command.bulletID, projectile));
         }
         else if (command.type == s_player_id_command)
@@ -208,6 +209,10 @@ void Game::processServerEvents()
         {
             gameOver = true;
             gameOverCode = command.team;
+        }
+        else if (command.type == s_pickups)
+        {
+            world.enabledPickups.push_back(command.pickupId);
         }
     }
     pthread_mutex_unlock(&commandQueueMutex);
@@ -259,7 +264,7 @@ void Game::receiveMessage(char buffer[], size_t nBytes, sockaddr_in* serverAddr)
 
                     memcpy(&srvCmd.ammo, buffer + offset, 1);
                     offset++;
-                    printf("ammo: %i\n", srvCmd.ammo);
+
                     pthread_mutex_lock(&commandQueueMutex);
                     commandQueue.push(srvCmd);
                     pthread_mutex_unlock(&commandQueueMutex);
@@ -329,6 +334,33 @@ void Game::receiveMessage(char buffer[], size_t nBytes, sockaddr_in* serverAddr)
         pthread_mutex_lock(&commandQueueMutex);
         commandQueue.push(srvCmd);
         pthread_mutex_unlock(&commandQueueMutex);
+    }
+    else if (command_type == s_pickups)
+    {
+        if(msgNum > lastServerMsgid)
+        {
+            do
+            {
+                command srvCmd;
+                srvCmd.msgNum = msgNum;
+                srvCmd.type = command_type;
+                int16_t pickupId = 0;
+                Serialization::charsToShort(buffer, pickupId, offset);
+
+                if (pickupId != -1)
+                {
+                    srvCmd.pickupId = pickupId;
+                    offset += 2;
+                    pthread_mutex_lock(&commandQueueMutex);
+                    commandQueue.push(srvCmd);
+                    pthread_mutex_unlock(&commandQueueMutex);
+                }
+                else
+                {
+                    break;
+                }
+            } while (true);
+        }
     }
 }
 
