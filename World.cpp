@@ -69,7 +69,7 @@ void World::loadTextures()
     World::textureHolder.load(Textures::SKULL, "files/skull-icon.png");
     World::textureHolder.load(Textures::RED_DEAD, "files/red_dead.png");
     World::textureHolder.load(Textures::GREEN_DEAD, "files/green_dead.png");
-    World::textureHolder.load(Textures::HUD_AMMO, "files/hud_ammo.png");
+    World::textureHolder.load(Textures::HUD_AMMO, "files/hud-ammo.png");
 }
 
 void World::loadSounds()
@@ -86,7 +86,7 @@ void World::selectTrack()
     int track = rand() % playlist.size();
     bgMusic->setVolume(40);
     bgMusic->openFromFile(playlist[track]);
-    bgMusic->play();
+    //bgMusic->play(); let me program to my music, motherfucker!
 }
 void World::readMap2(int map)
 {

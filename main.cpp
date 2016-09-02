@@ -23,7 +23,7 @@ int main()
     mWindow.create(sf::VideoMode(800, 600), "President Evil",  sf::Style::Fullscreen | sf::Style::Close);
     World::loadTextures();
     Menu menu(mWindow,&fullScreen);
-    menu.menuSong.play();
+    //menu.menuSong.play(); let me program to my music, motherfucker!
     menu.run(1);
     loopStage2:
     menu.run(2);

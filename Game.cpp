@@ -189,6 +189,7 @@ void Game::processServerEvents()
             players[command.playerID].boundingBox.left = command.posx;
             players[command.playerID].boundingBox.top = command.posy;
             players[command.playerID].rotation = command.rotation;
+            players[command.playerID].ammo = command.ammo;
         }
         else if (command.type == s_projectile_command)
         {
