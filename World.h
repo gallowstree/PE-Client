@@ -29,10 +29,6 @@ public:
     void updateProjectiles(const sf::Time &elapsedTime);
     bool findPlayer(int16_t playerID, std::vector<Player> * players);
     bool gameOver(int16_t winner);
-
-    sf::Text goverText[4];
-    sf::Font worldFont;
-    sf::Music * bgMusic = new sf::Music();
     static ResourceHolder<sf::Texture, Textures> textureHolder;
     sf::View camera;
     static void loadTextures();
@@ -52,7 +48,11 @@ private:
     sf::Sprite menuIcon;
     sf::RectangleShape radar;
 	sf::Text ammoText;
+	sf::Font hudFont;
 	sf::Sprite ammoSpirte;
+	sf::Text goverText[4];
+	sf::Font worldFont;
+	sf::Music * bgMusic = new sf::Music();
     void setRadarPosition();
     void updateCrosshair();
     void calculateCamCenter();
@@ -64,6 +64,8 @@ private:
     void loadSounds();
     void readMap2(int map);
     void selectTrack();
+
+
 };
 
 

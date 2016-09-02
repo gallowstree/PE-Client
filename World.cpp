@@ -16,7 +16,8 @@ ResourceHolder<sf::Texture, Textures> World::textureHolder;
 World::World(sf::RenderWindow&  window, std::vector<Player> * players,  std::map<int16_t, Projectile> *projectiles):
 window(window),
 players(players),
-projectiles(projectiles)
+projectiles(projectiles),
+ammoSpirte()
 {
 
     readMap2(0);
@@ -41,14 +42,24 @@ projectiles(projectiles)
 
     createStaticObjects();
     cursorSprite.setTexture(textureHolder.get(Textures::CROSSHAIR));
+    ammoSpirte.setTexture(textureHolder.get(Textures::HUD_AMMO));
+    ammoSpirte.setPosition(10, window.getSize().y - ammoText.getCharacterSize() - 10);
+
     menuIcon.setTexture(textureHolder.get(Textures::SKULL));
     worldFont.loadFromFile("files/sansation.ttf");
+    hudFont.loadFromFile("files/hud.ttf");
 
     radar.setSize((sf::Vector2f(bounds.width/20,bounds.height/20)));
     radar.setFillColor(sf::Color(0,0,0,150));
     radar.setOutlineThickness(1);
     radar.setOutlineColor(sf::Color(255,255,255,150));
     loadSounds();
+
+    ammoText.setFont(hudFont);
+    ammoText.setString("");
+    ammoText.setPosition(20 + ammoSpirte.getTextureRect().width , window.getSize().y - ammoText.getCharacterSize() - 10);
+    ammoText.setColor(sf::Color::White);
+    ammoText.setCharacterSize(20);
 }
 
 void World::updateCrosshair()
@@ -305,6 +316,16 @@ void World::render()
     window.draw(cursorSprite);
 
     window.setView(window.getDefaultView());
+
+    if (players->size() > 0 && playerID != -1)
+    {
+        auto ammoString = std::to_string((*players)[playerID].ammo);
+        ammoText.setString(ammoString);
+        window.draw(ammoText);
+        window.draw(ammoSpirte);
+    }
+
+    window.setView(camera);
 
 }
 
