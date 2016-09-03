@@ -17,7 +17,7 @@ class Menu : public SocketListener {
     static const int MENU_SIZE = 2;
 
 public:
-    Menu(sf::RenderWindow& window, bool * fullScreen);
+    Menu(sf::RenderWindow& window);
 
     void stage1();
     void stage2();
@@ -31,8 +31,6 @@ public:
     int16_t connResult = 0;
     sf::Text message;
     sf::Music menuSong;
-    bool * fullScreen;
-
 
 private:
     int selectedOption = 0;

@@ -15,14 +15,12 @@ const int s_port = 50420;
 const int c_port = 50421;
 const int c_port_join = 50422;
 
-sf::RenderWindow mWindow(sf::VideoMode(800, 600), "President Evil", sf::Style::Fullscreen | sf::Style::Close);
+sf::RenderWindow mWindow(sf::VideoMode(800, 600), "President Evil", sf::Style::Close);
 
 int main()
 {
-    bool fullScreen = true;
-    mWindow.create(sf::VideoMode(800, 600), "President Evil",  sf::Style::Fullscreen | sf::Style::Close);
     World::loadTextures();
-    Menu menu(mWindow,&fullScreen);
+    Menu menu(mWindow);
     menu.menuSong.play();
     menu.run(1);
     loopStage2:
@@ -48,7 +46,7 @@ int main()
 
     menu.menuSong.stop();
 
-    Game game(mWindow,&fullScreen,&sSocket,menu.selectedTeam);
+    Game game(mWindow,&sSocket,menu.selectedTeam);
     ClientSocket cSocket(menu.c_ip, c_port, &game);
     cSocket.timeout = 0;
     cSocket.keepAlive = true;

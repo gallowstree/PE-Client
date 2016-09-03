@@ -12,9 +12,8 @@
 #include "command.h"
 #include "SFUtils.h"
 
-Game::Game(sf::RenderWindow&  window,bool * fullScreen, ServerSocket * sSocket, int selectedTeam):
+Game::Game(sf::RenderWindow&  window, ServerSocket * sSocket, int selectedTeam):
 window(window),
-fullScreen(fullScreen),
 sSocket(sSocket),
 selectedTeam(selectedTeam),
 world(World(window,&players, &projectiles))
@@ -38,21 +37,6 @@ void Game::run()
         while (window.pollEvent(event))
         {
             switch (event.type) {
-                case sf::Event::KeyPressed:
-                    switch (event.key.code)
-                    {
-                        case sf::Keyboard::Key::Space:
-                            *fullScreen = !(*fullScreen);
-                            window.create(sf::VideoMode(800, 600), "President Evil", (*fullScreen) ? sf::Style::Fullscreen | sf::Style::Close  : sf::Style::Close);
-                            if(*fullScreen)
-                            {
-                                //world.camera.reset(sf::FloatRect(0, 0, sf::VideoMode::getDesktopMode().width,sf::VideoMode::getDesktopMode().height));
-                            }
-                            else
-                                world.camera.reset(sf::FloatRect(0,0, window.getSize().x, window.getSize().y));
-                            break;
-                    }
-                    break;
                 case sf::Event::Closed:
                     window.close();
                     exit(0);
@@ -66,8 +50,7 @@ void Game::run()
             timeSinceLastUpdate -= TimePerFrame;
             processServerEvents();
             processEvents();
-            if (window.hasFocus())
-                sendCommands();
+            sendCommands();
             should_render = true;
             world.update(TimePerFrame);
 
@@ -141,21 +124,23 @@ void Game::processEvents()
     }
 
     moves = 0x0000;
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::W))
-        moves |= 0x1;
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::S))
-        moves |= 0x2;
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-        moves |= 0x4;
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-        moves |= 0x8;
-    if(sf::Mouse::isButtonPressed(sf::Mouse::Left))
-        moves |= 0x10;
+    if (window.hasFocus()) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+            moves |= 0x1;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
+            moves |= 0x2;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+            moves |= 0x4;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+            moves |= 0x8;
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+            moves |= 0x10;
 
-    sf::Vector2f mousePositionFloat = window.mapPixelToCoords((sf::Mouse::getPosition(window)));
-    sf::Vector2f spriteCenter = getSpriteCenter(players[playerID].sprite);
-    sf::Vector2f facing = mousePositionFloat - spriteCenter;
-    rotation = atan2f(facing.y, facing.x);
+        sf::Vector2f mousePositionFloat = window.mapPixelToCoords((sf::Mouse::getPosition(window)));
+        sf::Vector2f spriteCenter = getSpriteCenter(players[playerID].sprite);
+        sf::Vector2f facing = mousePositionFloat - spriteCenter;
+        rotation = atan2f(facing.y, facing.x);
+    }
 
 }
 
