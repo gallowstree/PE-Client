@@ -39,10 +39,6 @@ void Area::draw(sf::RenderTarget &window, bool debugGrid)
 
     for (auto& pickup : pickups)
     {
-
-        printf("%f, %f, %i, %i, %i\n", pickup->sprite.getPosition().x, pickup->sprite.getPosition().y,
-                                 pickup->sprite.getTextureRect().width, pickup->sprite.getTextureRect().height,
-                                 pickup->enabled ? 1 : 0);
         if (pickup->enabled)
             window.draw(pickup->sprite);
     }

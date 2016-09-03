@@ -96,6 +96,10 @@ void World::loadSounds()
     sfxNoAmmo.setBuffer(sfxNoAmmoBuffer);
     sfxNoAmmo.setVolume(30);
 
+    sfxReloadBuffer.loadFromFile("files/sound/reload_bullets.wav");
+    sfxReload.setBuffer(sfxReloadBuffer);
+    sfxReload.setVolume(30);
+
     selectTrack();
 }
 
@@ -146,11 +150,11 @@ void World::readMap2(int map)
         else if (strncmp(params[0], "3", strlen(params[0])) == 0)//Pickup
         {
             auto pu = new Pickup(atoi(params[1]), atoi(params[2]), atoi(params[3]),
-                                 atoi(params[4]), atoi(params[5]), atoi(params[6]), atoi(params[7]),
-                                 atoi(params[8]));
+                                 atoi(params[4]), atoi(params[5]), atoi(params[6]), atoi(params[7]));
             pu->initSprite(textureHolder.get(pu->getTexture()));
 
             world_entities.push_back(pu);
+            all_pickups.push_back(pu);
         }
 
         for (auto& param : params)
