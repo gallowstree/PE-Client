@@ -84,6 +84,7 @@ void World::loadTextures()
     World::textureHolder.load(Textures::HUD_AMMO, "files/hud-ammo.png");
     World::textureHolder.load(Textures::PICKUP_AMMO, "files/ammo.png");
     World::textureHolder.load(Textures::PICKUP_HEALTH, "files/health.png");
+    World::textureHolder.load(Textures::WALL, "files/wall.png");
 }
 
 void World::loadSounds()
@@ -144,7 +145,7 @@ void World::readMap2(int map)
         }
         else if (strncmp(params[0], "0", strlen(params[0])) == 0) //Wall
         {
-            world_entities.push_back(new Wall(atoi(params[1]), atoi(params[2]), atoi(params[3]), atoi(params[4])));
+            world_entities.push_back(new Wall(atoi(params[1]), atoi(params[2]), atoi(params[3]), atoi(params[4]),textureHolder.get(Textures::WALL) ));
         }
         else if (strncmp(params[0], "2", strlen(params[0])) == 0)//Floor
         {
@@ -228,7 +229,7 @@ void World::createStaticObjects()
         {
             for (auto& area : areasForEntity(*entity))
             {
-                areas[area]->walls.push_back(entity);
+                areas[area]->walls.push_back((Wall*)entity);
             }
         }
         else if (entity->type == EntityType::FloorSection_T)

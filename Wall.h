@@ -7,11 +7,14 @@
 
 
 #include "Entity.h"
+#include "Textures.h"
 
 class Wall : public Entity
 {
 public:
-    Wall(float x, float y, float width, float height);
+    sf::Sprite sprite;
+
+    Wall(float x, float y, float width, float height, sf::Texture & texture);
 };
 
 

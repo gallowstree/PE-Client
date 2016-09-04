@@ -31,10 +31,8 @@ void Area::draw(sf::RenderTarget &window, bool debugGrid)
 
     for (auto& wall: walls)
     {
-        auto drawRect = sf::RectangleShape(sf::Vector2f(wall->boundingBox.width, wall->boundingBox.height));
-        drawRect.setPosition(wall->boundingBox.left, wall->boundingBox.top);
-        drawRect.setFillColor(sf::Color(144,144,144));
-        window.draw(drawRect);
+        World::textureHolder.get(Textures::WALL).setRepeated(true);
+        window.draw(wall->sprite);
     }
 
     for (auto& pickup : pickups)

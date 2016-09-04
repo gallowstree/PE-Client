@@ -10,6 +10,7 @@
 #include "Entity.h"
 #include "FloorSection.h"
 #include "Pickup.h"
+#include "Wall.h"
 
 class FloorSection;
 
@@ -19,7 +20,7 @@ public:
     Area(float x, float y, float width, float height);
     void draw(sf::RenderTarget &window, bool debugGrid);
     sf::FloatRect rect;
-    std::vector<Entity*> walls;
+    std::vector<Wall*> walls;
     std::vector<Pickup*> pickups;
     std::vector<FloorSection*> floors;
     std::vector<Entity*> moving_entities;
