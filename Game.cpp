@@ -11,7 +11,7 @@
 #include "CommandCode.h"
 #include "command.h"
 #include "SFUtils.h"
-
+int16_t Pickup::nextPickupId;
 Game::Game(sf::RenderWindow&  window, ServerSocket * sSocket, int selectedTeam):
 window(window),
 sSocket(sSocket),
@@ -20,6 +20,7 @@ world(World(window,&players, &projectiles))
 {
     pthread_mutex_init(&commandQueueMutex, NULL);
     pthread_mutex_init(&projectileACKMutex, NULL);
+    Pickup::nextPickupId = 0;
 }
 
 void Game::run()
@@ -147,7 +148,6 @@ void Game::processEvents()
 void Game::processServerEvents()
 {
     pthread_mutex_lock(&commandQueueMutex);
-    world.enabledPickups.clear();
     while(!commandQueue.empty())
     {
         command_t command = commandQueue.front();
@@ -169,6 +169,9 @@ void Game::processServerEvents()
                 else
                     players[command.playerID].setTexture( world.textureHolder.get(Textures::PLAYER_GREEN));
             }
+
+            if (players[command.playerID].ammo < command.ammo)
+                world.sfxReload.play();
 
             players[command.playerID].health = command.health;
             players[command.playerID].valid = command.validPlayer;
@@ -197,7 +200,7 @@ void Game::processServerEvents()
         }
         else if (command.type == s_pickups)
         {
-            world.enabledPickups.push_back(command.pickupId);
+            world.all_pickups[command.pickupId]->enabled = command.pickupEnabled;
         }
     }
     pthread_mutex_unlock(&commandQueueMutex);
@@ -206,7 +209,7 @@ void Game::processServerEvents()
 
 void Game::receiveMessage(char buffer[], size_t nBytes, sockaddr_in* serverAddr)
 {
-    if (nBytes < 0)
+    if (nBytes <= 0)
         return;
 
     int32_t  msgNum;
@@ -336,6 +339,8 @@ void Game::receiveMessage(char buffer[], size_t nBytes, sockaddr_in* serverAddr)
                 {
                     srvCmd.pickupId = pickupId;
                     offset += 2;
+                    srvCmd.pickupEnabled = buffer[offset] != 0;
+                    offset++;
                     pthread_mutex_lock(&commandQueueMutex);
                     commandQueue.push(srvCmd);
                     pthread_mutex_unlock(&commandQueueMutex);

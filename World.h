@@ -15,6 +15,7 @@
 
 
 class Area;
+class Pickup;
 
 
 class World
@@ -34,7 +35,8 @@ public:
 
 	bool mouseIsDown;
 	sf::Sound sfxShotGun;
-	std::vector<int16_t> enabledPickups;
+	sf::Sound sfxReload;
+	std::vector<Pickup*> all_pickups;
 private:
     std::vector<Player> * players;
     std::map<int16_t,Projectile> * projectiles;
@@ -45,10 +47,11 @@ private:
     sf::SoundBuffer sfxScreamBuffer;
     sf::SoundBuffer sfxShotGunBuffer;
     sf::SoundBuffer sfxNoAmmoBuffer;
+    sf::SoundBuffer sfxReloadBuffer;
 	sf::Sound sfxNoAmmo;
     sf::Sound sfxScream;
     std::vector<Entity*> world_entities;
-    std::vector<const char *> maps = {"maps/level1.txt","maps/level2.txt"};
+	std::vector<const char *> maps = {"maps/level1.txt","maps/level2.txt"};
     std::vector<const char *> playlist = {"files/sound/roller_mobster.ogg","files/sound/infiltrate_acid_spit.ogg","files/sound/cant_catch_me.ogg"};
     std::vector<Area*> areas;
     sf::Sprite menuIcon;

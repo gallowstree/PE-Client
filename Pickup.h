@@ -18,11 +18,12 @@ enum PickupType
 class Pickup : public Entity
 {
 public:
-    Pickup(int l, int t, int w, int h, int type, int seconds, int initialState, int16_t id);
+    Pickup(int l, int t, int w, int h, int type, int seconds, int initialState);
     PickupType pickupType;
     int16_t pickupId;
     bool enabled;
 
+	static int16_t nextPickupId;
     void initSprite(sf::Texture &texture);
 
     sf::Sprite sprite;
