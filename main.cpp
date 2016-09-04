@@ -21,7 +21,7 @@ int main()
 {
     World::loadTextures();
     Menu menu(mWindow);
-    menu.menuSong.play();
+    //menu.menuSong.play();
     menu.run(1);
     loopStage2:
     menu.run(2);

@@ -15,13 +15,15 @@ class FloorSection : public Entity
 {
 public:
     Textures getTexture();
-
+    sf::Sprite sprite;
     FloorSection(int texture, float left, float top, float width, float height);
 
 
+    void initSprite(sf::Texture &texture);
 
 private:
     int texture;
+
 };
 
 

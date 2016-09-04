@@ -15,7 +15,8 @@ enum EntityType
 {
     Wall_T,
     Player_T,
-    FloorSection_T
+    FloorSection_T,
+    Pickup_T
 };
 
 
@@ -29,6 +30,7 @@ public:
     int16_t entityId;
     bool isStatic;
     EntityType type;
+    bool needsDrawing;
 
     Entity();
 

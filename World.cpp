@@ -6,6 +6,7 @@
 #include "World.h"
 #include "Wall.h"
 #include "FloorSection.h"
+#include "Pickup.h"
 #include <fstream>
 #include <math.h>
 #include <sstream>
@@ -16,7 +17,8 @@ ResourceHolder<sf::Texture, Textures> World::textureHolder;
 World::World(sf::RenderWindow&  window, std::vector<Player> * players,  std::map<int16_t, Projectile> *projectiles):
 window(window),
 players(players),
-projectiles(projectiles)
+projectiles(projectiles),
+ammoSpirte()
 {
 
     readMap2(0);
@@ -41,14 +43,24 @@ projectiles(projectiles)
 
     createStaticObjects();
     cursorSprite.setTexture(textureHolder.get(Textures::CROSSHAIR));
+    ammoSpirte.setTexture(textureHolder.get(Textures::HUD_AMMO));
+    ammoSpirte.setPosition(10, window.getSize().y - ammoText.getCharacterSize() - 10);
+
     menuIcon.setTexture(textureHolder.get(Textures::SKULL));
     worldFont.loadFromFile("files/sansation.ttf");
+    hudFont.loadFromFile("files/hud.ttf");
 
     radar.setSize((sf::Vector2f(bounds.width/20,bounds.height/20)));
-    radar.setFillColor(sf::Color(0,0,0,150));
+    radar.setFillColor(sf::Color(0,0,0,100));
     radar.setOutlineThickness(1);
-    radar.setOutlineColor(sf::Color(255,255,255,150));
+    radar.setOutlineColor(sf::Color(255,255,255,150));wwwwwwwwwwww
     loadSounds();
+
+    ammoText.setFont(hudFont);
+    ammoText.setString("");
+    ammoText.setPosition(20 + ammoSpirte.getTextureRect().width , window.getSize().y - ammoText.getCharacterSize() - 10);
+    ammoText.setColor(sf::Color::White);
+    ammoText.setCharacterSize(20);
 }
 
 void World::updateCrosshair()
@@ -69,13 +81,25 @@ void World::loadTextures()
     World::textureHolder.load(Textures::SKULL, "files/skull-icon.png");
     World::textureHolder.load(Textures::RED_DEAD, "files/red_dead.png");
     World::textureHolder.load(Textures::GREEN_DEAD, "files/green_dead.png");
+    World::textureHolder.load(Textures::HUD_AMMO, "files/hud-ammo.png");
+    World::textureHolder.load(Textures::PICKUP_AMMO, "files/ammo.png");
+    World::textureHolder.load(Textures::PICKUP_HEALTH, "files/health.png");
 }
 
 void World::loadSounds()
 {
-    shotGunBuffer.loadFromFile("files/sound/shotgun.wav");
-    shotGun.setBuffer(shotGunBuffer);
-    shotGun.setVolume(30);
+    sfxShotGunBuffer.loadFromFile("files/sound/shotgun.wav");
+    sfxShotGun.setBuffer(sfxShotGunBuffer);
+    sfxShotGun.setVolume(30);
+
+    sfxNoAmmoBuffer.loadFromFile("files/sound/empty-gun.ogg");
+    sfxNoAmmo.setBuffer(sfxNoAmmoBuffer);
+    sfxNoAmmo.setVolume(30);
+
+    sfxScreamBuffer.loadFromFile("files/sound/scream.wav");
+    sfxScream.setBuffer(sfxScreamBuffer);
+    sfxScream.setVolume(30);
+
     selectTrack();
 }
 
@@ -85,8 +109,9 @@ void World::selectTrack()
     int track = rand() % playlist.size();
     bgMusic->setVolume(40);
     bgMusic->openFromFile(playlist[track]);
-    bgMusic->play();
+    //bgMusic->play(); let me program to my music, motherfucker!
 }
+
 void World::readMap2(int map)
 {
     std::ifstream mapFile(maps[map]);
@@ -118,7 +143,18 @@ void World::readMap2(int map)
         }
         else if (strncmp(params[0], "2", strlen(params[0])) == 0)//Floor
         {
-            world_entities.push_back(new FloorSection(atoi(params[5]), atoi(params[1]), atoi(params[2]), atoi(params[3]), atoi(params[4])));
+            auto fs = new FloorSection(atoi(params[5]), atoi(params[1]), atoi(params[2]), atoi(params[3]), atoi(params[4]));
+            fs->initSprite(textureHolder.get(fs->getTexture()));
+            world_entities.push_back(fs);
+        }
+        else if (strncmp(params[0], "3", strlen(params[0])) == 0)//Pickup
+        {
+            auto pu = new Pickup(atoi(params[1]), atoi(params[2]), atoi(params[3]),
+                                 atoi(params[4]), atoi(params[5]), atoi(params[6]), atoi(params[7]),
+                                 atoi(params[8]));
+            pu->initSprite(textureHolder.get(pu->getTexture()));
+
+            world_entities.push_back(pu);
         }
 
         for (auto& param : params)
@@ -131,23 +167,51 @@ void World::readMap2(int map)
 
 void World::calculateCamCenter()
 {
+
+
     auto pVector = (*players);
     if(findPlayer(playerID,players))
     {
-        camCenter = pVector[playerID].sprite.getPosition();
-
-        if (pVector[playerID].sprite.getPosition().x < window.getSize().x / 2)
-            camCenter.x = window.getSize().x / 2;
-        else if (pVector[playerID].sprite.getPosition().x > bounds.width - window.getSize().x / 2)
-            camCenter.x = pVector[playerID].sprite.getPosition().x;//bounds.width - 300;
-
-        if (pVector[playerID].sprite.getPosition().y < window.getSize().y / 2)
-            camCenter.y = window.getSize().y / 2;
-        else if (pVector[playerID].sprite.getPosition().y > bounds.height - window.getSize().y / 2)
-            camCenter.y = pVector[playerID].sprite.getPosition().y;//bounds.height - 300;
+        auto playerPosition = pVector[playerID].sprite.getPosition();
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift))
+        {
+            float maxCamMoveFactor = 0.25f;
+            auto maxCamMovement = sf::Vector2f( playerPosition.x + window.getSize().x * maxCamMoveFactor,
+                                                playerPosition.y + window.getSize().y * maxCamMoveFactor);
+
+            auto minCamMovement = sf::Vector2f( playerPosition.x - window.getSize().x * maxCamMoveFactor,
+                                                playerPosition.y - window.getSize().y * maxCamMoveFactor);
+
             camCenter = window.mapPixelToCoords((sf::Mouse::getPosition(window)));
+
+            if (camCenter.x > maxCamMovement.x)
+                camCenter.x = maxCamMovement.x;
+            else if (camCenter.x < minCamMovement.x)
+                camCenter.x = minCamMovement.x;
+
+            if (camCenter.y > maxCamMovement.y)
+                camCenter.y = maxCamMovement.y;
+            else if (camCenter.y < minCamMovement.y)
+                camCenter.y = minCamMovement.y;
+        }
+        else
+        {
+            auto halfWinSize = sf::Vector2f(window.getSize().x / 2, window.getSize().y / 2);
+            camCenter = playerPosition;
+
+
+            if (playerPosition.x < halfWinSize.x)
+                camCenter.x = halfWinSize.x;
+            else if (playerPosition.x > bounds.width - halfWinSize.x)
+                camCenter.x = playerPosition.x;
+
+            if (playerPosition.y < halfWinSize.y)
+                camCenter.y = halfWinSize.y;
+            else if (playerPosition.y > bounds.height - halfWinSize.y)
+                camCenter.y = playerPosition.y;
+        }
+
     }
 }
 
@@ -167,6 +231,14 @@ void World::createStaticObjects()
             for (auto& area : areasForEntity(*entity))
             {
                 areas[area]->floors.push_back((FloorSection*)entity);
+            }
+        }
+        else if (entity->type == EntityType::Pickup_T)
+        {
+            for (auto& area : areasForEntity(*entity))
+            {
+                printf("pickup id %i %i\n", ((Pickup*)entity)->pickupId, ((Pickup*)entity)->enabled ? 1 : 0);
+                areas[area]->pickups.push_back((Pickup*)entity);
             }
         }
     }
@@ -192,8 +264,13 @@ void World::deleteInvalidProjectiles()
 
 void World::render()
 {
-
     sf::FloatRect visibleRect(camCenter.x - window.getSize().x, camCenter.y - window.getSize().y, window.getSize().x * 2, window.getSize().y * 2);
+
+    for (auto& ent : world_entities)
+    {
+        if (ent->type == FloorSection_T)
+            ent->needsDrawing = true;
+    }
 
     for (auto &area : areas)
     {
@@ -205,13 +282,8 @@ void World::render()
 
 
 
-    window.draw(radar);
 
     window.setView(camera);
-
-
-    setRadarPosition();
-
 
 
     for(auto const &projectile : *projectiles)
@@ -261,6 +333,11 @@ void World::render()
             else
             {
                 player.sprite.setTexture(textureHolder.get(player.team == 0 ? Textures::RED_DEAD : Textures::GREEN_DEAD), true);
+                if(!player.death)
+                {
+                    sfxScream.play();
+                    player.death = true;
+                }
             }
             player.nickText.setPosition(player.boundingBox.getPosition().x + player.boundingBox.getSize().x / 2 - player.nickText.getLocalBounds().width / 2,
                                         player.boundingBox.getPosition().y + player.sprite.getTextureRect().height -7 );
@@ -273,6 +350,24 @@ void World::render()
     calculateCamCenter();
     camera.setCenter(camCenter);
     window.draw(cursorSprite);
+
+    window.setView(window.getDefaultView());
+
+    auto currentPlayer = getCurrentPlayer();
+
+    if (currentPlayer != nullptr)
+    {
+        auto ammoString = std::to_string(currentPlayer->ammo);
+        ammoText.setString(ammoString);
+        window.draw(ammoText);
+        window.draw(ammoSpirte);
+    }
+
+
+    window.setView(camera);
+    setRadarPosition();
+    window.draw(radar);
+
 }
 
 void World::update(sf::Time elapsedTime)
@@ -283,6 +378,20 @@ void World::update(sf::Time elapsedTime)
     if(bgMusic->getStatus() == sf::SoundSource::Status::Stopped)
     {
         selectTrack();
+    }
+
+    if(sf::Mouse::isButtonPressed(sf::Mouse::Left) && !mouseIsDown)
+    {
+        mouseIsDown = true;
+        Player* player = getCurrentPlayer();
+        if (player != nullptr && player->ammo == 0)
+        {
+            sfxNoAmmo.play();
+        }
+    }
+    else
+    {
+        mouseIsDown = false;
     }
 }
 
@@ -474,3 +583,11 @@ bool World::gameOver(int16_t winner) {
     }
     return response;
 }
+
+Player *World::getCurrentPlayer() {
+    if (players->size() > 0 && playerID != -1)
+        return &(*players)[playerID];
+
+    return nullptr;
+}
+
