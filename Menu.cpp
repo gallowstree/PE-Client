@@ -36,6 +36,9 @@ window(window)
 
 void Menu::run(int stage)
 {
+    if(menuSong.getStatus() == sf::SoundSource::Status::Stopped)
+        menuSong.play();
+
     currentStage = stage;
     if(currentStage == 1)
         stage1();
