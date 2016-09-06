@@ -115,7 +115,7 @@ void World::selectTrack()
     int track = rand() % playlist.size();
     bgMusic->setVolume(40);
     bgMusic->openFromFile(playlist[track]);
-    //bgMusic->play(); let me program to my music, motherfucker!
+    bgMusic->play(); //let me program to my music, motherfucker!
 }
 
 void World::readMap2(int map)
@@ -390,7 +390,7 @@ void World::update(sf::Time elapsedTime)
     {
         mouseIsDown = true;
         Player* player = getCurrentPlayer();
-        if (player != nullptr && player->ammo == 0)
+        if (player != nullptr && player->ammo == 0 && window.hasFocus())
         {
             sfxNoAmmo.play();
         }
