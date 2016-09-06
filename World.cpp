@@ -91,19 +91,19 @@ void World::loadSounds()
 {
     sfxShotGunBuffer.loadFromFile("files/sound/shotgun.wav");
     sfxShotGun.setBuffer(sfxShotGunBuffer);
-    sfxShotGun.setVolume(30);
+    sfxShotGun.setVolume(0);
 
     sfxNoAmmoBuffer.loadFromFile("files/sound/empty-gun.ogg");
     sfxNoAmmo.setBuffer(sfxNoAmmoBuffer);
-    sfxNoAmmo.setVolume(30);
+    sfxNoAmmo.setVolume(0);
 
     sfxScreamBuffer.loadFromFile("files/sound/scream.wav");
     sfxScream.setBuffer(sfxScreamBuffer);
-    sfxScream.setVolume(30);
+    sfxScream.setVolume(0);
 
     sfxReloadBuffer.loadFromFile("files/sound/reload_bullets.wav");
     sfxReload.setBuffer(sfxReloadBuffer);
-    sfxReload.setVolume(30);
+    sfxReload.setVolume(0);
 
 
     selectTrack();
