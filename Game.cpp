@@ -158,8 +158,8 @@ void Game::processServerEvents()
 
             if(!world.findPlayer(command.playerID,&players))
             {
-                char * nick = (char *)calloc(strlen(command.nickname)+1, sizeof(char));
-                printf("%s esto recibo pue\n",command.nickname);
+                char * nick = (char *)malloc(7*sizeof(char));
+                memset(nick,0,7);
                 strcpy(nick,command.nickname);
                 players.push_back(Player(command.playerID, command.team, command.posx, command.posy, world.textureHolder.get(command.team == 0 ? Textures::PLAYER_RED : Textures::PLAYER_GREEN) , nick));
             }
@@ -173,6 +173,9 @@ void Game::processServerEvents()
 
             if (players[command.playerID].ammo < command.ammo)
                 world.sfxReload.play();
+
+            if(strcmp(players[command.playerID].nick,command.nickname) != 0)
+                strcpy(players[command.playerID].nick,command.nickname);
 
             players[command.playerID].health = command.health;
             players[command.playerID].valid = command.validPlayer;

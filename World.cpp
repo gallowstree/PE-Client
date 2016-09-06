@@ -315,6 +315,7 @@ void World::render()
 
             player.nickText.setCharacterSize(14);
             player.nickText.setColor(sf::Color::White);
+            player.nickText.setString(player.nick);
 
             player.healthWrapper.setPosition(player.boundingBox.getPosition().x + 6,player.boundingBox.getPosition().y + player.sprite.getTextureRect().height -12);
             player.healthBox.setPosition(player.healthWrapper.getPosition().x,player.healthWrapper.getPosition().y);

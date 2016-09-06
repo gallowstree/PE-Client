@@ -17,14 +17,14 @@ class Player : public Entity {
         bool valid = 0;
         float rotation = 0;
         sf::Sprite sprite;
-        const char * nick;
+        char * nick;
         sf::Text nickText;
         sf::RectangleShape healthWrapper;
         sf::RectangleShape healthBox;
         unsigned char ammo = 0;
         int16_t health = 100;
         int16_t team = 0;
-        Player(int16_t playerID, int16_t team, float posx,float posy,sf::Texture &texture, const char* nick);
+        Player(int16_t playerID, int16_t team, float posx,float posy,sf::Texture &texture, char* nick);
         void setTexture(const sf::Texture &texture);
         bool death = false;
 };
