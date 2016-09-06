@@ -209,7 +209,7 @@ void Game::processServerEvents()
 
 void Game::receiveMessage(char buffer[], size_t nBytes, sockaddr_in* serverAddr)
 {
-    if (nBytes <= 0)
+    if (nBytes <= 0 || gameOver)
         return;
 
     int32_t  msgNum;
