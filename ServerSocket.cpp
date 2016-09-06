@@ -25,7 +25,7 @@ void ServerSocket::send(char buffer[], int COMMAND_DATA_SIZE)
     sendto(serverSocket,buffer,COMMAND_DATA_SIZE,0,(struct sockaddr *)&serverAddr,addr_size);
 }
 
-void ServerSocket::close()
+void ServerSocket::closeFD()
 {
     close(serverSocket);
 }

@@ -388,8 +388,8 @@ void Game::reset()
 {
     pthread_mutex_lock(&commandQueueMutex);
     playerID = -1;
-    sSocket.close();
-    delete(sSocket);
+    sSocket->closeFD();
+    sSocket = nullptr;
     for (auto it = players.begin() ; it != players.end(); ++it)
     {
         delete (*it).nick;
