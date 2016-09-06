@@ -91,19 +91,19 @@ void World::loadSounds()
 {
     sfxShotGunBuffer.loadFromFile("files/sound/shotgun.wav");
     sfxShotGun.setBuffer(sfxShotGunBuffer);
-    sfxShotGun.setVolume(0);
+    sfxShotGun.setVolume(30);
 
     sfxNoAmmoBuffer.loadFromFile("files/sound/empty-gun.ogg");
     sfxNoAmmo.setBuffer(sfxNoAmmoBuffer);
-    sfxNoAmmo.setVolume(0);
+    sfxNoAmmo.setVolume(30);
 
     sfxScreamBuffer.loadFromFile("files/sound/scream.wav");
     sfxScream.setBuffer(sfxScreamBuffer);
-    sfxScream.setVolume(0);
+    sfxScream.setVolume(30);
 
     sfxReloadBuffer.loadFromFile("files/sound/reload_bullets.wav");
     sfxReload.setBuffer(sfxReloadBuffer);
-    sfxReload.setVolume(0);
+    sfxReload.setVolume(30);
 
 
     selectTrack();
@@ -332,7 +332,7 @@ void World::render()
                 window.draw(player.healthBox);
 
                 sf::RectangleShape radarPos(sf::Vector2f(4,4));
-                radarPos.setFillColor((player.team == 0) ? sf::Color::Red : sf::Color::Green);
+                radarPos.setFillColor(sf::Color::White);
                 radarPos.setPosition(radar.getPosition().x + player.boundingBox.left / 20 , radar.getPosition().y + player.boundingBox.top / 20 );
                 window.draw(radarPos);
             }
