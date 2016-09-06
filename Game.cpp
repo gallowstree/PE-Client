@@ -18,6 +18,7 @@ sSocket(sSocket),
 selectedTeam(selectedTeam),
 world(World(window,&players, &projectiles))
 {
+    this->playerID = -1;
     pthread_mutex_init(&commandQueueMutex, NULL);
     pthread_mutex_init(&projectileACKMutex, NULL);
     Pickup::nextPickupId = 0;
@@ -191,6 +192,7 @@ void Game::processServerEvents()
         }
         else if (command.type == s_player_id_command)
         {
+            printf("here!!!! %d",command.playerID);
             playerID = command.playerID;
         }
         else if (command.type == s_game_over)
@@ -380,4 +382,21 @@ void Game::render()
     window.clear();
     world.render();
     window.display();
+}
+
+void Game::reset()
+{
+    pthread_mutex_lock(&commandQueueMutex);
+    playerID = -1;
+    sSocket.close();
+    delete(sSocket);
+    for (auto it = players.begin() ; it != players.end(); ++it)
+    {
+        delete (*it).nick;
+    }
+    players.clear();
+    projectiles.clear();
+    std::queue<int32_t>().swap(projectileACKQueue);
+    std::queue<command_t>().swap(commandQueue);
+    pthread_mutex_unlock(&commandQueueMutex);
 }

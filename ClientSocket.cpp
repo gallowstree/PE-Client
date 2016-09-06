@@ -9,6 +9,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include <sys/time.h>
+#include <zconf.h>
 
 
 ClientSocket::ClientSocket(const char * ip, int port, SocketListener * listener)
@@ -24,6 +25,7 @@ ClientSocket::ClientSocket(const char * ip, int port, SocketListener * listener)
     memset(clientAddr.sin_zero, '\0', sizeof clientAddr.sin_zero);
 
     int reuse = 1;
+
 
     if (setsockopt(udpSocket,SOL_SOCKET,SO_REUSEADDR,&reuse,sizeof(int))) {
         Serialization::shortToChars(4,buffer,0);
@@ -82,6 +84,7 @@ void ClientSocket::run()
         }
     }
     while(keepAlive);
+    close(udpSocket);
 }
 
 void *ClientSocket::runThread(void *clientSocket) {

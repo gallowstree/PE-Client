@@ -20,7 +20,7 @@ private:
     int serverSocket;
     struct sockaddr_in serverAddr;
     socklen_t addr_size = sizeof serverAddr;
-
+    void close();
 
 };
 

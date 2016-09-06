@@ -40,6 +40,7 @@ int main()
         goto loopStage2;
     }
 
+    printf("result %d\n",menu.connResult);
     if(menu.connResult == 1)
         menu.run(3);
 
@@ -57,11 +58,11 @@ int main()
     game.run();
     if(game.restart)
     {
+        game.reset();
         cSocket.timeout =1;
         cSocket.keepAlive = false;
         menu.message.setString("");
         menu.connResult = 0;
-        menu.menuSong.play();
         goto loopStage2;
     }
 

@@ -28,6 +28,7 @@ public:
     void receiveMessage(char buffer[], size_t nBytes, sockaddr_in* serverAddr);
     void run();
     void getID();
+    void reset();
 
 private:
     World world;

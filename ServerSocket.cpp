@@ -5,6 +5,7 @@
 #include <cstring>
 #include <cstdio>
 #include <errno.h>
+#include <zconf.h>
 #include "ServerSocket.h"
 
 ServerSocket::ServerSocket(const char *ip, int port) :
@@ -22,4 +23,9 @@ port(port)
 void ServerSocket::send(char buffer[], int COMMAND_DATA_SIZE)
 {
     sendto(serverSocket,buffer,COMMAND_DATA_SIZE,0,(struct sockaddr *)&serverAddr,addr_size);
+}
+
+void ServerSocket::close()
+{
+    close(serverSocket);
 }
