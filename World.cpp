@@ -134,7 +134,8 @@ void World::readMap2(int map)
         {
             auto paramString = (char *) malloc(item.length());
             strcpy(paramString, item.c_str());
-            params.push_back(paramString);
+            if (strlen(paramString) > 0)
+                params.push_back(paramString);
         }
 
         if (strncmp(params[0], "1", strlen(params[0])) == 0) //World info
@@ -304,6 +305,7 @@ void World::render()
     {
         if(player.valid)
         {
+            printf("%f,%f\n", player.boundingBox.left, player.boundingBox.top);
             double angle = player.rotation * 180 / M_PI;
             sf::IntRect spriteRect = player.sprite.getTextureRect();
             player.sprite.setPosition(player.boundingBox.left + player.boundingBox.width / 2,
