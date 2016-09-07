@@ -14,14 +14,14 @@
 
 ResourceHolder<sf::Texture, Textures> World::textureHolder;
 
-World::World(sf::RenderWindow&  window, std::vector<Player> * players,  std::map<int16_t, Projectile> *projectiles):
+World::World(sf::RenderWindow&  window, std::vector<Player> * players,  std::map<int16_t, Projectile> *projectiles,int16_t selectedMap):
 window(window),
 players(players),
 projectiles(projectiles),
 ammoSpirte()
 {
 
-    readMap2(0);
+    readMap2(selectedMap);
 
     int noAreasX = 0;
     int noAreasY = 0;
@@ -78,6 +78,8 @@ void World::loadTextures()
     World::textureHolder.load(Textures::BULLET_SMALL, "files/small_bullet.png");
     World::textureHolder.load(Textures::FLOOR_PURPLE_CHESS, "files/floor-purple-chess.png");
     World::textureHolder.load(Textures::FLOOR_BLUE_BRICK, "files/floor-blue-brick.png");
+    World::textureHolder.load(Textures::FLOOR_W00D, "files/floor-wood.png");
+    World::textureHolder.load(Textures::FLOOR_2, "files/floor2.png");
     World::textureHolder.load(Textures::SKULL, "files/skull-icon.png");
     World::textureHolder.load(Textures::RED_DEAD, "files/red_dead.png");
     World::textureHolder.load(Textures::GREEN_DEAD, "files/green_dead.png");
@@ -282,7 +284,7 @@ void World::render()
     {
         if (area->rect.intersects(visibleRect))
         {
-            area->draw(window, true);
+            area->draw(window, false);
         }
     }
 

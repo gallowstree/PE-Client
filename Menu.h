@@ -27,6 +27,7 @@ public:
     char * s_ip;
     char * nick;
     int currentStage = 0;
+    int16_t selectedMap = 0;
     int16_t selectedTeam = 0;
     int16_t connResult = 0;
     sf::Text message;

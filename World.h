@@ -21,7 +21,7 @@ class Pickup;
 class World
 {
 public:
-    World(sf::RenderWindow&  window, std::vector<Player> * players, std::map<int16_t, Projectile> *projectiles);
+    World(sf::RenderWindow&  window, std::vector<Player> * players, std::map<int16_t, Projectile> *projectiles, int16_t selectedMap);
     sf::RenderWindow&  window;
     int playerID = -1;
     void render();

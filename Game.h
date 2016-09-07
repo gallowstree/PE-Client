@@ -20,7 +20,7 @@ class Game : public SocketListener {
 public:
     int playerID = -1;
     sf::RenderWindow&  window;
-    Game(sf::RenderWindow&  window,ServerSocket * sSocket, int selectedTeam);
+    Game(sf::RenderWindow&  window,ServerSocket * sSocket, int selectedTeam,int16_t selectedMap);
     std::vector<Player> players;
     ServerSocket * sSocket;
     bool restart = true;

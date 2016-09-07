@@ -12,11 +12,11 @@
 #include "command.h"
 #include "SFUtils.h"
 int16_t Pickup::nextPickupId;
-Game::Game(sf::RenderWindow&  window, ServerSocket * sSocket, int selectedTeam):
+Game::Game(sf::RenderWindow&  window, ServerSocket * sSocket, int selectedTeam, int16_t selectedMap):
 window(window),
 sSocket(sSocket),
 selectedTeam(selectedTeam),
-world(World(window,&players, &projectiles))
+world(World(window,&players, &projectiles, selectedMap))
 {
     this->playerID = -1;
     pthread_mutex_init(&commandQueueMutex, NULL);

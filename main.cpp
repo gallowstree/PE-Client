@@ -46,7 +46,7 @@ int main()
 
     menu.menuSong.stop();
 
-    Game game(mWindow,&sSocket,menu.selectedTeam);
+    Game game(mWindow,&sSocket,menu.selectedTeam,menu.selectedMap);
     ClientSocket cSocket(menu.c_ip, c_port, &game);
     cSocket.timeout = 0;
     cSocket.keepAlive = true;

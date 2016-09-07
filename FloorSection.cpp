@@ -12,7 +12,7 @@ FloorSection::FloorSection(int texture, float left, float top, float width, floa
 }
 
 Textures FloorSection::getTexture() {
-    return texture == 1 ? Textures ::FLOOR_PURPLE_CHESS : Textures ::FLOOR_BLUE_BRICK;
+    return texture == 1 ? Textures ::FLOOR_2 : Textures ::FLOOR_W00D;
 }
 
 void FloorSection::initSprite(sf::Texture &texture)

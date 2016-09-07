@@ -597,10 +597,11 @@ void Menu::receiveMessage(char buffer[], size_t nBytes, sockaddr_in* serverAddr)
     {
         Serialization::charsToShort(buffer, this->connResult, 0);
         if (this->connResult == 1 || this->connResult == 2) {
+            Serialization::charsToShort(buffer, this->selectedMap, 2);
             if(this->connResult == 1)
             {
-                Serialization::charsToShort(buffer, this->playersTeam[0], 2);
-                Serialization::charsToShort(buffer, this->playersTeam[1], 4);
+                Serialization::charsToShort(buffer, this->playersTeam[0], 4);
+                Serialization::charsToShort(buffer, this->playersTeam[1], 6);
             }
             this->currentStage = 3;
         }
