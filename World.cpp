@@ -305,7 +305,6 @@ void World::render()
     {
         if(player.valid)
         {
-            printf("%f,%f\n", player.boundingBox.left, player.boundingBox.top);
             double angle = player.rotation * 180 / M_PI;
             sf::IntRect spriteRect = player.sprite.getTextureRect();
             player.sprite.setPosition(player.boundingBox.left + player.boundingBox.width / 2,
