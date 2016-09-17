@@ -126,7 +126,7 @@ void Game::processEvents()
     }
 
     moves = 0x0000;
-    if (window.hasFocus()) {
+    if (window.hasFocus() && !players[playerID].death) {
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
             moves |= 0x1;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
@@ -165,18 +165,19 @@ void Game::processServerEvents()
             }
             else
             {
-                if(command.team == 0)
-                    players[command.playerID].setTexture( world.textureHolder.get(Textures::PLAYER_RED));
+                if (command.team == 0)
+                    players[command.playerID].setTexture(world.textureHolder.get(players[command.playerID].death ? Textures::RED_DEAD : Textures::PLAYER_RED));
                 else
-                    players[command.playerID].setTexture( world.textureHolder.get(Textures::PLAYER_GREEN));
+                    players[command.playerID].setTexture(world.textureHolder.get(players[command.playerID].death ? Textures::GREEN_DEAD : Textures::PLAYER_GREEN));
+
             }
 
             if (players[command.playerID].ammo < command.ammo)
                 world.sfxReload.play();
-            
-            /*if(strcmp(players[command.playerID].nick,command.nickname) != 0)
+
+            if(strcmp(players[command.playerID].nick,command.nickname) != 0)
                 strcpy(players[command.playerID].nick,command.nickname);
-*/
+
             players[command.playerID].health = command.health;
             players[command.playerID].valid = command.validPlayer;
             players[command.playerID].boundingBox.left = command.posx;
