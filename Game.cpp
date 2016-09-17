@@ -174,7 +174,6 @@ void Game::processServerEvents()
             if (players[command.playerID].ammo < command.ammo)
                 world.sfxReload.play();
 
-            printf("pid: %d nick: %s\n",command.playerID,command.nickname);
             if(strcmp(players[command.playerID].nick,command.nickname) != 0)
                 strcpy(players[command.playerID].nick,command.nickname);
 
