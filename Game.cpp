@@ -173,11 +173,10 @@ void Game::processServerEvents()
 
             if (players[command.playerID].ammo < command.ammo)
                 world.sfxReload.play();
-
-            printf("pid: %d nick: %s\n",command.playerID,command.nickname);
-            if(strcmp(players[command.playerID].nick,command.nickname) != 0)
+            
+            /*if(strcmp(players[command.playerID].nick,command.nickname) != 0)
                 strcpy(players[command.playerID].nick,command.nickname);
-
+*/
             players[command.playerID].health = command.health;
             players[command.playerID].valid = command.validPlayer;
             players[command.playerID].boundingBox.left = command.posx;
