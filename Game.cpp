@@ -174,6 +174,7 @@ void Game::processServerEvents()
             if (players[command.playerID].ammo < command.ammo)
                 world.sfxReload.play();
 
+            printf("pid: %d nick: %s\n",command.playerID,command.nickname);
             if(strcmp(players[command.playerID].nick,command.nickname) != 0)
                 strcpy(players[command.playerID].nick,command.nickname);
 
@@ -183,6 +184,8 @@ void Game::processServerEvents()
             players[command.playerID].boundingBox.top = command.posy;
             players[command.playerID].rotation = command.rotation;
             players[command.playerID].ammo = command.ammo;
+
+            free(command.nickname);
         }
         else if (command.type == s_projectile_command)
         {
@@ -251,7 +254,8 @@ void Game::receiveMessage(char buffer[], size_t nBytes, sockaddr_in* serverAddr)
                     Serialization::charsToShort(buffer, srvCmd.health, offset);
                     offset += 2;
 
-                    memset(srvCmd.nickname, 0, 6);
+                    srvCmd.nickname = (char *)malloc(7*sizeof(char));
+                    memset(srvCmd.nickname, 0, 7);
                     strcpy(srvCmd.nickname, buffer + offset);
                     offset += strlen(srvCmd.nickname) + 1;
 

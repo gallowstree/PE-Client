@@ -22,7 +22,7 @@ typedef struct command {
     float rotation;
     float originx;
     float originy;
-    char nickname[7];
+    char * nickname;
 	unsigned char ammo;
 	int16_t pickupId;
 	bool pickupEnabled;

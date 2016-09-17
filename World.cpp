@@ -285,7 +285,7 @@ void World::render()
     {
         if (area->rect.intersects(visibleRect))
         {
-            area->draw(window, false);
+            area->draw(window, true);
         }
     }
 
