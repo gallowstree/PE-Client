@@ -184,6 +184,7 @@ void Game::processServerEvents()
             players[command.playerID].boundingBox.top = command.posy;
             players[command.playerID].rotation = command.rotation;
             players[command.playerID].ammo = command.ammo;
+            players[command.playerID].invisible = command.invisible;
 
             free(command.nickname);
         }
@@ -244,6 +245,7 @@ void Game::receiveMessage(char buffer[], size_t nBytes, sockaddr_in* serverAddr)
                     srvCmd.playerID = playerInfo & 0x00FF;
                     srvCmd.team = playerInfo & 0x0100;
                     srvCmd.validPlayer = playerInfo & 0x0200;
+                    srvCmd.invisible = (playerInfo & 0x0400) != 0;
                     offset += 2;
                     Serialization::charsToFloat(buffer, srvCmd.posx, offset);
                     offset += 4;

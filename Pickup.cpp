@@ -14,7 +14,7 @@ Pickup::Pickup(int l, int t, int w, int h, int type, int seconds, int initialSta
     isStatic = true;
     enabled = initialState == 1;
     this->type = Pickup_T;
-    pickupType = type == 0 ? Ammo_T : Health_T;
+    pickupType = static_cast<PickupType>(type);
 }
 
 void Pickup::initSprite(sf::Texture &texture)
@@ -29,6 +29,11 @@ void Pickup::initSprite(sf::Texture &texture)
 }
 
 Textures Pickup::getTexture() {
-    return pickupType == 0 ? Textures ::PICKUP_AMMO : Textures ::PICKUP_HEALTH;
+    if (pickupType == PickupType::Ammo_T)
+        return Textures ::PICKUP_AMMO;
+    else if (pickupType == PickupType::Health_T)
+        return Textures ::PICKUP_HEALTH;
+    else
+        return Textures ::GHOST;
 }
 

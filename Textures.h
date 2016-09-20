@@ -21,7 +21,8 @@ enum Textures
 	HUD_AMMO,
 	PICKUP_AMMO,
 	PICKUP_HEALTH,
-	WALL
+	WALL,
+	GHOST
 };
 
 #endif //TEST_CLIENT_TEXTURES_H

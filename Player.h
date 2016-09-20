@@ -27,6 +27,7 @@ class Player : public Entity {
         Player(int16_t playerID, int16_t team, float posx,float posy,sf::Texture &texture, char* nick);
         void setTexture(const sf::Texture &texture);
         bool death = false;
+        bool invisible = false;
 };
 
 #endif //TEST_CLIENT_PLAYER_H

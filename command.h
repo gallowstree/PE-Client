@@ -26,6 +26,7 @@ typedef struct command {
 	unsigned char ammo;
 	int16_t pickupId;
 	bool pickupEnabled;
+	bool invisible;
 } command_t;
 
 

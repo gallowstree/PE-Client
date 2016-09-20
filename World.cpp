@@ -87,6 +87,7 @@ void World::loadTextures()
     World::textureHolder.load(Textures::PICKUP_AMMO, "files/ammo.png");
     World::textureHolder.load(Textures::PICKUP_HEALTH, "files/health.png");
     World::textureHolder.load(Textures::WALL, "files/wall.png");
+    World::textureHolder.load(Textures::GHOST, "files/ghost.png");
 }
 
 void World::loadSounds()
@@ -311,6 +312,10 @@ void World::render()
                                       player.boundingBox.top + player.boundingBox.height / 2);
             player.sprite.setOrigin(sf::Vector2f(spriteRect.width / 2, spriteRect.height / 2));
             player.sprite.setRotation(angle);
+
+            player.sprite.setColor(sf::Color(255, 255, 255, player.invisible ?
+                                                            (player.playerID == playerID ? 128 : 0)
+                                                                             : 255));
             window.draw(player.sprite);
             player.nickText.setPosition(player.boundingBox.getPosition().x + player.boundingBox.getSize().x / 2 - player.nickText.getLocalBounds().width / 2,
                                         player.boundingBox.getPosition().y + player.sprite.getTextureRect().height -7 );
@@ -322,7 +327,7 @@ void World::render()
 
             player.healthWrapper.setPosition(player.boundingBox.getPosition().x + 6,player.boundingBox.getPosition().y + player.sprite.getTextureRect().height -12);
             player.healthBox.setPosition(player.healthWrapper.getPosition().x,player.healthWrapper.getPosition().y);
-            if(player.health > 0)
+            if(player.health > 0 && (!player.invisible || player.playerID == playerID))
             {
                 player.healthBox.setSize(sf::Vector2f(player.health * 40 / 100, 2));
                 if (player.health >= 75 && player.health <= 100)
