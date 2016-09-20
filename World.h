@@ -32,7 +32,7 @@ public:
     static ResourceHolder<sf::Texture, Textures> textureHolder;
     sf::View camera;
     static void loadTextures();
-
+    bool debugAreas = false;
 	bool mouseIsDown;
 	sf::Sound sfxShotGun;
 	sf::Sound sfxReload;

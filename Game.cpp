@@ -42,6 +42,13 @@ void Game::run()
                 case sf::Event::Closed:
                     window.close();
                     exit(0);
+                case sf::Event::KeyPressed:
+                    switch (event.key.code) {
+                        case sf::Keyboard::Key::L:
+                            world.debugAreas = (world.debugAreas) ? false : true;
+                            break;
+                    }
+                    break;
             }
         }
         sf::Time elapsedTime = clock.restart();

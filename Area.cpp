@@ -39,7 +39,6 @@ void Area::draw(sf::RenderTarget &window, bool debugGrid)
     {
         if (pickup->enabled)
             window.draw(pickup->sprite);
-        printf("%s\n", pickup->enabled ? "enabled" : "disabled");
     }
 }
 
