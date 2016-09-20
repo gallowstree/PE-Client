@@ -344,8 +344,9 @@ void World::render()
                 radarPos.setFillColor(sf::Color::White);
                 radarPos.setPosition(radar.getPosition().x + player.boundingBox.left / 20 , radar.getPosition().y + player.boundingBox.top / 20 );
                 window.draw(radarPos);
+                window.draw(player.nickText);
             }
-            else
+            else if(player.health == 0)
             {
                 player.sprite.setTexture(textureHolder.get(player.team == 0 ? Textures::RED_DEAD : Textures::GREEN_DEAD), true);
                 if(!player.death)
@@ -353,11 +354,12 @@ void World::render()
                     sfxScream.play();
                     player.death = true;
                 }
+                window.draw(player.nickText);
             }
             player.nickText.setPosition(player.boundingBox.getPosition().x + player.boundingBox.getSize().x / 2 - player.nickText.getLocalBounds().width / 2,
                                         player.boundingBox.getPosition().y + player.sprite.getTextureRect().height -7 );
 
-            window.draw(player.nickText);
+
 
         }
 
